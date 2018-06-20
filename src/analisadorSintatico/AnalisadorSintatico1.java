@@ -56,6 +56,10 @@ public class AnalisadorSintatico1 {
         }
     }
 
+    /*
+        Caso tenha '|' na grámatica seria if - if ...
+        Caso seja direto na grámatica seria if - else if ...
+     */
     private boolean proximoToken() {
         if (posicao + 1 < tokens.size()) {
             posicao++;
@@ -85,176 +89,235 @@ public class AnalisadorSintatico1 {
         return null;
     }
 
-    public boolean programa() {
-        if (declaracao()) {
-            if (programaAux()) {
-                return true;
-            } else {
-                panicMode();
-            }
-        } else {
-            panicMode();
-        }
-        return false;
+    public void programa() {
+        declaracao();
+        programaAux();
     }
 
-    public boolean programaAux() {
-        if (programa()) {
-            return true;
-        }
-        return true;
+    public void programaAux() {
+        programa();
     }
 
-    public boolean declaracao() {
-        if (declaracaoDeFuncao()) {
-
-        }
+    /**
+     * **********************************************************************************
+     * ************************* TERMINAR AS DECLARAÇÕES
+     * ********************************
+     * **********************************************************************************
+     */
+    public void declaracao() {
+        declaracaoDeFuncao();
 
     }
 
-    private boolean declaracaoDeFuncao() {
+    private void declaracaoDeFuncao() {
         if (validarToken("function")) {
-            if (funcId()) {
-                if (validarToken("(")) {
-
-                } else {
-                    panicMode();
-                }
+            funcId();
+            if (validarToken("(")) {
+                funcaoProcedimentoFim();
             } else {
                 panicMode();
             }
+        }
+    }
+
+    private void funcId() {
+        tipo();
+        if (validarToken("identificador")) {
+
         } else {
             panicMode();
         }
-        return false;
-    }
-
-    private boolean funcId() {
-        if (tipo()) {
-            if (validarToken("identificador")) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void panicMode() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Implementar modo pânico!!!!!");
     }
 
-    private boolean tipo() {
-        if (tipobase()) {
-            if (tipoAux()) {
-
-            }
-        }
-        return false;
+    private void tipo() {
+        tipobase();
+        tipoAux();
     }
 
-    private boolean tipobase() {
+    private void tipobase() {
         if (escalar()) {
-            return true;
         } else if (declaracaoDeStruct()) {
-            return true;
+
         } else if (validarToken("identificador")) {
-            return true;
+
         } else if (validarToken("struct")) {
             if (validarToken("identificador")) {
-                return true;
+            } else {
+                panicMode();
             }
+        } else {
+            panicMode();
         }
-        return false;
     }
 
     private boolean escalar() {
         if (validarToken("int") || validarToken("float") || validarToken("bool") || validarToken("string")) {
             return true;
-        } else {
-            panicMode();
         }
         return false;
     }
 
     private boolean declaracaoDeStruct() {
         if (validarToken("struct")) {
-            if (declaracaoDeStructAux()) {
-
-            }
+            declaracaoDeStructAux();
         }
-
         return false;
     }
 
     private boolean declaracaoDeStructAux() {
         if (validarToken("identificador")) {
-            if (Extends()) {
-                if (validarToken("{")) {
-                    if (declaracaoDeStructCorpo()) {
-                        if (validarToken("}")) {
-                            return true;
-                        }
-                    }
+            Extends();
+            if (validarToken("{")) {
+                declaracaoDeStructCorpo();
+                if (validarToken("}")) {
+                    return true;
                 }
             }
         }
         return false;
     }
 
-    private boolean Extends() {
+    private void Extends() {
         if (validarToken("extends")) {
             if (validarToken("identificador")) {
+
+            } else {
+                panicMode();
+            }
+        } // PODE SER VAZIO
+    }
+
+    private void declaracaoDeStructCorpo() {
+        declaracaoDeStructLinha();
+        declaracaoDeStructCorpoAux();
+    }
+
+    private void declaracaoDeStructLinha() {
+        tipo();
+        expressaoIdentificadoresStruct();
+    }
+
+    private void expressaoIdentificadoresStruct() {
+        expressaoIdentificadorStruct();
+        expressaoIdentificadoresStructAux();
+    }
+
+    private void expressaoIdentificadorStruct() {
+        if (validarToken("identificador")) {
+
+        } else {
+            panicMode();
+        }
+    }
+
+    private void expressaoIdentificadoresStructAux() {
+        if (validarToken(";")) {
+
+        }
+        if (validarToken(",")) {
+            expressaoIdentificadoresStruct();
+        }
+    }
+
+    /*
+        TERMINAR!!!!!!!!
+     */
+    private void tipoAux() {
+        if (tipoVetorDeclarando()) {
+
+        }
+        // PODE SER VAZIO
+    }
+
+    private boolean tipoVetorDeclarando() {
+        if (tipoVetorDeclarado()) {
+            if (tipoVetorDeclarandoAux()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean tipoVetorDeclarado() {
+        if (validarToken("[")) {
+            if (validarToken("]")) {
                 return true;
             } else {
                 panicMode();
             }
         }
-        return true;
-    }
-
-    private boolean declaracaoDeStructCorpo() {
-        if (declaracaoDeStructLinha()) {
-            if (declaracaoDeStructCorpoAux()) {
-                return true;
-            }
-        }
         return false;
     }
 
-    private boolean declaracaoDeStructLinha() {
-        if (tipo()) {
-            if (expressaoIdentificadoresStruct()) {
-
-            }
-        }
-
-        return false;
-    }
-
-    private boolean declaracaoDeStructCorpoAux() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private boolean expressaoIdentificadoresStruct() {
-        if (expressaoIdentificadorStruct()) {
-            if(expressaoIdentificadoresStructAux()){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean expressaoIdentificadorStruct() {
-        if (validarToken("identificador")) {
+    private boolean tipoVetorDeclarandoAux() {
+        if (tipoVetorDeclarando()) {
             return true;
-        } else {
-            return false;
+        }
+        return false;
+    }
+
+    private void declaracaoDeStructCorpoAux() {
+        declaracaoDeStructCorpo();
+    }
+
+    /**
+     * ***********************************************************************
+     */
+    private void funcaoProcedimentoFim() {
+        parametros();
+        if (validarToken(")")) {
+            bloco();
         }
     }
 
-    private boolean expressaoIdentificadoresStructAux() {
-        
-        
+    private void parametros() {
+        parametro();
+        parametrosAux();
+    }
+
+    private void bloco() {
+        if (validarToken("{")) {
+            blocoAux();
+        }
+    }
+
+    private void parametro() {
+        tipo();
+        if (validarToken("identificador")) {
+
+        } else {
+            panicMode();
+        }
+    }
+
+    private void parametrosAux() {
+        if (validarToken(",")) {
+            parametros();
+        } else {
+            // Vazio
+        }
+    }
+
+    private void blocoAux() {
+        if (listaDeInstrucoes()) {
+            if (validarToken("}")) {
+
+            }
+        }
+        if (validarToken("}")) {
+
+        }
+    }
+
+    private boolean listaDeInstrucoes() {
+        /* CORRIGIR !!!!!!!!!!!!!!!!!!!!!!!!!!!! */
         return false;
     }
+
+
 
 }

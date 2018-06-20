@@ -105,7 +105,8 @@ public class AnalisadorSintatico {
     }
 
     private void variavelConstanteObjeto() {
-
+        
+        
     }
 
     private boolean proximoToken() {
