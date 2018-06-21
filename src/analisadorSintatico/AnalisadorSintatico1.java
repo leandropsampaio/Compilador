@@ -100,8 +100,8 @@ public class AnalisadorSintatico1 {
 
     /**
      * **********************************************************************************
-     * ************************* TERMINAR AS DECLARAÇÕES
-     * ********************************
+     * ************************* TERMINAR AS DECLARAÇÕES E VERIFICAR OS QUE
+     * ********************* POSSUEM VAZIO PARA ADICIONAR O ELSE(RETURN FALSE)
      * **********************************************************************************
      */
     public void declaracao() {
@@ -133,9 +133,10 @@ public class AnalisadorSintatico1 {
         System.out.println("Implementar modo pânico!!!!!");
     }
 
-    private void tipo() {
+    private boolean tipo() {
         tipobase();
         tipoAux();
+        return false;
     }
 
     private void tipobase() {
@@ -268,10 +269,10 @@ public class AnalisadorSintatico1 {
      * ***********************************************************************
      */
     private void funcaoProcedimentoFim() {
-        parametros();
         if (validarToken(")")) {
             bloco();
         }
+        parametros();
     }
 
     private void parametros() {
@@ -279,10 +280,13 @@ public class AnalisadorSintatico1 {
         parametrosAux();
     }
 
-    private void bloco() {
+    private boolean bloco() {
         if (validarToken("{")) {
-            blocoAux();
+            if (blocoAux()) {
+                return true;
+            }
         }
+        return false;
     }
 
     private void parametro() {
@@ -302,22 +306,542 @@ public class AnalisadorSintatico1 {
         }
     }
 
-    private void blocoAux() {
+    private boolean blocoAux() {
         if (listaDeInstrucoes()) {
             if (validarToken("}")) {
-
+                return true;
             }
+        } else if (validarToken("}")) {
+            return true;
         }
-        if (validarToken("}")) {
-
-        }
-    }
-
-    private boolean listaDeInstrucoes() {
-        /* CORRIGIR !!!!!!!!!!!!!!!!!!!!!!!!!!!! */
         return false;
     }
 
+    private boolean listaDeInstrucoes() {
+        if (instrucao()) {
+            if (listaDeInstrucoesAux()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    private boolean instrucao() {
+        if (instrucaoNormal()) {
+            return true;
+        } else if (estruturaCondicional()) {
+            return true;
+        } else if (While()) {
+            return true;
+        } else if (declaracaoDeVar()) {
+            return true;
+        } else if (declaracaoDeConst()) {
+            return true;
+        } else if (declaracaoDeTypedef()) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean listaDeInstrucoesAux() {
+        if (listaDeInstrucoes()) {
+            return true;
+        }
+        // Pode ser Vazio
+        return true;
+    }
+
+    private boolean instrucaoNormal() {
+        if (operacaoDeAtribuicao()) {
+            if (validarToken(";")) {
+                return true;
+            } else {
+                panicMode();
+            }
+        } else if (declaracaoDeStruct()) {
+            if (validarToken(";")) {
+                return true;
+            } else {
+                panicMode();
+            }
+        } else if (instrucaoDeRetorno()) {
+            if (validarToken(";")) {
+                return true;
+            } else {
+                panicMode();
+            }
+        } else if (Print()) {
+            if (validarToken(";")) {
+                return true;
+            } else {
+                panicMode();
+            }
+        } else if (scan()) {
+            if (validarToken(";")) {
+                return true;
+            } else {
+                panicMode();
+            }
+        }
+        return false;
+    }
+
+    private boolean operacaoDeAtribuicao() {
+        if (Final()) {
+            if (validarToken("=")) {
+                if (expressao()) {
+                    return true;
+                }
+            }
+        } else if (validarToken("identificador")) {
+            if (validarToken("=")) {
+                if (expressao()) {
+                    return true;
+                }
+            }
+        } else if (expressao()) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean instrucaoDeRetorno() {
+        if (validarToken("return")) {
+            if (instrucaoDeRetornoAux()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean Print() {
+        if (validarToken("print")) {
+            if (validarToken("(")) {
+                if (saida()) {
+                    if (outrasSaidas()) {
+                        if (validarToken(")")) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean scan() {
+        if (validarToken("scan")) {
+            if (validarToken("(")) {
+                if (entrada()) {
+                    if (outrasEntradas()) {
+                        if (validarToken(")")) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean estruturaCondicional() {
+        if (ifThen()) {
+            if (estruturaCondicionalAux()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean While() {
+        if (validarToken("while")) {
+            if (validarToken("(")) {
+                if (expressao()) {
+                    if (validarToken(")")) {
+                        if (bloco()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean declaracaoDeVar() {
+        if (validarToken("var")) {
+            if (validarToken("{")) {
+                if (declaracaoDeVariavelCorpo()) {
+                    if (validarToken("}")) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean declaracaoDeConst() {
+        if (validarToken("const")) {
+            if (validarToken("{")) {
+                if (declaracaoDeConstanteCorpo()) {
+                    if (validarToken("{")) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean declaracaoDeTypedef() {
+        if (validarToken("typedef")) {
+            if (declaracaoDeTypedefAux()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean Final() {
+        if (validarToken("identificador")) {
+            if (acessando()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean expressao() {
+        if (opE()) {
+            if (expressaoAux()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean instrucaoDeRetornoAux() {
+        if (expressao()) {
+            return true;
+        }
+        return true;
+    }
+
+    private boolean saida() {
+        if (expressao()) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean outrasSaidas() {
+        if (validarToken(",")) {
+            if (saida()) {
+                if (outrasSaidas()) {
+                    return true;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean entrada() {
+        if (Final()) {
+            return true;
+        } else if (validarToken("identificador")) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean outrasEntradas() {
+        if (validarToken(",")) {
+            if (entrada()) {
+                if (outrasEntradas()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean ifThen() {
+        if (validarToken("if")) {
+            if (validarToken("(")) {
+                if (expressao()) {
+                    if (validarToken(")")) {
+                        if (validarToken("then")) {
+                            if (bloco()) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean estruturaCondicionalAux() {
+        if (validarToken("else")) {
+            if (bloco()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean declaracaoDeVariavelCorpo() {
+        if (declaracaoDeVariavelLinha()) {
+            if (declaracaoDeVariavelCorpoAux()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean declaracaoDeVariavelLinha() {
+        if (tipo()) {
+            if (expressaoIdentificadoresVar()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean declaracaoDeVariavelCorpoAux() {
+        if (declaracaoDeVariavelCorpo()) {
+            return true;
+        }
+        return true;
+    }
+
+    private boolean expressaoIdentificadoresVar() {
+        if (expressaoIdentificadorVar()) {
+            if (expressaoIdentificadoresVarAux()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean expressaoIdentificadorVar() {
+        if (validarToken("identificador")) {
+            if (expressaoIdentificadorVarAux()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean expressaoIdentificadoresVarAux() {
+        if (validarToken(";")) {
+            return true;
+        } else if (validarToken(",")) {
+            if (expressaoIdentificadoresVar()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean expressaoIdentificadorVarAux() {
+        if (validarToken("=")) {
+            if (expressao()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean declaracaoDeConstanteCorpo() {
+        if (declaracaoDeConstanteLinha()) {
+            if (declaracaoDeConstanteCorpoAux()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean declaracaoDeConstanteLinha() {
+        if (tipo()) {
+            if (expressaoIdentificadoresConst()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean declaracaoDeConstanteCorpoAux() {
+        if (declaracaoDeConstanteCorpo()) {
+            return true;
+        }
+        return true;
+    }
+
+    private boolean expressaoIdentificadoresConst() {
+        if (expressaoIdentificadorConst()) {
+            if (expressaoIdentificadoresConstAux()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean expressaoIdentificadorConst() {
+        if (validarToken("identificador")) {
+            if (validarToken("=")) {
+                if (expressao()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean expressaoIdentificadoresConstAux() {
+        if (validarToken(";")) {
+            return true;
+        } else if (validarToken(",")) {
+            if (expressaoIdentificadoresConst()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean declaracaoDeTypedefAux() {
+        if (tipo()) {
+            if (validarToken("identificador")) {
+                if (validarToken(";")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean acessando() {
+        if (acesso()) {
+            if (acessandoAux()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean acesso() {
+        if (validarToken(".")) {
+            if (validarToken("identificador")) {
+                return true;
+            }
+        } else if (validarToken("[")) {
+            if (expressao()) {
+                if (validarToken("]")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean acessandoAux() {
+        if (acessando()) {
+            return true;
+        }
+        return true;
+    }
+
+    private boolean opE() {
+        if (opRelacional()) {
+            if (opEAux()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean expressaoAux() {
+        if (validarToken("||")) {
+            if (expressao()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean opRelacional() {
+        if (valorRelacional()) {
+            if (opRelacionalAux()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean opEAux() {
+        if (validarToken("&&")) {
+            if (opE()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean valorRelacional() {
+        if (opMult()) {
+            if (valorRelacionalAux()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean opRelacionalAux() {
+        if (escalarRelacional()) {
+            if (opRelacional()) {
+                return true;
+            }
+        }
+        return true;
+    }
+
+    private boolean opMult() {
+        if (opUnary()) {
+            if (opMultAux()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean valorRelacionalAux() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private boolean escalarRelacional() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private boolean opUnary() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private boolean opMultAux() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
 }
