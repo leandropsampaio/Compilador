@@ -105,7 +105,12 @@ public class AnalisadorSintatico {
     }
 
     private void variavelConstanteObjeto() {
+//<<<<<<< HEAD
                 
+//=======
+        
+        
+//>>>>>>> 743bdd58c6072284bceff706d52383f6ba0244d4
     }
 
     private boolean proximoToken() {
@@ -288,7 +293,7 @@ public class AnalisadorSintatico {
     }
 
     private void structConsumido() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     /* Método para criar variáveis 
