@@ -926,20 +926,144 @@ public class AnalisadorSintatico1 {
                 }
             }
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0f9b4fae3d897b80682eff2ece3e09c9f8a6221d
         return true;
     }
 
     private boolean escalarRelacional() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (validarToken("!=")) {
+            return true;
+        } else if (validarToken("==")) {
+            return true;
+        } else if (validarToken("<")) {
+            return true;
+        } else if (validarToken("<=")) {
+            return true;
+        } else if (validarToken(">")) {
+            return true;
+        } else if (validarToken(">=")) {
+            return true;
+        }
+        return false;
     }
 
     private boolean opUnary() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (validarToken("!")) {
+            if (opUnary()) {
+                return true;
+            }
+        } else if (validarToken("++")) {
+            if (opUnary()) {
+                return true;
+            }
+        } else if (validarToken("--")) {
+            if (opUnary()) {
+                return true;
+            }
+        } else if (Final()) {
+            if (simboloUnario()) {
+                return true;
+            }
+        } else if (valor()) {
+            if (simboloUnario()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean opMultAux() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (validarToken("*")) {
+            if (opUnary()) {
+                if (opMultAux()) {
+                    return true;
+                }
+            }
+        } else if (validarToken("/")) {
+            if (opUnary()) {
+                if (opMultAux()) {
+                    return true;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean simboloUnario() {
+        if (validarToken("++")) {
+            return true;
+        } else if (validarToken("--")) {
+            return true;
+        }
+        return true;
+    }
+
+    private boolean valor() {
+        if (validarToken("identificador")) {
+            if (valorAux1()) {
+                return true;
+            }
+        } else if (validarToken("(")) {
+            if (expressao()) {
+                if (validarToken(")")) {
+                    return true;
+                }
+            }
+        } else if (validarToken("digitos")) {
+            return true;
+        } else if (validarToken("cadeiaDeCaracteres")) {
+            return true;
+        } else if (validarToken("true")) {
+            return true;
+        } else if (validarToken("false")) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean valorAux1() {
+        if (validarToken("(")) {
+            if (valorAux2()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean valorAux2() {
+        if (parametrosFuncao()) {
+            if (validarToken(")")) {
+                return true;
+            }
+        } else if (validarToken(")")) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean parametrosFuncao() {
+        if (expressao()) {
+            if (parametrosFuncaoAux()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean parametrosFuncaoAux() {
+        if (validarToken(",")) {
+            if (parametrosFuncao()) {
+                return true;
+            } else {
+                panicMode();
+            }
+        }
+        return true;
     }
 
 }
