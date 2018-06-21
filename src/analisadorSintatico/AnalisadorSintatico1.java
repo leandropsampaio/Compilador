@@ -926,7 +926,10 @@ public class AnalisadorSintatico1 {
                 }
             }
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 94756625a1dd8c5b4ecced07612b0d34211596d3
         return true;
     }
 
