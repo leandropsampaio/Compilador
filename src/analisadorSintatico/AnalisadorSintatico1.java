@@ -89,13 +89,20 @@ public class AnalisadorSintatico1 {
         return null;
     }
 
-    public void programa() {
-        declaracao();
-        programaAux();
+    public boolean programa() {
+        if (declaracao()) {
+            if (programaAux()) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void programaAux() {
-        programa();
+    public boolean programaAux() {
+        if (programa()) {
+            return true;
+        }
+        return true;
     }
 
     /**
@@ -385,9 +392,13 @@ public class AnalisadorSintatico1 {
         return false;
     }
 
-    private void parametros() {
-        parametro();
-        parametrosAux();
+    private boolean parametros() {
+        if (parametro()) {
+            if (parametrosAux()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean bloco() {
@@ -399,21 +410,22 @@ public class AnalisadorSintatico1 {
         return false;
     }
 
-    private void parametro() {
-        tipo();
-        if (validarToken("identificador")) {
-
-        } else {
-            panicMode();
+    private boolean parametro() {
+        if (tipo()) {
+            if (validarToken("identificador")) {
+                return true;
+            }
         }
+        return false;
     }
 
-    private void parametrosAux() {
+    private boolean parametrosAux() {
         if (validarToken(",")) {
-            parametros();
-        } else {
-            // Vazio
+            if (parametros()) {
+                return true;
+            }
         }
+        return true;
     }
 
     private boolean blocoAux() {
@@ -926,10 +938,6 @@ public class AnalisadorSintatico1 {
                 }
             }
         }
-<<<<<<< HEAD
-
-=======
->>>>>>> 94756625a1dd8c5b4ecced07612b0d34211596d3
         return true;
     }
 
