@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * @author Leandro Sampaio e Elvis Huges
  */
 
-public class AnalisadorSintatico1 {
+public class teste {
 
     private Token tokenAtual, tokenAnterior;
     private int posicao = -1;
