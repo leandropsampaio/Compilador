@@ -1074,9 +1074,7 @@ public class AnalisadorSintatico1 {
         return true;
     }
     
-     private boolean testecommit() {
-      return true;
-    }
+    
 
 
 }
