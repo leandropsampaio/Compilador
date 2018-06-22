@@ -161,6 +161,7 @@ public class AnalisadorSintatico1 {
     private boolean declaracaoDeFuncao() {
         System.out.println("DECLARACAO DE FUNCAO");
         if (validarToken("function")) {
+            
             funcId();
             if (validarToken("(")) {
                 funcaoProcedimentoFim();
@@ -347,30 +348,36 @@ public class AnalisadorSintatico1 {
     }
 
     private boolean declaracaoDeStructCorpo() {
+        System.out.println("DECLARACAO DE STRUCT CORPO");
         if (declaracaoDeStructLinha()) {
             if (declaracaoDeStructCorpoAux()) {
                 return true;
             }
         }
+        System.out.println("SAIDA DECLARACAO DE STRUCT CORPO");
         return false;
 
     }
 
     private boolean declaracaoDeStructLinha() {
+        System.out.println("DECLARACAO DE STRUCT LINHA");
         if (tipo()) {
             if (expressaoIdentificadoresStruct()) {
                 return true;
             }
         }
+        System.out.println("SAIDA DECLARACAO DE STRUCT LINHA");
         return false;
     }
 
     private boolean expressaoIdentificadoresStruct() {
+        System.out.println("EXPRESSAO IDENTIFICADORES STRUCT");
         if (expressaoIdentificadorStruct()) {
             if (expressaoIdentificadoresStructAux()) {
                 return true;
             }
         }
+        System.out.println("SAIDA EXPRESSAO IDENTIFICADORES STRUCT");
         return false;
     }
 
@@ -383,6 +390,7 @@ public class AnalisadorSintatico1 {
     }
 
     private boolean expressaoIdentificadoresStructAux() {
+        System.out.println("EXPRESSAO IDENTIFICADORES STRUCT AUX");
         if (validarToken(";")) {
             return true;
         } else if (validarToken(",")) {
@@ -390,6 +398,7 @@ public class AnalisadorSintatico1 {
                 return true;
             }
         }
+        System.out.println("SAIDA EXPRESSAO IDENTIFICADORES STRUCT AUX");
         return false;
     }
 
@@ -397,22 +406,27 @@ public class AnalisadorSintatico1 {
         TERMINAR!!!!!!!!
      */
     private boolean tipoAux() {
+        System.out.println("TIPO AUX");
         if (tipoVetorDeclarando()) {
             return true;
         }
+        System.out.println("SAIDA TIPO AUX");
         return true;
     }
 
     private boolean tipoVetorDeclarando() {
+         System.out.println("TIPO VETOR DECLARANDO");
         if (tipoVetorDeclarado()) {
             if (tipoVetorDeclarandoAux()) {
                 return true;
             }
         }
+        System.out.println("SAIDA TIPO VETOR DECLARANDO");
         return false;
     }
 
     private boolean tipoVetorDeclarado() {
+        System.out.println("TIPO VETOR DECLARADO");
         if (validarToken("[")) {
             if (validarToken("]")) {
                 return true;
@@ -420,6 +434,7 @@ public class AnalisadorSintatico1 {
                 panicMode();
             }
         }
+        System.out.println("SAIDA TIPO VETOR DECLARADO");
         return false;
     }
 
@@ -441,7 +456,7 @@ public class AnalisadorSintatico1 {
      * ***********************************************************************
      */
     private boolean funcaoProcedimentoFim() {
-        System.out.println("CCCCCCCCCCCCCC");
+        System.out.println("PROCEDIMENTO FIM");
         if (parametros()) {
             System.out.println("BBBBBBBBBBBBBBBBBBb");
             if (validarToken(")")) {
@@ -455,37 +470,42 @@ public class AnalisadorSintatico1 {
                 return true;
             }
         }
+        System.out.println("SIM PROCEDIMENTO FIM");
         return false;
     }
 
     private boolean parametros() {
+        System.out.println("PARAMETROS");
         if (parametro()) {
             if (parametrosAux()) {
                 return true;
             }
         }
+        System.out.println("SAIDA PARAMETROS");
         return false;
     }
 
     private boolean bloco() {
-        System.out.println("1 - Bloco");
+        System.out.println("BLOCO");
         if (validarToken("{")) {
             if (blocoAux()) {
                 System.out.println("2");
                 return true;
             }
         }
-        System.out.println("BLOCO SAIU!");
+        System.out.println("SAIDA BLOCO");
         return false;
     }
 
     private boolean parametro() {
+        System.out.println("PARAMETRO");
         if (tipo()) {
             if (validarToken("IDE")) {
                 System.out.println("8");
                 return true;
             }
         }
+        System.out.println("SAIDA PARAMETRO");
         return false;
     }
 
@@ -514,11 +534,13 @@ public class AnalisadorSintatico1 {
     }
 
     private boolean listaDeInstrucoes() {
+        System.out.println("LISTA DE INSTRUCOES");
         if (instrucao()) {
             if (listaDeInstrucoesAux()) {
                 return true;
             }
         }
+        System.out.println("SAIDA LISTA DE INSTRUCOES");
         return false;
     }
 

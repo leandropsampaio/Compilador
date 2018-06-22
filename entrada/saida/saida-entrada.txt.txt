@@ -2,8 +2,10 @@
 01 DEL (
 01 DEL )
 01 DEL {
-02 PRE int
+02 IDE teste
 02 IDE a
+02 REL =
+02 NRO 9
 02 DEL ;
 03 DEL }
 
