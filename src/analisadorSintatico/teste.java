@@ -1,7 +1,4 @@
 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
 
 package analisadorSintatico;
 
@@ -32,7 +29,7 @@ public class teste {
      * @param tokens lista de tokens extraídos da análise léxica
      * @param file diretório para armazenar os resultados
      */
-    /**
+   
     public void iniciar(ArrayList tokens) {
         File file = null;
         FileWriter output;
@@ -111,8 +108,8 @@ public class teste {
         if (declaracaoDeFuncao()) {
 
         }
-
-    
+return true;
+    }
 
     private boolean declaracaoDeFuncao() {
         if (validarToken("function")) {
@@ -146,8 +143,8 @@ public class teste {
 
     private boolean tipo() {
         if (tipobase()) {
-            if (tipoAux()) {
-
+            if (true) {
+return true;
             }
         }
         return false;

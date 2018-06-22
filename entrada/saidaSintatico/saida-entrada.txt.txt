@@ -1,0 +1,1 @@
+Análise Sintática iniciada para o arquivo entrada.txt/nAnálise Sintática finalizada com sucesso para o arquivo entrada.txt

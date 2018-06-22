@@ -1,0 +1,10 @@
+01 PRE start
+01 DEL (
+01 DEL )
+01 DEL {
+02 PRE int
+02 IDE a
+02 DEL ;
+03 DEL }
+
+Sucesso, código pronto para a análise semântica!
