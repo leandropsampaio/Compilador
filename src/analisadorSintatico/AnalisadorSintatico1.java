@@ -338,6 +338,7 @@ public class AnalisadorSintatico1 {
     }
 
     private boolean Extends() {
+        System.out.println("EXTENDS");
         if (validarToken("extends")) {
             if (validarToken("IDE")) {
                 System.out.println("6");
@@ -346,6 +347,7 @@ public class AnalisadorSintatico1 {
                 panicMode();
             }
         } // PODE SER VAZIO        
+        System.out.println("SAIDA EXTENDS");
         return true;
     }
 
@@ -441,16 +443,20 @@ public class AnalisadorSintatico1 {
     }
 
     private boolean tipoVetorDeclarandoAux() {
+        System.out.println("TIPO VETOR DECLARANDO AUX");
         if (tipoVetorDeclarando()) {
             return true;
         }
+        System.out.println("SAIDA TIPO VETOR DECLARANDO AUX");
         return false;
     }
 
     private boolean declaracaoDeStructCorpoAux() {
+        System.out.println("DECLARACAO DE STRUCT CORPO AUX");
         if (declaracaoDeStructCorpo()) {
             return true;
         }
+        System.out.println("SAIDA DECLARACAO DE STRUCT CORPO AUX");
         return true;
     }
 
