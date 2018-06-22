@@ -314,6 +314,7 @@ public class AnalisadorSintatico1 {
     }
 
     private boolean declaracaoDeStructAux() {
+        System.out.println("DECLARACAO DE STRUCT AUX");
         if (validarToken("IDE")) {
             System.out.println("5");
             if (Extends()) { // LEMBRARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
@@ -332,6 +333,7 @@ public class AnalisadorSintatico1 {
                 }
             }
         }
+        System.out.println("SAIDA DECLARACAO DE STRUCT AUX");
         return false;
     }
 

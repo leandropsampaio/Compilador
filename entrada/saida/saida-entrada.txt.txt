@@ -1,11 +1,7 @@
-01 PRE start
-01 DEL (
-01 DEL )
+01 PRE struct
+01 IDE a
 01 DEL {
-02 IDE teste
 02 IDE a
-02 REL =
-02 NRO 9
 02 DEL ;
 03 DEL }
 
