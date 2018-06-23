@@ -1,3 +1,12 @@
 start(){
-	int a;
+
+    struct Alunos{
+        string nome;
+        float matematica, fisica, media;
+    };
+
+    struct AlunosEcomp extends Alunos{
+        float algoritmos, compiladores;
+    };
+
 }
