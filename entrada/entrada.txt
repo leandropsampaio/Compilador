@@ -8,5 +8,4 @@ start(){
     struct AlunosEcomp extends Alunos{
         float algoritmos, compiladores;
     };
-
 }

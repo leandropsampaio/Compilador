@@ -328,6 +328,7 @@ public class AnalisadorSintatico1 {
     }
 
     private boolean declaracaoDeStructAux() {
+        System.out.println("DECLARACAO DE STRUCT AUX");
         if (validarToken("IDE")) {
             if (Extends()) { // LEMBRARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
                 if (validarToken("{")) {
@@ -351,10 +352,12 @@ public class AnalisadorSintatico1 {
                 }
             }
         }
+        System.out.println("SAIDA DECLARACAO DE STRUCT AUX");
         return false;
     }
 
     private boolean Extends() {
+        System.out.println("EXTENDS");
         if (validarToken("extends")) {
             if (validarToken("IDE")) {
                 //System.out.println("6");
@@ -363,6 +366,7 @@ public class AnalisadorSintatico1 {
                 panicMode();
             }
         } // PODE SER VAZIO        
+        System.out.println("SAIDA EXTENDS");
         return true;
     }
 
@@ -459,16 +463,20 @@ public class AnalisadorSintatico1 {
     }
 
     private boolean tipoVetorDeclarandoAux() {
+        System.out.println("TIPO VETOR DECLARANDO AUX");
         if (tipoVetorDeclarando()) {
             return true;
         }
+        System.out.println("SAIDA TIPO VETOR DECLARANDO AUX");
         return true;
     }
 
     private boolean declaracaoDeStructCorpoAux() {
+        System.out.println("DECLARACAO DE STRUCT CORPO AUX");
         if (declaracaoDeStructCorpo()) {
             return true;
         }
+        System.out.println("SAIDA DECLARACAO DE STRUCT CORPO AUX");
         return true;
     }
 

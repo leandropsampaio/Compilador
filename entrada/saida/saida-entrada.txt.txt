@@ -1,7 +1,7 @@
-01 PRE start
-01 DEL (
-01 DEL )
+01 PRE struct
+01 IDE a
 01 DEL {
+<<<<<<< HEAD
 03 PRE struct
 03 IDE Alunos
 03 DEL {
@@ -30,5 +30,10 @@
 10 DEL }
 10 DEL ;
 12 DEL }
+=======
+02 IDE a
+02 DEL ;
+03 DEL }
+>>>>>>> f21f05cf3c1b3b4562eb5d2ad531c00ffc14fe57
 
 Sucesso, código pronto para a análise semântica!
