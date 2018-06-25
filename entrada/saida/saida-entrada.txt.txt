@@ -1,8 +1,15 @@
-01 PRE struct
+01 PRE function
 01 IDE a
+01 DEL (
 01 DEL {
-02 IDE a
-02 DEL ;
-03 DEL }
+02 PRE struct
+02 IDE z
+02 DEL {
+03 PRE int
+03 IDE a
+03 DEL ;
+04 DEL }
+04 DEL ;
+05 DEL }
 
 Sucesso, código pronto para a análise semântica!

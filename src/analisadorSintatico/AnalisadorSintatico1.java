@@ -26,6 +26,7 @@ public class AnalisadorSintatico1 {
     private BufferedWriter saidaSintatico;
     private int errosSintaticos = 0;
     private int contador = 0;
+    private int erros = 0;
 
     /**
      * Método que inicia a análise sintática.
@@ -49,7 +50,11 @@ public class AnalisadorSintatico1 {
             }
 
             programa();
-            if (errosSintaticos == 0) { // adicionar verificador de main !!!
+            
+            if(this.erros == 0 ){
+               saidaSintatico.write("Analise concluida sem erros sintáticos");
+            }
+            if (errosSintaticos == 0){ // adicionar verificador de main !!!
                 System.out.println("Análise Sintática finalizada com sucesso para o arquivo " + nomeArquivo);
                 saidaSintatico.write("Análise Sintática finalizada com sucesso para o arquivo " + nomeArquivo);
             } else {
@@ -62,7 +67,13 @@ public class AnalisadorSintatico1 {
             Logger.getLogger(AnalisadorSintatico.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
+    private void panicMode() {
+        this.erros++;
+        System.out.println("Implementar modo pânico!!!!!");
+    }
+    
+    
     /*
         Caso tenha '|' na grámatica seria if - if ...
         Caso seja direto na grámatica seria if - else if ...
@@ -160,8 +171,7 @@ public class AnalisadorSintatico1 {
 
     private boolean declaracaoDeFuncao() {
         System.out.println("DECLARACAO DE FUNCAO");
-        if (validarToken("function")) {
-            
+        if (validarToken("function")) {            
             funcId();
             if (validarToken("(")) {
                 funcaoProcedimentoFim();
@@ -220,7 +230,7 @@ public class AnalisadorSintatico1 {
                 } else {
                     panicMode();
                 }
-            } else {
+            } else { // erro declaracao de bloco variavel
                 panicMode();
             }
         }
@@ -258,10 +268,7 @@ public class AnalisadorSintatico1 {
         System.out.println("SAIDA FUNC ID");
         return false;
     }
-
-    private void panicMode() {
-        System.out.println("Implementar modo pânico!!!!!");
-    }
+    
 
     private boolean tipo() {
         System.out.println("TIPO");
@@ -386,10 +393,13 @@ public class AnalisadorSintatico1 {
     }
 
     private boolean expressaoIdentificadorStruct() {
+        System.out.println("EXPRESSAO IDENTIFICADOR STRUCT");
         if (validarToken("IDE")) {
             System.out.println("7");
             return true;
         }
+        System.out.println("erro sintatico: expressaoIdentificadorStruct");
+        System.out.println("SAIDA EXPRESSAO IDENTIFICADOR STRUCT");
         return false;
     }
 
@@ -464,7 +474,7 @@ public class AnalisadorSintatico1 {
      * ***********************************************************************
      */
     private boolean funcaoProcedimentoFim() {
-        System.out.println("PROCEDIMENTO FIM");
+        System.out.println("FUNCAO PROCEDIMENTO FIM");
         if (parametros()) {
             System.out.println("BBBBBBBBBBBBBBBBBBb");
             if (validarToken(")")) {
@@ -478,7 +488,7 @@ public class AnalisadorSintatico1 {
                 return true;
             }
         }
-        System.out.println("SIM PROCEDIMENTO FIM");
+        System.out.println("SAIDA FUNCAO PROCEDIMENTO FIM");
         return false;
     }
 

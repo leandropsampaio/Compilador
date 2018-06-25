@@ -1,3 +1,5 @@
-struct a {
-     a;
+function a ({
+    struct z {
+        int a;
+    };
 }
