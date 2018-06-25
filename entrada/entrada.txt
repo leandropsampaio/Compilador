@@ -1,11 +1,27 @@
-start(){
+start () {
 
-    struct Alunos{
-        string nome;
-        float matematica, fisica, media;
-    };
+    var {
+        int a, b;
+        float c;
+    }
 
-    struct AlunosEcomp extends Alunos{
-        float algoritmos, compiladores;
-    };
+    const{
+        int lim = 50;
+    }
+
+    a = 1;
+    b = 2;
+
+    while (a < b){
+        a ++;
+    }
+
+    c = a + b * 2;
+
+    if (c < lim) then {
+        print ("O valor de c eh: ", c);
+    } else {
+        print ("Passou o limite");
+    }
+
 }

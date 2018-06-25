@@ -298,7 +298,6 @@ public class AnalisadorSintatico1 {
                 System.out.println("4");
                 return true;
             } else {
-                tokenAnterior(1);
                 panicMode();
             }
         }
@@ -337,11 +336,11 @@ public class AnalisadorSintatico1 {
                             return true;
                         }
                     } else {
-                        tokenAnterior(1);
+                        //tokenAnterior(1);
                     }
                 }
             } else {
-                tokenAnterior(1);
+                //tokenAnterior(1);
             }
         } else if (Extends()) {
             if (validarToken("{")) {
@@ -420,7 +419,6 @@ public class AnalisadorSintatico1 {
             if (expressaoIdentificadoresStruct()) {
                 return true;
             }
-            tokenAnterior(1);
         }
         System.out.println("SAIDA EXPRESSAO IDENTIFICADORES STRUCT AUX");
         return false;
@@ -491,14 +489,12 @@ public class AnalisadorSintatico1 {
                 if (bloco()) {
                     return true;
                 }
-                tokenAnterior(1);
             }
         } else if (validarToken(")")) {
             //System.out.println("AAAAAAAAAAAAAA");
             if (bloco()) {
                 return true;
             }
-            tokenAnterior(1);
         }
         System.out.println("SIM PROCEDIMENTO FIM");
         return false;
@@ -522,7 +518,6 @@ public class AnalisadorSintatico1 {
                 //System.out.println("2");
                 return true;
             }
-            tokenAnterior(1);
         }
         System.out.println("SAIDA BLOCO");
         return false;
@@ -546,7 +541,6 @@ public class AnalisadorSintatico1 {
             if (parametros()) {
                 return true;
             }
-            tokenAnterior(1);
         }
         System.out.println("SAIDA PARAMETROS AUX");
         return true;
@@ -653,13 +647,8 @@ public class AnalisadorSintatico1 {
             }
             tokenAnterior(1);
         }
-        if (expressao()) {
-            System.out.println("2222222222222222222222222222222222222222222222222222222222222222222222222222");
-            System.out.println("EXPRESSAO!");
-            return true;
-        }
         if (Final()) {
-            System.out.println("3333333333333333333333333333333333333333333333333333333333333333333333333333");
+            System.out.println("2222222222222222222222222222222222222222222222222222222222222222222222222222");
             System.out.println("FINAL!");
             if (validarToken("=")) {
                 if (expressao()) {
@@ -668,6 +657,13 @@ public class AnalisadorSintatico1 {
                 tokenAnterior(1);
             }
         }
+        if (expressao()) {
+            System.out.println("3333333333333333333333333333333333333333333333333333333333333333333333333333");
+            System.out.println("EXPRESSAO!");
+            return true;
+        }
+
+        System.out.println("4444444444444444444444444444444444444444444444444444444444444444444444444444444444444");
         System.out.println("SAIDA OPERACAO DE ATRIBUICAO");
         return false;
     }
@@ -678,7 +674,6 @@ public class AnalisadorSintatico1 {
             if (instrucaoDeRetornoAux()) {
                 return true;
             }
-            tokenAnterior(1);
         }
         System.out.println("SAIDA INSTRUÇÃO DE RETORNO");
         return false;
@@ -750,7 +745,6 @@ public class AnalisadorSintatico1 {
             if (declaracaoDeTypedefAux()) {
                 return true;
             }
-            tokenAnterior(1);
         }
         System.out.println("SAIDA DECLARACAO DE TYPEDEF");
         return false;
@@ -807,7 +801,6 @@ public class AnalisadorSintatico1 {
                     return true;
                 }
             }
-            tokenAnterior(1);
         }
         System.out.println("SAIDA OUTRAS SAIDAS");
         return true;
@@ -832,11 +825,9 @@ public class AnalisadorSintatico1 {
                 if (outrasEntradas()) {
                     return true;
                 } else {
-                    tokenAnterior(1);
                     return false;
                 }
             } else {
-                tokenAnterior(1);
                 return false;
             }
         }
@@ -869,7 +860,6 @@ public class AnalisadorSintatico1 {
             if (bloco()) {
                 return true;
             } else {
-                tokenAnterior(1);
                 return false;
             }
         }
@@ -926,7 +916,14 @@ public class AnalisadorSintatico1 {
             if (expressaoIdentificadorVarAux()) {
                 return true;
             }
-            tokenAnterior(1);
+            /**
+             * ****************************** VERIFICAR
+             * *******************************
+             */
+            //tokenAnterior(1);
+            /**
+             * ************************************************************************
+             */
         }
         System.out.println("SAIDA EXPRESSAO IDENTIFICADOR VAR");
         return false;
@@ -940,7 +937,6 @@ public class AnalisadorSintatico1 {
             if (expressaoIdentificadoresVar()) {
                 return true;
             }
-            tokenAnterior(1);
         }
         System.out.println("SAIDA EXPRESSAO IDENTIFICADOR VAR AUX");
         return false;
@@ -952,7 +948,6 @@ public class AnalisadorSintatico1 {
             if (expressao()) {
                 return true;
             } else {
-                tokenAnterior(1);
                 return false;
             }
         }
@@ -1002,6 +997,7 @@ public class AnalisadorSintatico1 {
         return false;
     }
 
+    /* VERIFICAR TOKEN ANTERIOR NO CONST*/
     private boolean expressaoIdentificadorConst() {
         System.out.println("EXPRESSAO IDENTIFICADOR CONST");
         if (validarToken("IDE")) {
@@ -1010,9 +1006,9 @@ public class AnalisadorSintatico1 {
                 if (expressao()) {
                     return true;
                 }
-                tokenAnterior(2);
+                //tokenAnterior(2);
             }
-            tokenAnterior(1);
+            //tokenAnterior(1);
         }
         System.out.println("SAIDA EXPRESSAO IDENTIFICADOR CONST");
         return false;
@@ -1026,7 +1022,6 @@ public class AnalisadorSintatico1 {
             if (expressaoIdentificadoresConst()) {
                 return true;
             }
-            tokenAnterior(1);
         }
         System.out.println("SAIDA EXPRESSAO IDENTIFICADORES CONST AUX");
         return false;
@@ -1040,7 +1035,6 @@ public class AnalisadorSintatico1 {
                 if (validarToken(";")) {
                     return true;
                 }
-                tokenAnterior(1);
             }
         }
         System.out.println("SAIDA DECLARACAO DE TYPEDEF AUX");
@@ -1065,14 +1059,12 @@ public class AnalisadorSintatico1 {
                 System.out.println("15");
                 return true;
             }
-            tokenAnterior(1);
         } else if (validarToken("[")) {
             if (expressao()) {
                 if (validarToken("]")) {
                     return true;
                 }
             }
-            tokenAnterior(1);
         }
         System.out.println("SAIDA ACESSO");
         return false;
@@ -1104,7 +1096,6 @@ public class AnalisadorSintatico1 {
             if (expressao()) {
                 return true;
             } else {
-                tokenAnterior(1);
                 return false;
             }
         }
@@ -1129,7 +1120,6 @@ public class AnalisadorSintatico1 {
             if (opE()) {
                 return true;
             } else {
-                tokenAnterior(1);
                 return false;
             }
         }
@@ -1177,11 +1167,9 @@ public class AnalisadorSintatico1 {
                 if (valorRelacionalAux()) {
                     return true;
                 } else {
-                    tokenAnterior(1);
                     return false;
                 }
             } else {
-                tokenAnterior(1);
                 return false;
             }
         } else if (validarToken("-")) {
@@ -1189,11 +1177,9 @@ public class AnalisadorSintatico1 {
                 if (valorRelacionalAux()) {
                     return true;
                 } else {
-                    tokenAnterior(1);
                     return false;
                 }
             } else {
-                tokenAnterior(1);
                 return false;
             }
         }
@@ -1229,17 +1215,14 @@ public class AnalisadorSintatico1 {
             if (opUnary()) {
                 return true;
             }
-            tokenAnterior(1);
         } else if (validarToken("++")) {
             if (opUnary()) {
                 return true;
             }
-            tokenAnterior(1);
         } else if (validarToken("--")) {
             if (opUnary()) {
                 return true;
             }
-            tokenAnterior(1);
         } else if (Final()) {
             if (simboloUnario()) {
                 return true;
@@ -1260,11 +1243,9 @@ public class AnalisadorSintatico1 {
                 if (opMultAux()) {
                     return true;
                 } else {
-                    tokenAnterior(1);
                     return false;
                 }
             } else {
-                tokenAnterior(1);
                 return false;
             }
         } else if (validarToken("/")) {
@@ -1272,11 +1253,9 @@ public class AnalisadorSintatico1 {
                 if (opMultAux()) {
                     return true;
                 } else {
-                    tokenAnterior(1);
                     return false;
                 }
             } else {
-                tokenAnterior(1);
                 return false;
             }
         }
@@ -1309,7 +1288,6 @@ public class AnalisadorSintatico1 {
                     return true;
                 }
             }
-            tokenAnterior(1);
         } else if (validarToken("NRO")) {
             return true;
         } else if (validarToken("CAD")) {
@@ -1329,7 +1307,6 @@ public class AnalisadorSintatico1 {
             if (valorAux2()) {
                 return true;
             } else {
-                tokenAnterior(1);
                 return false;
             }
         }
@@ -1367,7 +1344,6 @@ public class AnalisadorSintatico1 {
             if (parametrosFuncao()) {
                 return true;
             } else {
-                tokenAnterior(1);
                 return false;
             }
         }
