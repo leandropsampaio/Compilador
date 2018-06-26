@@ -1,5 +1,11 @@
-function a ({
-    struct z {
-        int a;
-    };
+
+
+start () {
+
+    var {
+        int a, b;
+        float c;
+    }
+
+   
 }

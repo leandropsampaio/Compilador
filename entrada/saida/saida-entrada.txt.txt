@@ -1,15 +1,18 @@
-01 PRE function
-01 IDE a
-01 DEL (
-01 DEL {
-02 PRE struct
-02 IDE z
-02 DEL {
-03 PRE int
-03 IDE a
-03 DEL ;
-04 DEL }
-04 DEL ;
-05 DEL }
+03 PRE start
+03 DEL (
+03 DEL )
+03 DEL {
+05 PRE var
+05 DEL {
+06 PRE int
+06 IDE a
+06 DEL ,
+06 IDE b
+06 DEL ;
+07 PRE float
+07 IDE c
+07 DEL ;
+08 DEL }
+11 DEL }
 
 Sucesso, código pronto para a análise semântica!
