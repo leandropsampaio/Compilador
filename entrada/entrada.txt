@@ -1,5 +1,18 @@
+<<<<<<< HEAD
 start(){
 		if(a+b){
 		
 		}
+=======
+
+
+start () {
+
+    var {
+        int a, b;
+        float c;
+    }
+
+   
+>>>>>>> a773a0cddd4ffc2674b0ed57caf6b5d374d6ab80
 }

@@ -20,7 +20,11 @@ public class AnalisadorSintatico1 {
     private BufferedWriter saidaSintatico;
     private int errosSintaticos = 0;
     private int contador = 0;
+    
+    
+
     private boolean proximoToken = false;
+
 
     /**
      * Método que inicia a análise sintática.
@@ -32,20 +36,26 @@ public class AnalisadorSintatico1 {
         FileWriter saidaSintatico = new FileWriter("entrada\\saidaSintatico\\saida-" + nomeArquivo + ".txt");
         try {
 
-            saidaSintatico.write("Análise Sintática iniciada para o arquivo " + nomeArquivo);
-            saidaSintatico.append("/n");
+            saidaSintatico.write("Análise Sintática iniciada para o arquivo " + nomeArquivo + "\n");
+            //saidaSintatico.append("/n");
             System.out.println("Análise Sintática iniciada para o arquivo " + nomeArquivo);
             this.tokens = tokens;
             proximoToken();
+            String StringErrosSintaticos = "\n";
             Iterator iterador = this.tokens.listIterator();
             while (iterador.hasNext()) {
                 Token token = (Token) iterador.next();
                 System.out.println(token.getNome());
             }
             programa();
+            
+            
+            if (errosSintaticos == 0){ // adicionar verificador de main !!!
+                 
             if (errosSintaticos == 0 && !proximoToken) { // adicionar verificador de main !!!
-                System.out.println("Análise Sintática finalizada com sucesso para o arquivo " + nomeArquivo);
-                saidaSintatico.write("Análise Sintática finalizada com sucesso para o arquivo " + nomeArquivo);
+
+                System.out.println("Análise Sintática finalizada com sucesso para o arquivo " + nomeArquivo+ "\n");
+                saidaSintatico.write("Análise Sintática finalizada com sucesso para o arquivo " + nomeArquivo+ "\n");
             } else {
                 System.out.println("\n\n");
                 System.out.println("ERROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!");
@@ -54,11 +64,20 @@ public class AnalisadorSintatico1 {
             }
             saidaSintatico.close();
 
-        } catch (IOException ex) {
+        }
+        
+    }
+            catch (IOException ex) {
             Logger.getLogger(AnalisadorSintatico.class.getName()).log(Level.SEVERE, null, ex);
         }
+    
+       
     }
-
+    
+    private void panicMode() {
+        
+        System.out.println("Implementar modo pânico!!!!!");
+    }
     /*
         Caso tenha '|' na grámatica seria if - if ...
         Caso seja direto na grámatica seria if - else if ...
@@ -97,10 +116,10 @@ public class AnalisadorSintatico1 {
     }
 
     private boolean validarToken(String tipo) {
-        System.out.println("VALIDANDO TOKEN: " + tipo);
+        System.out.println("METODO VALIDAR TOKEN: " + tipo);
         //System.out.println("TESTE!");
         if (tokenAtual.getTipo().equals(tipo) || tokenAtual.getNome().equals(tipo)) {
-            System.out.println(tokenAtual);
+            System.out.println("validou!, token atual:"+tokenAtual);
             proximoToken();
             return true;
         }
@@ -161,6 +180,14 @@ public class AnalisadorSintatico1 {
 
     private boolean declaracaoDeFuncao() {
         System.out.println("DECLARACAO DE FUNCAO");
+        if (validarToken("function")) {            
+            funcId();
+            if (validarToken("(")) {
+                funcaoProcedimentoFim();
+            } else {
+                panicMode();
+            }
+        }
         if (validarToken("function")) {
             if (funcId()) {
                 if (validarToken("(")) {
@@ -170,12 +197,14 @@ public class AnalisadorSintatico1 {
                 } else {
                     panicMode();
                 }
+
             }
         }
         System.out.println("SAIDA DECLARACAO DE FUNCAO");
         return false;
-    }
+    
 
+     }
     private boolean declaracaoDeProcedimento() {
         System.out.println("DECLARACAO DE PROCEDIMENTO");
         if (validarToken("procedure")) {
@@ -227,7 +256,7 @@ public class AnalisadorSintatico1 {
                 } else {
                     panicMode();
                 }
-            } else {
+            } else { // erro declaracao de bloco variavel
                 panicMode();
             }
         }
@@ -305,10 +334,7 @@ public class AnalisadorSintatico1 {
         System.out.println("SAIDA FUNC ID");
         return false;
     }
-
-    private void panicMode() {
-        System.out.println("Implementar modo pânico!!!!!");
-    }
+    
 
     private boolean tipo() {
         System.out.println("TIPO");
@@ -436,10 +462,13 @@ public class AnalisadorSintatico1 {
     }
 
     private boolean expressaoIdentificadorStruct() {
+        System.out.println("EXPRESSAO IDENTIFICADOR STRUCT");
         if (validarToken("IDE")) {
             System.out.println("7");
             return true;
         }
+        System.out.println("erro sintatico: expressaoIdentificadorStruct");
+        System.out.println("SAIDA EXPRESSAO IDENTIFICADOR STRUCT");
         return false;
     }
 
@@ -514,7 +543,7 @@ public class AnalisadorSintatico1 {
      * ***********************************************************************
      */
     private boolean funcaoProcedimentoFim() {
-        System.out.println("PROCEDIMENTO FIM");
+        System.out.println("FUNCAO PROCEDIMENTO FIM");
         if (parametros()) {
             //System.out.println("BBBBBBBBBBBBBBBBBBb");
             if (validarToken(")")) {
@@ -528,7 +557,7 @@ public class AnalisadorSintatico1 {
                 return true;
             }
         }
-        System.out.println("SIM PROCEDIMENTO FIM");
+        System.out.println("SAIDA FUNCAO PROCEDIMENTO FIM");
         return false;
     }
 
