@@ -89,6 +89,7 @@ public class AnalisadorSintatico1 {
         Caso seja direto na grámatica seria if - else if ...
      */
     private boolean proximoToken() {
+        System.out.println("proximo token !!!!!");
         if (posicao + 1 < tokens.size()) {
             posicao++;
             tokenAnterior = tokenAtual;
@@ -204,8 +205,7 @@ public class AnalisadorSintatico1 {
             }
         }
         System.out.println("SAIDA DECLARACAO DE FUNCAO");
-        return false;
-    
+        return false;    
 
      }
     private boolean declaracaoDeProcedimento() {
@@ -222,7 +222,9 @@ public class AnalisadorSintatico1 {
                     panicMode();
                 }
             }
-
+            else {
+                    panicMode();
+            }
         }
         System.out.println("SAIDA DECLARACAO DE PROCEDIMENTO");
         return false;
@@ -235,14 +237,13 @@ public class AnalisadorSintatico1 {
                 if (validarToken(")")) {
                     if (bloco()) {
                         return true;
-                    }
+                    }                    
                 } else {
                     panicMode();
                 }
             } else {
                 panicMode();
             }
-
         }
         System.out.println("SAIDA DECLARACAO DE INICIO");
         return false;
@@ -720,6 +721,10 @@ public class AnalisadorSintatico1 {
                     }
                 }
             }
+            else { // verificar se esta certo esse modo panico !
+                panicMode();
+            }
+            
         }
         System.out.println("SAIDA PRINT");
         return false;
@@ -736,6 +741,9 @@ public class AnalisadorSintatico1 {
                         }
                     }
                 }
+            }
+            else { // verificar se esta certo esse modo panico !
+                panicMode();
             }
         }
         System.out.println("SAIDA SCAN");
@@ -762,6 +770,9 @@ public class AnalisadorSintatico1 {
                         }
                     }
                 }
+            }
+            else { // verificar se esta certo esse modo panico !
+                panicMode();
             }
         }
         System.out.println("SAIDA WHILE");
@@ -878,6 +889,9 @@ public class AnalisadorSintatico1 {
                     }
                 }
             }
+            else { // verificar se esta certo esse modo panico !
+                panicMode();
+            }
         }
         System.out.println("SAIDA IF THEN");
         return false;
@@ -957,7 +971,7 @@ public class AnalisadorSintatico1 {
         System.out.println("SAIDA EXPRESSAO IDENTIFICADOR VAR");
         return false;
     }
-
+    
     private boolean expressaoIdentificadoresVarAux() {
         System.out.println("EXPRESSAO IDENTIFICADORES VAR AUX");
         if (validarToken(";")) {

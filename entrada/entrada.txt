@@ -1,11 +1,7 @@
+start(){
+if(a+b){
 
 
-start () {
+}
 
-    var {
-        int a, b;
-        float c;
-    }
-
-   
 }

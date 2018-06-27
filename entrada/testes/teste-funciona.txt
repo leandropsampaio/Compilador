@@ -29,6 +29,11 @@ start () {
     } else {
         print ("Passou o limite");
     }
+   
+   
+   var s {
+  int a = a1();
+}
 
 
 }

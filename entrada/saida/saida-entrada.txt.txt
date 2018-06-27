@@ -1,18 +1,15 @@
-03 PRE start
-03 DEL (
-03 DEL )
-03 DEL {
-05 PRE var
-05 DEL {
-06 PRE int
-06 IDE a
-06 DEL ,
-06 IDE b
-06 DEL ;
-07 PRE float
-07 IDE c
-07 DEL ;
-08 DEL }
-11 DEL }
+01 PRE start
+01 DEL (
+01 DEL )
+01 DEL {
+02 PRE if
+02 DEL (
+02 IDE a
+02 ART +
+02 IDE b
+02 DEL )
+02 DEL {
+05 DEL }
+07 DEL }
 
 Sucesso, código pronto para a análise semântica!
