@@ -1,4 +1,13 @@
-var a {
-int a = 2;
+start(){
+function int nomeDaFuncao (int parametroUm, float parametroDois) {
+    nomeDaFuncao();
+    algumaOutraVariavel = nomeDaFuncao();
+    return algo;
+}
+
+procedure nomeDoProcedimento (tipoDefinidoPeloUsuario parametroDois, int algo) {
+    nomeDaFuncao();
+    algumaOutraVariavel = nomeDaFuncao(parametroDois, parametroUm);
+}
 
 }

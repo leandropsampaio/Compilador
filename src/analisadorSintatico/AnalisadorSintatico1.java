@@ -225,7 +225,6 @@ public class AnalisadorSintatico1 {
                 System.out.println("FALTOU O (");
                 panicMode("bloco");
             }
-
             if (!validarToken(")")) {
                 System.out.println("FALTOU O )");
                 panicMode("bloco");
