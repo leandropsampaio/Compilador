@@ -342,6 +342,9 @@ public class AnalisadorSintatico1 {
             case "parametros":
                 searchNextParametros();
                 break;
+            case "simboloUnario":
+                searchNextSimboloUnario();
+                break;
         }
     }
 
@@ -1186,9 +1189,9 @@ public class AnalisadorSintatico1 {
     private boolean valorRelacional() {
         System.out.println("VALOR RELACIONAL");
         if (opMult()) {
-            if (valorRelacionalAux()) {
-                return true;
-            }
+            valorRelacionalAux();
+            return true;
+
         }
         System.out.println("SAIDA VALOR RELACIONAL");
         return false;
@@ -1197,9 +1200,8 @@ public class AnalisadorSintatico1 {
     private boolean opRelacionalAux() {
         System.out.println("OP RELACIONAL AUX");
         if (escalarRelacional()) {
-            if (opRelacional()) {
-                return true;
-            }
+            opRelacional();
+            return true;
         }
         System.out.println("SAIDA OP RELACIONAL AUX");
         return true;
@@ -1208,9 +1210,8 @@ public class AnalisadorSintatico1 {
     private boolean opMult() {
         System.out.println("OP MULT");
         if (opUnary()) {
-            if (opMultAux()) {
-                return true;
-            }
+            opMultAux();
+            return true;
         }
         System.out.println("SAIDA OP MULT");
         return false;
@@ -1219,25 +1220,14 @@ public class AnalisadorSintatico1 {
     private boolean valorRelacionalAux() {
         System.out.println("VALOR RELACIONAL AUX");
         if (validarToken("+")) {
-            if (opMult()) {
-                if (valorRelacionalAux()) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+            opMult();
+            valorRelacionalAux();
+            return true;
+
         } else if (validarToken("-")) {
-            if (opMult()) {
-                if (valorRelacionalAux()) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+            opMult();
+            valorRelacionalAux();
+            return true;
         }
         System.out.println("SAIDA VALOR RELACIONAL AUX");
         return true;
@@ -1295,25 +1285,14 @@ public class AnalisadorSintatico1 {
     private boolean opMultAux() {
         System.out.println("OP MULT AUX");
         if (validarToken("*")) {
-            if (opUnary()) {
-                if (opMultAux()) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+            opUnary();
+            opMultAux();
+            return true;
+
         } else if (validarToken("/")) {
-            if (opUnary()) {
-                if (opMultAux()) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+            opUnary();
+            opMultAux();
+            return true;
         }
         System.out.println("SAIDA OP MULT AUX");
         return true;
@@ -1334,16 +1313,15 @@ public class AnalisadorSintatico1 {
         System.out.println("VALOR");
         if (validarToken("IDE")) {
             System.out.println("16");
-            if (valorAux1()) {
-                return true;
-            }
+            valorAux1();
             tokenAnterior(1);
+            return true;
         } else if (validarToken("(")) {
-            if (expressao()) {
-                if (validarToken(")")) {
-                    return true;
-                }
+            expressao();
+            if (!validarToken(")")) {
+                panicMode("simboloUnario");
             }
+            return true;
         } else if (validarToken("NRO")) {
             return true;
         } else if (validarToken("CAD")) {
@@ -1360,12 +1338,9 @@ public class AnalisadorSintatico1 {
     private boolean valorAux1() {
         System.out.println("VALOR AUX1");
         if (validarToken("(")) {
-            if (valorAux2()) {
-                return true;
-            } else {
-                return false;
-            }
+            panicMode("simboloUnario");
         }
+        valorAux2();
         System.out.println("SAIDA VALOR AUX1");
         return true;
     }
