@@ -185,6 +185,7 @@ public class AnalisadorSintatico1 {
         if (validarToken("function")) {
             funcId();
             if (!validarToken("(")) {
+                System.out.println("FALTOU O ( DE FUNCAO" + tokenAtual.getLinha());
                 panicMode("funcaoProcedimentoFim");
             }
             funcaoProcedimentoFim();
@@ -198,11 +199,11 @@ public class AnalisadorSintatico1 {
         System.out.println("DECLARACAO DE PROCEDIMENTO");
         if (validarToken("procedure")) {
             if (!validarToken("IDE")) {
-                System.out.println("FALTOU O IDENTIFICADOR");
-                panicMode("(");
+                System.out.println("FALTOU O IDENTIFICADOR" + tokenAtual.getLinha());
+                panicMode("funcaoProcedimentoFim");
             }
             if (!validarToken("(")) {
-                System.out.println("FALTOU O (");
+                System.out.println("FALTOU O (" + tokenAtual.getLinha());
                 panicMode("funcaoProcedimentoFim");
             }
             if (funcaoProcedimentoFim()) {
@@ -217,12 +218,12 @@ public class AnalisadorSintatico1 {
         System.out.println("DECLARACAO DE INICIO");
         if (validarToken("start")) {
             if (!validarToken("(")) {
-                System.out.println("FALTOU O (");
+                System.out.println("FALTOU O (" + tokenAtual.getLinha());
                 panicMode("bloco");
             }
 
             if (!validarToken(")")) {
-                System.out.println("FALTOU O )");
+                System.out.println("FALTOU O )" + tokenAtual.getLinha());
                 panicMode("bloco");
             }
             bloco();
@@ -237,12 +238,12 @@ public class AnalisadorSintatico1 {
         System.out.println("DECLARACAO DE VAR");
         if (validarToken("var")) {
             if (!validarToken("{")) {
-                System.out.println("FALTOU O { DO VAR");
+                System.out.println("FALTOU O { DO VAR" + tokenAtual.getLinha());
                 panicMode("declaracaoDeVariavelCorpo");
             }
             declaracaoDeVariavelCorpo();
             if (!validarToken("}")) {
-                System.out.println("FALTOU O } DO VAR");
+                System.out.println("FALTOU O } DO VAR" + tokenAtual.getLinha());
                 panicMode("declaracao"); // VERIFICARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR!
             }
             return true;
@@ -255,10 +256,12 @@ public class AnalisadorSintatico1 {
         System.out.println("DECLARACAO DE CONST");
         if (validarToken("const")) {
             if (!validarToken("{")) {
+                System.out.println("FALTOU O { DO CONST" + tokenAtual.getLinha());
                 panicMode("declaracaoDeConstanteCorpo");
             }
             declaracaoDeConstanteCorpo();
             if (!validarToken("}")) {
+                System.out.println("FALTOU O } DO CONST" + tokenAtual.getLinha());
                 panicMode("declaracao");
             }
             return true;
@@ -272,16 +275,16 @@ public class AnalisadorSintatico1 {
         System.out.println("IF THEN");
         if (validarToken("if")) {
             if (!validarToken("(")) {
-                System.out.println("FALTOU O (");
+                System.out.println("FALTOU O (" + tokenAtual.getLinha());
                 panicMode("expressao");
             }
             expressao();
             if (!validarToken(")")) {
-                System.out.println("FALTOU O )");
+                System.out.println("FALTOU O )" + tokenAtual.getLinha());
                 panicMode("then");
             }
             if (!validarToken("then")) {
-                System.out.println("FALTOU O then");
+                System.out.println("FALTOU O then" + tokenAtual.getLinha());
                 panicMode("bloco");
             }
             bloco();
@@ -328,6 +331,7 @@ public class AnalisadorSintatico1 {
         System.out.println("FUNC ID");
         tipo();
         if (!validarToken("IDE")) {
+            System.out.println("FALTOU O IDENTIFICADOR" + tokenAtual.getLinha());
             panicMode("funcaoProcedimentoFim");
         }
 
@@ -353,6 +357,7 @@ public class AnalisadorSintatico1 {
             return true;
         } else if (validarToken("struct")) {
             if (!validarToken("IDE")) {
+                System.out.println("FALTOU O IDENTIFICADOR DO STRUCT" + tokenAtual.getLinha());
                 panicMode("tipoAux");
             }
             return true;
@@ -361,6 +366,7 @@ public class AnalisadorSintatico1 {
         } else if (declaracaoDeStruct()) { // VERIFICAR
             return true;
         } else {
+            System.out.println("FALTOU O TIPO" + tokenAtual.getLinha());
             panicMode("tipoAux");
         }
         System.out.println("SAIDA TIPO BASE");
@@ -393,6 +399,7 @@ public class AnalisadorSintatico1 {
         if (validarToken("IDE")) {
             Extends();// LEMBRARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
             if (!validarToken("{")) {
+                System.out.println("FALTOU O { DE STRUCT" + tokenAtual.getLinha());
                 panicMode("structCorpo");
             }
             declaracaoDeStructCorpo();
@@ -416,6 +423,7 @@ public class AnalisadorSintatico1 {
         System.out.println("EXTENDS");
         if (validarToken("extends")) {
             if (!validarToken("IDE")) {
+                System.out.println("FALTOU O IDENTIFICADOR DO EXTENDS" + tokenAtual.getLinha());
                 panicMode("declaracaoDeStructCorpo");
             }
         } // PODE SER VAZIO
@@ -457,7 +465,8 @@ public class AnalisadorSintatico1 {
     private boolean expressaoIdentificadorStruct() {
         System.out.println("EXPRESSAO IDENTIFICADOR STRUCT");
         if (!validarToken("IDE")) {
-            panicMode("expressaoIdentificadoresStructAux");
+            System.out.println("FALTOU O IDENTIFICADOR DO STRUCT" + tokenAtual.getLinha());
+            panicMode("expressaoIdentificadoresStruct");
         }
         System.out.println("erro sintatico: expressaoIdentificadorStruct");
         System.out.println("SAIDA EXPRESSAO IDENTIFICADOR STRUCT");
@@ -467,9 +476,11 @@ public class AnalisadorSintatico1 {
     private boolean expressaoIdentificadoresStructAux() {
         System.out.println("EXPRESSAO IDENTIFICADORES STRUCT AUX");
         if (!validarToken(";")) {
-            panicMode("declaracaoDeStructCorpoAux");
+            System.out.println("FALTOU O ; DO STRUCT" + tokenAtual.getLinha());
+            panicMode("declaracaoDeStructCorpo");
             return true;
         } else if (!validarToken(",")) {
+            System.out.println("FALTOU A ," + tokenAtual.getLinha());
             panicMode("expressaoIdentificadoresStruct");
         }
         expressaoIdentificadoresStruct();
@@ -506,7 +517,8 @@ public class AnalisadorSintatico1 {
                 return true;
             }
         } else {
-            panicMode("tipoVetorDeclarandoAux");
+            System.out.println("FALTOU O [ do vetor" + tokenAtual.getLinha());
+            panicMode("tipoVetorDeclarando");
         }
         System.out.println("SAIDA TIPO VETOR DECLARADO");
         return false;
@@ -541,6 +553,7 @@ public class AnalisadorSintatico1 {
         } else if (parametros()) {
             //System.out.println("BBBBBBBBBBBBBBBBBBb");
             if (validarToken(")")) {
+                System.out.println("FALTOU O ) DA FUNCAO" + tokenAtual.getLinha());
                 panicMode("bloco");
             }
             if (bloco()) {
@@ -564,6 +577,7 @@ public class AnalisadorSintatico1 {
     private boolean bloco() {
         System.out.println("BLOCO");
         if (!validarToken("{")) {
+            System.out.println("FALTOU O { DO BLOCO" + tokenAtual.getLinha());
             panicMode("listaDeInstrucoes");
         }
         blocoAux();
@@ -576,6 +590,7 @@ public class AnalisadorSintatico1 {
         System.out.println("PARAMETRO");
         tipo();
         if (!validarToken("IDE")) {
+            System.out.println("FALTOU O IDENTIFICADOR DO PARAMETRO" + tokenAtual.getLinha());
             panicMode("parametrosAux");
         }
         System.out.println("SAIDA PARAMETRO");
@@ -586,7 +601,7 @@ public class AnalisadorSintatico1 {
         System.out.println("PARAMETROS AUX");
         if (!validarToken(",")) {
             if (showProx().getTipo().equals("IDE")) {
-                System.out.println("FALTOU A VÍRGULA");
+                System.out.println("FALTOU A VÍRGULA" + tokenAtual.getLinha());
                 panicMode("parametros");
             }
         }
@@ -595,6 +610,10 @@ public class AnalisadorSintatico1 {
         return true;
     }
 
+    /*
+        VERIFICAR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    */
     private boolean blocoAux() {
         System.out.println("BLOCO AUX");
         if (listaDeInstrucoes()) {
@@ -646,27 +665,32 @@ public class AnalisadorSintatico1 {
         System.out.println("INSTRUCAO NORMAL");
         if (operacaoDeAtribuicao()) {
             if (!validarToken(";")) {
-                panicMode("instrucao");
+                System.out.println("FALTOU O ; DA INSTRUÇÃO" + tokenAtual.getLinha());
+                panicMode("listaDeInstrucoes");
             }
             return true;
         } else if (declaracaoDeStruct()) {
             if (!validarToken(";")) {
-                panicMode("instrucao");
+                System.out.println("FALTOU O ; DA INSTRUÇÃO" + tokenAtual.getLinha());
+                panicMode("listaDeInstrucoes");
             }
             return true;
         } else if (Print()) {
             if (!validarToken(";")) {
-                panicMode("instrucao");
+                System.out.println("FALTOU O ; DA INSTRUÇÃO" + tokenAtual.getLinha());
+                panicMode("listaDeInstrucoes");
             }
             return true;
         } else if (scan()) {
             if (!validarToken(";")) {
-                panicMode("instrucao");
+                System.out.println("FALTOU O ; DA INSTRUÇÃO" + tokenAtual.getLinha());
+                panicMode("listaDeInstrucoes");
             }
             return true;
         } else if (instrucaoDeRetorno()) {
             if (!validarToken(";")) {
-                panicMode("instrucao");
+                System.out.println("FALTOU O ; DA INSTRUÇÃO" + tokenAtual.getLinha());
+                panicMode("listaDeInstrucoes");
             }
             return true;
         }
@@ -732,7 +756,7 @@ public class AnalisadorSintatico1 {
             outrasSaidas();
             if (!validarToken(")")) {
                 System.out.println("FALTOU O ) DO PRINT");
-                panicMode("listaDeInstrucoesAux");
+                panicMode("listaDeInstrucoes");
             }
             return true;
         }
@@ -751,7 +775,7 @@ public class AnalisadorSintatico1 {
             outrasEntradas();
             if (!validarToken(")")) {
                 System.out.println("FALTOU O ) DO SCAN");
-                panicMode("listaDeInstrucoesAux");
+                panicMode("listaDeInstrucoes");
             }
             return true;
         }
@@ -1018,6 +1042,7 @@ public class AnalisadorSintatico1 {
         if (validarToken("IDE")) {
             System.out.println("13");
             if (!validarToken("=")) {
+                System.out.println("FALTOU O = DA EXPRESSÃO" + tokenAtual.getLinha());;
                 panicMode("expressao");
             }
             if (expressao()) {
