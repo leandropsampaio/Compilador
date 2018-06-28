@@ -1,4 +1,5 @@
 start(){
+<<<<<<< HEAD
 function int nomeDaFuncao (int parametroUm, float parametroDois) {
     nomeDaFuncao();
     algumaOutraVariavel = nomeDaFuncao();
@@ -10,4 +11,7 @@ procedure nomeDoProcedimento (tipoDefinidoPeloUsuario parametroDois, int algo) {
     algumaOutraVariavel = nomeDaFuncao(parametroDois, parametroUm);
 }
 
+=======
+	var
+>>>>>>> d5870c4c2e5f762c172059c3e141364b76d18d6f
 }

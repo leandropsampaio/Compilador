@@ -2,6 +2,7 @@
 01 DEL (
 01 DEL )
 01 DEL {
+<<<<<<< HEAD
 02 PRE function
 02 PRE int
 02 IDE nomeDaFuncao
@@ -52,5 +53,9 @@
 10 DEL ;
 11 DEL }
 13 DEL }
+=======
+02 PRE var
+03 DEL }
+>>>>>>> d5870c4c2e5f762c172059c3e141364b76d18d6f
 
 Sucesso, código pronto para a análise semântica!
