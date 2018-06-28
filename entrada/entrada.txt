@@ -1,7 +1,4 @@
-start(){
-if(a+b){
-
-
-}
+var a {
+int a = 2;
 
 }
