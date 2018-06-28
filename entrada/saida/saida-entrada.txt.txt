@@ -1,11 +1,8 @@
-01 PRE var
-01 IDE a
+01 PRE start
+01 DEL (
+01 DEL )
 01 DEL {
-02 PRE int
-02 IDE a
-02 REL =
-02 NRO 2
-02 DEL ;
-04 DEL }
+02 PRE var
+03 DEL }
 
 Sucesso, código pronto para a análise semântica!

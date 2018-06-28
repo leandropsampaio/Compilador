@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  */
 public class AnalisadorSintatico1 {
 
-    private Token tokenAtual, tokenAnterior;
+    private Token tokenAtual, tokenAnterior, tokenProximo;
     private int posicao = -1;
     private ArrayList<Token> tokens;
     private BufferedWriter saidaSintatico;
@@ -46,7 +46,6 @@ public class AnalisadorSintatico1 {
             }
             programa();
 
-
             if (errosSintaticos == 0) { // adicionar verificador de main !!!
 
                 if (errosSintaticos == 0 && !proximoToken) { // adicionar verificador de main !!!
@@ -63,9 +62,6 @@ public class AnalisadorSintatico1 {
 
             }
 
-
-
-           
         } catch (IOException ex) {
             Logger.getLogger(AnalisadorSintatico.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -91,7 +87,7 @@ public class AnalisadorSintatico1 {
             posicao++;
             tokenAnterior = tokenAtual;
             tokenAtual = tokens.get(posicao);
-           // System.out.println(" token atual em proximo token !!!!!" + tokenAtual);
+            // System.out.println(" token atual em proximo token !!!!!" + tokenAtual);
             // Pulando comentários de linha e bloco
             //validarToken("Comentário de Linha");s
             //validarToken("Comentário de Bloco");
@@ -124,7 +120,7 @@ public class AnalisadorSintatico1 {
         //System.out.println("TESTE!");
         if (tokenAtual.getTipo().equals(tipo) || tokenAtual.getNome().equals(tipo)) {
 
-            System.out.println("validou!, token:" + tokenAtual);            
+            System.out.println("validou!, token:" + tokenAtual);
             proximoToken();
             return true;
         }
@@ -195,7 +191,6 @@ public class AnalisadorSintatico1 {
         }
         System.out.println("SAIDA DECLARACAO DE FUNCAO");
         return false;
-
 
     }
 
@@ -326,7 +321,6 @@ public class AnalisadorSintatico1 {
                 searchNextFuncaoProcedimentoFim();
                 break;
 
-
         }
     }
 
@@ -344,30 +338,30 @@ public class AnalisadorSintatico1 {
     private boolean tipo() {
         System.out.println("TIPO");
         if (tipobase()) {
-            if (tipoAux()) {
-                return true;
-            }
+            tipoAux();
+            return true;
         }
+
         System.out.println("SAIDA TIPO");
         return false;
     }
 
     private boolean tipobase() {
         System.out.println("TIPO BASE");
-        if (escalar()) {
-            return true;
-        } else if (declaracaoDeStruct()) { // VERIFICAR
-            return true;
-        } else if (validarToken("IDE")) {
+        if (validarToken("IDE")) {
             System.out.println("3");
             return true;
         } else if (validarToken("struct")) {
-            if (validarToken("IDE")) {
-                System.out.println("4");
-                return true;
-            } else {
-                panicMode();
+            if (!validarToken("IDE")) {
+                panicMode("tipoAux");
             }
+            return true;
+        } else if (escalar()) {
+            return true;
+        } else if (declaracaoDeStruct()) { // VERIFICAR
+            return true;
+        } else {
+            panicMode("tipoAux");
         }
         System.out.println("SAIDA TIPO BASE");
         return false;
@@ -424,7 +418,7 @@ public class AnalisadorSintatico1 {
             if (!validarToken("IDE")) {
                 panicMode("declaracaoDeStructCorpo");
             }
-        } // PODE SER VAZIO        
+        } // PODE SER VAZIO
         System.out.println("SAIDA EXTENDS");
         return true;
     }
@@ -432,9 +426,8 @@ public class AnalisadorSintatico1 {
     private boolean declaracaoDeStructCorpo() {
         System.out.println("DECLARACAO DE STRUCT CORPO");
         if (declaracaoDeStructLinha()) {
-            if (declaracaoDeStructCorpoAux()) {
-                return true;
-            }
+            declaracaoDeStructCorpoAux();
+            return true;
         }
         System.out.println("SAIDA DECLARACAO DE STRUCT CORPO");
         return false;
@@ -444,9 +437,8 @@ public class AnalisadorSintatico1 {
     private boolean declaracaoDeStructLinha() {
         System.out.println("DECLARACAO DE STRUCT LINHA");
         if (tipo()) {
-            if (expressaoIdentificadoresStruct()) {
-                return true;
-            }
+            expressaoIdentificadoresStruct();
+            return true;
         }
         System.out.println("SAIDA DECLARACAO DE STRUCT LINHA");
         return false;
@@ -455,9 +447,8 @@ public class AnalisadorSintatico1 {
     private boolean expressaoIdentificadoresStruct() {
         System.out.println("EXPRESSAO IDENTIFICADORES STRUCT");
         if (expressaoIdentificadorStruct()) {
-            if (expressaoIdentificadoresStructAux()) {
-                return true;
-            }
+            expressaoIdentificadoresStructAux();
+            return true;
         }
         System.out.println("SAIDA EXPRESSAO IDENTIFICADORES STRUCT");
         return false;
@@ -465,9 +456,8 @@ public class AnalisadorSintatico1 {
 
     private boolean expressaoIdentificadorStruct() {
         System.out.println("EXPRESSAO IDENTIFICADOR STRUCT");
-        if (validarToken("IDE")) {
-            System.out.println("7");
-            return true;
+        if (!validarToken("IDE")) {
+            panicMode("expressaoIdentificadoresStructAux");
         }
         System.out.println("erro sintatico: expressaoIdentificadorStruct");
         System.out.println("SAIDA EXPRESSAO IDENTIFICADOR STRUCT");
@@ -476,13 +466,14 @@ public class AnalisadorSintatico1 {
 
     private boolean expressaoIdentificadoresStructAux() {
         System.out.println("EXPRESSAO IDENTIFICADORES STRUCT AUX");
-        if (validarToken(";")) {
+        if (!validarToken(";")) {
+            panicMode("declaracaoDeStructCorpoAux");
             return true;
-        } else if (validarToken(",")) {
-            if (expressaoIdentificadoresStruct()) {
-                return true;
-            }
+        } else if (!validarToken(",")) {
+            panicMode("expressaoIdentificadoresStruct");
         }
+        expressaoIdentificadoresStruct();
+
         System.out.println("SAIDA EXPRESSAO IDENTIFICADORES STRUCT AUX");
         return false;
     }
@@ -492,9 +483,8 @@ public class AnalisadorSintatico1 {
      */
     private boolean tipoAux() {
         System.out.println("TIPO AUX");
-        if (tipoVetorDeclarando()) {
-            return true;
-        }
+        tipoVetorDeclarando();
+
         System.out.println("SAIDA TIPO AUX");
         return true;
     }
@@ -502,9 +492,8 @@ public class AnalisadorSintatico1 {
     private boolean tipoVetorDeclarando() {
         System.out.println("TIPO VETOR DECLARANDO");
         if (tipoVetorDeclarado()) {
-            if (tipoVetorDeclarandoAux()) {
-                return true;
-            }
+            tipoVetorDeclarandoAux();
+            return true;
         }
         System.out.println("SAIDA TIPO VETOR DECLARANDO");
         return false;
@@ -515,9 +504,9 @@ public class AnalisadorSintatico1 {
         if (validarToken("[")) {
             if (validarToken("]")) {
                 return true;
-            } else {
-                panicMode();
             }
+        } else {
+            panicMode("tipoVetorDeclarandoAux");
         }
         System.out.println("SAIDA TIPO VETOR DECLARADO");
         return false;
@@ -525,18 +514,16 @@ public class AnalisadorSintatico1 {
 
     private boolean tipoVetorDeclarandoAux() {
         System.out.println("TIPO VETOR DECLARANDO AUX");
-        if (tipoVetorDeclarando()) {
-            return true;
-        }
+        tipoVetorDeclarando();
+
         System.out.println("SAIDA TIPO VETOR DECLARANDO AUX");
         return true;
     }
 
     private boolean declaracaoDeStructCorpoAux() {
         System.out.println("DECLARACAO DE STRUCT CORPO AUX");
-        if (declaracaoDeStructCorpo()) {
-            return true;
-        }
+        declaracaoDeStructCorpo();
+
         System.out.println("SAIDA DECLARACAO DE STRUCT CORPO AUX");
         return true;
     }
@@ -567,9 +554,8 @@ public class AnalisadorSintatico1 {
     private boolean parametros() {
         System.out.println("PARAMETROS");
         if (parametro()) {
-            if (parametrosAux()) {
-                return true;
-            }
+            parametrosAux();
+            return true;
         }
         System.out.println("SAIDA PARAMETROS");
         return false;
@@ -580,21 +566,17 @@ public class AnalisadorSintatico1 {
         if (!validarToken("{")) {
             panicMode("listaDeInstrucoes");
         }
-        if (blocoAux()) {
-            //System.out.println("2");
-            return true;
-        }
+        blocoAux();
+
         System.out.println("SAIDA BLOCO");
         return false;
     }
 
     private boolean parametro() {
         System.out.println("PARAMETRO");
-        if (tipo()) {
-            if (validarToken("IDE")) {
-                //System.out.println("8");
-                return true;
-            }
+        tipo();
+        if (!validarToken("IDE")) {
+            panicMode("parametrosAux");
         }
         System.out.println("SAIDA PARAMETRO");
         return false;
@@ -602,11 +584,13 @@ public class AnalisadorSintatico1 {
 
     private boolean parametrosAux() {
         System.out.println("PARAMETROS AUX");
-        if (validarToken(",")) {
-            if (parametros()) {
-                return true;
+        if (!validarToken(",")) {
+            if (showProx().getTipo().equals("IDE")) {
+                System.out.println("FALTOU A VÍRGULA");
+                panicMode("parametros");
             }
         }
+        parametros();
         System.out.println("SAIDA PARAMETROS AUX");
         return true;
     }
@@ -614,13 +598,11 @@ public class AnalisadorSintatico1 {
     private boolean blocoAux() {
         System.out.println("BLOCO AUX");
         if (listaDeInstrucoes()) {
-            if (validarToken("}")) {
-                return true;
-            } else {
-                panicMode();
+            if (!validarToken("}")) {
+                panicMode("*********************");
             }
-        } else if (validarToken("}")) {
-            return true;
+        } else if (!validarToken("}")) {
+            panicMode("************************");
         }
         System.out.println("SAIDA BLOCO AUX");
         return false;
@@ -629,9 +611,8 @@ public class AnalisadorSintatico1 {
     private boolean listaDeInstrucoes() {
         System.out.println("LISTA DE INSTRUCOES");
         if (instrucao()) {
-            if (listaDeInstrucoesAux()) {
-                return true;
-            }
+            listaDeInstrucoesAux();
+            return true;
         }
         System.out.println("SAIDA LISTA DE INSTRUCOES");
         return false;
@@ -657,10 +638,7 @@ public class AnalisadorSintatico1 {
     }
 
     private boolean listaDeInstrucoesAux() {
-        if (listaDeInstrucoes()) {
-            return true;
-        }
-        // Pode ser Vazio
+        listaDeInstrucoes();
         return true;
     }
 
@@ -676,17 +654,17 @@ public class AnalisadorSintatico1 {
                 panicMode("instrucao");
             }
             return true;
-        } else if (instrucaoDeRetorno()) {
-            if (!validarToken(";")) {
-                panicMode("instrucao");
-            }
-            return true;
         } else if (Print()) {
             if (!validarToken(";")) {
                 panicMode("instrucao");
             }
             return true;
         } else if (scan()) {
+            if (!validarToken(";")) {
+                panicMode("instrucao");
+            }
+            return true;
+        } else if (instrucaoDeRetorno()) {
             if (!validarToken(";")) {
                 panicMode("instrucao");
             }
@@ -738,6 +716,7 @@ public class AnalisadorSintatico1 {
                 return true;
             }
         }
+
         System.out.println("SAIDA INSTRUÇÃO DE RETORNO");
         return false;
     }
@@ -746,13 +725,16 @@ public class AnalisadorSintatico1 {
         System.out.println("PRINT");
         if (validarToken("print")) {
             if (!validarToken("(")) {
+                System.out.println("FALTOU O ( DO PRINT");
                 panicMode("saida");
             }
             saida();
             outrasSaidas();
-            if (validarToken(")")) {
-                return true;
+            if (!validarToken(")")) {
+                System.out.println("FALTOU O ) DO PRINT");
+                panicMode("listaDeInstrucoesAux");
             }
+            return true;
         }
         System.out.println("SAIDA PRINT");
         return false;
@@ -762,13 +744,16 @@ public class AnalisadorSintatico1 {
         System.out.println("SCAN");
         if (validarToken("scan")) {
             if (!validarToken("(")) {
+                System.out.println("FALTOU O ( DO SCAN");
                 panicMode("entrada");
             }
             entrada();
             outrasEntradas();
-            if (validarToken(")")) {
-                return true;
+            if (!validarToken(")")) {
+                System.out.println("FALTOU O ) DO SCAN");
+                panicMode("listaDeInstrucoesAux");
             }
+            return true;
         }
         System.out.println("SAIDA SCAN");
         return false;
@@ -776,9 +761,8 @@ public class AnalisadorSintatico1 {
 
     private boolean estruturaCondicional() {
         if (ifThen()) {
-            if (estruturaCondicionalAux()) {
-                return true;
-            }
+            estruturaCondicionalAux();
+            return true;
         }
         return false;
     }
@@ -787,15 +771,16 @@ public class AnalisadorSintatico1 {
         System.out.println("WHILE");
         if (validarToken("while")) {
             if (!validarToken("(")) {
+                System.out.println("FALTOU O ( DO WHILE");
                 panicMode("expressao");
             }
             expressao();
             if (!validarToken(")")) {
+                System.out.println("FALTOU O ) DO WHILE");
                 panicMode("bloco");
             }
-            if (bloco()) {
-                return true;
-            }
+            bloco();
+            return true;
         }
         System.out.println("SAIDA WHILE");
         return false;
@@ -804,9 +789,8 @@ public class AnalisadorSintatico1 {
     private boolean declaracaoDeTypedef() {
         System.out.println("DECLARACAO DE TYPEDEF");
         if (validarToken("typedef")) {
-            if (declaracaoDeTypedefAux()) {
-                return true;
-            }
+            declaracaoDeTypedefAux();
+            return true;
         }
         System.out.println("SAIDA DECLARACAO DE TYPEDEF");
         return false;
@@ -817,10 +801,10 @@ public class AnalisadorSintatico1 {
         if (validarToken("IDE")) {
             System.out.println("------------------------------------------------------------------ 4- " + contador);
             System.out.println("10");
-            if (acessando()) {
-                return true;
-            }
+            acessando();
+
             tokenAnterior(1);
+            return true;
         }
         System.out.println("SAIDA FINAL");
         return false;
@@ -829,9 +813,8 @@ public class AnalisadorSintatico1 {
     private boolean expressao() {
         System.out.println("EXPRESSAO");
         if (opE()) {
-            if (expressaoAux()) {
-                return true;
-            }
+            expressaoAux();
+            return true;
         }
         System.out.println("SAIDA EXPRESSAO");
         return false;
@@ -839,9 +822,8 @@ public class AnalisadorSintatico1 {
 
     private boolean instrucaoDeRetornoAux() {
         System.out.println("INSTRUCAO DE RETORNO AUX");
-        if (expressao()) {
-            return true;
-        }
+        expressao();
+
         System.out.println("SAIDA INSTRUCAO DE RETORNO AUX");
         return true;
     }
@@ -1445,7 +1427,7 @@ public class AnalisadorSintatico1 {
                 || tokenAtual.getNome().equals("IDE") || tokenAtual.getNome().equals("int")
                 || tokenAtual.getNome().equals("string") || tokenAtual.getNome().equals("struct")) {
         } else if (tokenAtual.getNome().equals("var") || tokenAtual.getNome().equals("struct")
-                || tokenAtual.getNome().equals("const") || tokenAtual.getNome().equals("function")
+                || tokenAtual.getNome().equals("const") || tokenAtual.getNome().equals("")
                 || tokenAtual.getNome().equals("procedure")) {
 
         } else if (proximoToken()) {
@@ -1461,7 +1443,7 @@ public class AnalisadorSintatico1 {
                 || tokenAtual.getNome().equals("true") || tokenAtual.getNome().equals(",")
                 || tokenAtual.getNome().equals(")")) {
         } else if (tokenAtual.getNome().equals("var") || tokenAtual.getNome().equals("struct")
-                || tokenAtual.getNome().equals("const") || tokenAtual.getNome().equals("function")
+                || tokenAtual.getNome().equals("const") || tokenAtual.getNome().equals("")
                 || tokenAtual.getNome().equals("procedure")) {
 
         } else if (proximoToken()) {
@@ -1472,7 +1454,7 @@ public class AnalisadorSintatico1 {
         if (tokenAtual.getNome().equals("IDE") || tokenAtual.getNome().equals(",")
                 || tokenAtual.getNome().equals(")")) {
         } else if (tokenAtual.getNome().equals("var") || tokenAtual.getNome().equals("struct")
-                || tokenAtual.getNome().equals("const") || tokenAtual.getNome().equals("function")
+                || tokenAtual.getNome().equals("const") || tokenAtual.getNome().equals("")
                 || tokenAtual.getNome().equals("procedure")) {
 
         } else if (proximoToken()) {
@@ -1486,14 +1468,13 @@ public class AnalisadorSintatico1 {
                 || tokenAtual.getNome().equals("string") || tokenAtual.getNome().equals("struct")
                 || tokenAtual.getNome().equals("}")) {
         } else if (tokenAtual.getNome().equals("var") || tokenAtual.getNome().equals("struct")
-                || tokenAtual.getNome().equals("const") || tokenAtual.getNome().equals("function")
+                || tokenAtual.getNome().equals("const") || tokenAtual.getNome().equals("")
                 || tokenAtual.getNome().equals("procedure")) {
 
         } else if (proximoToken()) {
 
         }
     }
-
 
     private void searchNextParentese() {
         if (tokenAtual.getNome().equals("(")) {

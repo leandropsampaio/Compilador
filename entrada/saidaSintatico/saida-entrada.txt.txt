@@ -1,2 +1,0 @@
-Análise Sintática iniciada para o arquivo entrada.txt
-Análise Sintática finalizada com erro para o arquivo entrada.txt
