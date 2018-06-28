@@ -221,7 +221,6 @@ public class AnalisadorSintatico1 {
                 System.out.println("FALTOU O (" + tokenAtual.getLinha());
                 panicMode("bloco");
             }
-
             if (!validarToken(")")) {
                 System.out.println("FALTOU O )" + tokenAtual.getLinha());
                 panicMode("bloco");
@@ -319,6 +318,33 @@ public class AnalisadorSintatico1 {
                 break;
             case "listaDeInstrucoes":
                 searchNextListaDeInstrucoes();
+                break;
+            case "funcaoProcedimentoFim":
+                searchNextFuncaoProcedimentoFim();
+                break;
+            case "declaracaoDeVariavelCorpo":
+                searchNextFuncaoProcedimentoFim();
+                break;
+            case "declaracao":
+                searchNextFuncaoProcedimentoFim();
+                break;
+            case "declaracaoDeConstanteCorpo":
+                searchNextFuncaoProcedimentoFim();
+                break;
+            case "tipoAux":
+                searchNextFuncaoProcedimentoFim();
+                break;
+            case "declaracaoDeStructCorpo":
+                searchNextFuncaoProcedimentoFim();
+                break;
+            case "expressaoIdentificadoresStruct":
+                searchNextFuncaoProcedimentoFim();
+                break;
+            case "tipoVetorDeclarando":
+                searchNextFuncaoProcedimentoFim();
+                break;
+            case "parametroAux":
+                searchNextFuncaoProcedimentoFim();
                 break;
             case "parametros":
                 searchNextFuncaoProcedimentoFim();
@@ -1016,6 +1042,10 @@ public class AnalisadorSintatico1 {
         return false;
     }
 
+    /**
+     * comecei a partir daqui >>>>>>
+     *
+     */
     private boolean declaracaoDeConstanteCorpoAux() {
         System.out.println("DECLARACAO DE CONSTANTE CORPO AUX");
         if (declaracaoDeConstanteCorpo()) {
@@ -1028,9 +1058,8 @@ public class AnalisadorSintatico1 {
     private boolean expressaoIdentificadoresConst() {
         System.out.println("EXPRESSAO IDENTIFICADORES CONST");
         if (expressaoIdentificadorConst()) {
-            if (expressaoIdentificadoresConstAux()) {
-                return true;
-            }
+            expressaoIdentificadoresConstAux();
+            return true;
         }
         System.out.println("SAIDA EXPRESSAO IDENTIFICADORES CONST");
         return false;
@@ -1059,9 +1088,8 @@ public class AnalisadorSintatico1 {
         if (validarToken(";")) {
             return true;
         } else if (validarToken(",")) {
-            if (expressaoIdentificadoresConst()) {
-                return true;
-            }
+            expressaoIdentificadoresConst();
+            return true;
         }
         System.out.println("SAIDA EXPRESSAO IDENTIFICADORES CONST AUX");
         return false;
@@ -1072,11 +1100,11 @@ public class AnalisadorSintatico1 {
         tipo();
         if (validarToken("IDE")) {
             System.out.println("14");
-            if (validarToken(";")) {
-                return true;
+            if (!validarToken(";")) {
+                System.out.println("FALTOU O ; NA DECLARACAO DE TYPEDEF ");
+                panicMode("instrucao");
             }
         }
-
         System.out.println("SAIDA DECLARACAO DE TYPEDEF AUX");
         return false;
     }
@@ -1084,9 +1112,8 @@ public class AnalisadorSintatico1 {
     private boolean acessando() {
         System.out.println("ACESSANDO");
         if (acesso()) {
-            if (acessandoAux()) {
-                return true;
-            }
+            acessandoAux();
+            return true;
         }
         System.out.println("SAIDA ACESSANDO");
         return false;
@@ -1095,16 +1122,18 @@ public class AnalisadorSintatico1 {
     private boolean acesso() {
         System.out.println("ACESSO");
         if (validarToken(".")) {
-            if (validarToken("IDE")) {
-                System.out.println("15");
-                return true;
+            if (!validarToken("IDE")) {
+                System.out.println("FALTOU IDENTIFICADOR");
+                panicMode("listaDeInstrucoes");
             }
+            return true;
         } else if (validarToken("[")) {
             expressao();
-            if (validarToken("]")) {
-                return true;
+            if (!validarToken("]")) {
+                System.out.println("FALTOU [");
+                panicMode("listaDeInstrucoes");
             }
-
+            return true;
         }
         System.out.println("SAIDA ACESSO");
         return false;
@@ -1112,9 +1141,9 @@ public class AnalisadorSintatico1 {
 
     private boolean acessandoAux() {
         System.out.println("ACESSANDO AUX");
-        if (acessando()) {
-            return true;
-        }
+        
+        acessando();
+
         System.out.println("SAIDA ACESSANDO AUX");
         return true;
     }
@@ -1122,15 +1151,14 @@ public class AnalisadorSintatico1 {
     private boolean opE() {
         System.out.println("OPE");
         if (opRelacional()) {
-            if (opEAux()) {
-                return true;
-            }
+            opEAux();
+            return true;
         }
         System.out.println("SAIDA OPE");
         return false;
     }
 
-    private boolean expressaoAux() {
+    private boolean expressaoAux() { /// pulei !!!!!
         System.out.println("EXPRESSAO AUX");
         if (validarToken("||")) {
             if (expressao()) {
@@ -1146,22 +1174,18 @@ public class AnalisadorSintatico1 {
     private boolean opRelacional() {
         System.out.println("OP RELACIONAL");
         if (valorRelacional()) {
-            if (opRelacionalAux()) {
-                return true;
-            }
+            opRelacionalAux();
+            return true;
         }
         System.out.println("SAIDA OP RELACIONAL");
         return false;
     }
 
-    private boolean opEAux() {
+    private boolean opEAux(){ 
         System.out.println("OP AUX");
         if (validarToken("&&")) {
-            if (opE()) {
-                return true;
-            } else {
-                return false;
-            }
+            opE();
+                return true;            
         }
         System.out.println("SAIDA OP AUX");
         return true;

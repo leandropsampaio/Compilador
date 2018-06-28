@@ -2,7 +2,60 @@
 01 DEL (
 01 DEL )
 01 DEL {
+<<<<<<< HEAD
+02 PRE function
+02 PRE int
+02 IDE nomeDaFuncao
+02 DEL (
+02 PRE int
+02 IDE parametroUm
+02 DEL ,
+02 PRE float
+02 IDE parametroDois
+02 DEL )
+02 DEL {
+03 IDE nomeDaFuncao
+03 DEL (
+03 DEL )
+03 DEL ;
+04 IDE algumaOutraVariavel
+04 REL =
+04 IDE nomeDaFuncao
+04 DEL (
+04 DEL )
+04 DEL ;
+05 PRE return
+05 IDE algo
+05 DEL ;
+06 DEL }
+08 PRE procedure
+08 IDE nomeDoProcedimento
+08 DEL (
+08 IDE tipoDefinidoPeloUsuario
+08 IDE parametroDois
+08 DEL ,
+08 PRE int
+08 IDE algo
+08 DEL )
+08 DEL {
+09 IDE nomeDaFuncao
+09 DEL (
+09 DEL )
+09 DEL ;
+10 IDE algumaOutraVariavel
+10 REL =
+10 IDE nomeDaFuncao
+10 DEL (
+10 IDE parametroDois
+10 DEL ,
+10 IDE parametroUm
+10 DEL )
+10 DEL ;
+11 DEL }
+13 DEL }
+=======
 02 PRE var
 03 DEL }
+>>>>>>> d5870c4c2e5f762c172059c3e141364b76d18d6f
 
 Sucesso, código pronto para a análise semântica!
