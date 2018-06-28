@@ -639,7 +639,7 @@ public class AnalisadorSintatico1 {
     /*
         VERIFICAR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
-    */
+     */
     private boolean blocoAux() {
         System.out.println("BLOCO AUX");
         if (listaDeInstrucoes()) {
@@ -1141,7 +1141,7 @@ public class AnalisadorSintatico1 {
 
     private boolean acessandoAux() {
         System.out.println("ACESSANDO AUX");
-        
+
         acessando();
 
         System.out.println("SAIDA ACESSANDO AUX");
@@ -1181,11 +1181,11 @@ public class AnalisadorSintatico1 {
         return false;
     }
 
-    private boolean opEAux(){ 
+    private boolean opEAux() {
         System.out.println("OP AUX");
         if (validarToken("&&")) {
             opE();
-                return true;            
+            return true;
         }
         System.out.println("SAIDA OP AUX");
         return true;
