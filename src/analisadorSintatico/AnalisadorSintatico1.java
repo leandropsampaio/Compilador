@@ -1398,11 +1398,11 @@ public class AnalisadorSintatico1 {
      * Procura o proximo token de sincronização
      */
     private void searchNextExpressao() {
-        if (tokenAtual.getNome().equals("IDE") || tokenAtual.getNome().equals(")") || tokenAtual.getNome().equals("then")
-                || tokenAtual.getNome().equals("true") || tokenAtual.getNome().equals("false")
-                || tokenAtual.getNome().equals("--") || tokenAtual.getNome().equals("++")
-                || tokenAtual.getNome().equals("!") || tokenAtual.getNome().equals("CAD")
-                || tokenAtual.getNome().equals("DIG") || tokenAtual.getNome().equals("(")) {
+        if (tokenAtual.getNome().equals("--") || tokenAtual.getNome().equals("!") || tokenAtual.getNome().equals("(")
+                || tokenAtual.getNome().equals("++") || tokenAtual.getNome().equals("CAD")
+                || tokenAtual.getNome().equals("DIG") || tokenAtual.getNome().equals("false")
+                || tokenAtual.getNome().equals("IDE") || tokenAtual.getNome().equals("true")
+               ) {
 
         } else if (first()) {
         } else if (proximoToken()) {
@@ -1421,14 +1421,8 @@ public class AnalisadorSintatico1 {
 
     private void searchNextBloco() {
         ///System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
-        if (tokenAtual.getNome().equals("{")
-                || tokenAtual.getNome().equals("--") || tokenAtual.getNome().equals("!")
-                || tokenAtual.getNome().equals("(") || tokenAtual.getNome().equals("++")
-                || tokenAtual.getNome().equals("CAD") || tokenAtual.getNome().equals("DIG")
-                || tokenAtual.getNome().equals("false") || tokenAtual.getNome().equals("IDE")
-                || tokenAtual.getNome().equals("print") || tokenAtual.getNome().equals("return")
-                || tokenAtual.getNome().equals("scan") || tokenAtual.getNome().equals("struct")) {
-            // System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+        if (tokenAtual.getNome().equals("{")) {
+          
         } else if (first()) {
 
         } else if (proximoToken()) {
@@ -1437,13 +1431,15 @@ public class AnalisadorSintatico1 {
     }
 
     private void searchNextListaDeInstrucoes() {
-        if (tokenAtual.getNome().equals("print") || tokenAtual.getNome().equals("scan")
-                || tokenAtual.getNome().equals("struct") || tokenAtual.getNome().equals("return")
-                || tokenAtual.getNome().equals("++") || tokenAtual.getNome().equals("!")
-                || tokenAtual.getNome().equals("--") || tokenAtual.getNome().equals("(")
+        if (tokenAtual.getNome().equals("--") || tokenAtual.getNome().equals("!")
+                || tokenAtual.getNome().equals("(") || tokenAtual.getNome().equals("++")
                 || tokenAtual.getNome().equals("CAD") || tokenAtual.getNome().equals("DIG")
-                || tokenAtual.getNome().equals("while") || tokenAtual.getNome().equals("typedef")
-                || tokenAtual.getNome().equals("false")) {
+                || tokenAtual.getNome().equals("false") || tokenAtual.getNome().equals("IDE")
+                || tokenAtual.getNome().equals("print") || tokenAtual.getNome().equals("return")
+                || tokenAtual.getNome().equals("scan") || tokenAtual.getNome().equals("struct")
+                || tokenAtual.getNome().equals("true") || tokenAtual.getNome().equals("typedef")
+                || tokenAtual.getNome().equals("var") || tokenAtual.getNome().equals("while")
+                ) {
 
         } else if (first()) {
 
@@ -1456,9 +1452,7 @@ public class AnalisadorSintatico1 {
         if (tokenAtual.getNome().equals("bool") || tokenAtual.getNome().equals("float")
                 || tokenAtual.getNome().equals("IDE") || tokenAtual.getNome().equals("int")
                 || tokenAtual.getNome().equals("string") || tokenAtual.getNome().equals("struct")) {
-        } else if (tokenAtual.getNome().equals("var") || tokenAtual.getNome().equals("struct")
-                || tokenAtual.getNome().equals("const") || tokenAtual.getNome().equals("")
-                || tokenAtual.getNome().equals("procedure")) {
+        } else if (first()) {
 
         } else if (proximoToken()) {
             searchNextstructCorpo();
@@ -1470,11 +1464,8 @@ public class AnalisadorSintatico1 {
                 || tokenAtual.getNome().equals("(") || tokenAtual.getNome().equals("++")
                 || tokenAtual.getNome().equals("CAD") || tokenAtual.getNome().equals("DIG")
                 || tokenAtual.getNome().equals("false") || tokenAtual.getNome().equals("IDE")
-                || tokenAtual.getNome().equals("true") || tokenAtual.getNome().equals(",")
-                || tokenAtual.getNome().equals(")")) {
-        } else if (tokenAtual.getNome().equals("var") || tokenAtual.getNome().equals("struct")
-                || tokenAtual.getNome().equals("const") || tokenAtual.getNome().equals("")
-                || tokenAtual.getNome().equals("procedure")) {
+                || tokenAtual.getNome().equals("true") ) {
+        } else if (first()) {
 
         } else if (proximoToken()) {
             searchNextSaida();
@@ -1482,34 +1473,29 @@ public class AnalisadorSintatico1 {
     }
 
     private void searchNextEntrada() {
-        if (tokenAtual.getNome().equals("IDE") || tokenAtual.getNome().equals(",")
-                || tokenAtual.getNome().equals(")")) {
-        } else if (tokenAtual.getNome().equals("var") || tokenAtual.getNome().equals("struct")
-                || tokenAtual.getNome().equals("const") || tokenAtual.getNome().equals("")
-                || tokenAtual.getNome().equals("procedure")) {
+        if (tokenAtual.getNome().equals("IDE")) {
+        } else if (first()) {
         } else if (proximoToken()) {
             searchNextEntrada();
         }
     }
 
     private void searchNextDeclaracaoDeStructCorpo() {
-        if (tokenAtual.getNome().equals("bool") || tokenAtual.getNome().equals("float")
+         if (tokenAtual.getNome().equals("bool") || tokenAtual.getNome().equals("float")
                 || tokenAtual.getNome().equals("IDE") || tokenAtual.getNome().equals("int")
-                || tokenAtual.getNome().equals("string") || tokenAtual.getNome().equals("struct")
-                || tokenAtual.getNome().equals("}")) {
-        } else if (tokenAtual.getNome().equals("var") || tokenAtual.getNome().equals("struct")
-                || tokenAtual.getNome().equals("const") || tokenAtual.getNome().equals("")
-                || tokenAtual.getNome().equals("procedure")) {
+                || tokenAtual.getNome().equals("string") || tokenAtual.getNome().equals("struct")) {
+         } else if (first()) {
         } else if (proximoToken()) {
             searchNextDeclaracaoDeStructCorpo();
         }
     }
 
     private void searchNextFuncaoProcedimentoFim() {
-        if (tokenAtual.getNome().equals("bool") || tokenAtual.getNome().equals("float")
-                || tokenAtual.getNome().equals("IDE") || tokenAtual.getNome().equals("int")
-                || tokenAtual.getNome().equals("string") || tokenAtual.getNome().equals("struct")) {
-        } else if (tokenAtual.getNome().equals("var")) {
+        if (tokenAtual.getNome().equals(")") || tokenAtual.getNome().equals("bool")
+                || tokenAtual.getNome().equals("float") || tokenAtual.getNome().equals("IDE")
+                || tokenAtual.getNome().equals("int") || tokenAtual.getNome().equals("string")
+                 || tokenAtual.getNome().equals("struct")) {
+        } else if (first()) {
 
         } else if (proximoToken()) {
             searchNextFuncaoProcedimentoFim();
@@ -1517,7 +1503,10 @@ public class AnalisadorSintatico1 {
     }
 
     private void searchNextDeclaracaoDeVariavelCorpo() {
-        if (false) {
+        if (tokenAtual.getNome().equals("bool") || tokenAtual.getNome().equals("float")
+                || tokenAtual.getNome().equals("IDE") || tokenAtual.getNome().equals("int")
+                || tokenAtual.getNome().equals("string") || tokenAtual.getNome().equals("struct")
+                ) {
         } else if (first()) {
 
         } else if (proximoToken()) {
@@ -1526,7 +1515,9 @@ public class AnalisadorSintatico1 {
     }
 
     private void searchNextDeclaracao() {
-        if (false) {
+        if (tokenAtual.getNome().equals("const") || tokenAtual.getNome().equals("function")
+                || tokenAtual.getNome().equals("procedure") || tokenAtual.getNome().equals("start")
+                || tokenAtual.getNome().equals("typedef") || tokenAtual.getNome().equals("var")) {
         } else if (first()) {
 
         } else if (proximoToken()) {
@@ -1535,7 +1526,9 @@ public class AnalisadorSintatico1 {
     }
 
     private void searchNextDeclaracaoDeConstanteCorpo() {
-        if (false) {
+        if (tokenAtual.getNome().equals("bool") || tokenAtual.getNome().equals("float")
+                || tokenAtual.getNome().equals("IDE") || tokenAtual.getNome().equals("int")
+                || tokenAtual.getNome().equals("string") || tokenAtual.getNome().equals("struct")) {
         } else if (first()) {
 
         } else if (proximoToken()) {
@@ -1544,7 +1537,7 @@ public class AnalisadorSintatico1 {
     }
 
     private void searchNextTipoAux() {
-        if (false) {
+        if (tokenAtual.getNome().equals("[")) {
         } else if (first()) {
 
         } else if (proximoToken()) {
@@ -1553,7 +1546,7 @@ public class AnalisadorSintatico1 {
     }
 
     private void searchNextExpressaoIdentificadoresStruct() {
-        if (false) {
+        if (tokenAtual.getNome().equals("IDE")) {
         } else if (first()) {
 
         } else if (proximoToken()) {
@@ -1562,7 +1555,7 @@ public class AnalisadorSintatico1 {
     }
 
     private void searchNextTipoVetorDeclarando() {
-        if (false) {
+        if (tokenAtual.getNome().equals("{")) {
         } else if (first()) {
 
         } else if (proximoToken()) {
@@ -1571,7 +1564,7 @@ public class AnalisadorSintatico1 {
     }
 
     private void searchNextParametroAux() {
-        if (false) {
+        if (tokenAtual.getNome().equals(",")) {
         } else if (first()) {
 
         } else if (proximoToken()) {
@@ -1580,7 +1573,9 @@ public class AnalisadorSintatico1 {
     }
 
     private void searchNextParametros() {
-        if (false) {
+        if (tokenAtual.getNome().equals("bool") || tokenAtual.getNome().equals("float")
+                || tokenAtual.getNome().equals("IDE") || tokenAtual.getNome().equals("int")
+                || tokenAtual.getNome().equals("string") || tokenAtual.getNome().equals("struct")) {
         } else if (first()) {
 
         } else if (proximoToken()) {
@@ -1589,7 +1584,8 @@ public class AnalisadorSintatico1 {
     }
 
     private void searchNextSimboloUnario() {
-        if (false) {
+        if (tokenAtual.getNome().equals("--") || tokenAtual.getNome().equals("++")
+               ) {
         } else if (first()) {
 
         } else if (proximoToken()) {
