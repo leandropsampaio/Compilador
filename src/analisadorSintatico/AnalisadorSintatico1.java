@@ -1169,7 +1169,7 @@ public class AnalisadorSintatico1 {
         } else if (validarToken("[")) {
             expressao();
             if (!validarToken("]")) {
-                System.out.println("FALTOU [");
+                System.out.println("FALTOU ]");
                 panicMode("listaDeInstrucoes");
             }
             return true;

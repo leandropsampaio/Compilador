@@ -1,35 +1,24 @@
-<<<<<<< HEAD
 start () {
 
+    typedef struct{
+        float peso;
+        int idade; 
+        float altura;
+    } Pessoa;
+
     var {
-        int a, b;
-        float c;
+        Pessoa joao, maria;
+        Pessoa[] populacao;
     }
 
-    const{
-        int lim = 50;
-    }
+    joao.idade = 15;
+    joao.peso = 60.5;
+    joao.altura = 1.75;
 
-    a = 1;
-    b = 2;
+    populacao[4].idade = 23;
+    populacao[4].peso = 75.3;
+    populacao[4].altura = 1.89;
 
-    while (a < b){
-        a ++;
-    }
-
-    c = a + b * 2;
-
-    if (c < lim) then {
-        print ("O valor de c eh: ", c);
-    } else {
-        print ("Passou o limite");
-    }
-=======
-start({
-
-    typedef struct extends Aluno{
-        float matematica, fisica, media;
-    } AlunoEngenharia;
->>>>>>> c2e01116914583dc4d3e61489ac3e0ab4c22e3f9
+    maria = populacao[4];
 
 }

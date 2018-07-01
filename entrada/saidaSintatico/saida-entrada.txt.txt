@@ -1,6 +1,2 @@
 Análise Sintática iniciada para o arquivo entrada.txt
-<<<<<<< HEAD
-Análise Sintática finalizada com sucesso para o arquivo entrada.txt
-=======
 Análise Sintática finalizada com erro para o arquivo entrada.txt
->>>>>>> c2e01116914583dc4d3e61489ac3e0ab4c22e3f9
