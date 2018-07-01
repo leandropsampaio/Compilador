@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 start () {
 
     var {
@@ -23,5 +24,12 @@ start () {
     } else {
         print ("Passou o limite");
     }
+=======
+start({
+
+    typedef struct extends Aluno{
+        float matematica, fisica, media;
+    } AlunoEngenharia;
+>>>>>>> c2e01116914583dc4d3e61489ac3e0ab4c22e3f9
 
 }

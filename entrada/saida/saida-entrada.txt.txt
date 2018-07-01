@@ -1,7 +1,7 @@
 01 PRE start
 01 DEL (
-01 DEL )
 01 DEL {
+<<<<<<< HEAD
 03 PRE var
 03 DEL {
 04 PRE int
@@ -73,5 +73,23 @@
 24 DEL ;
 25 DEL }
 27 DEL }
+=======
+03 PRE typedef
+03 PRE struct
+03 PRE extends
+03 IDE Aluno
+03 DEL {
+04 PRE float
+04 IDE matematica
+04 DEL ,
+04 IDE fisica
+04 DEL ,
+04 IDE media
+04 DEL ;
+05 DEL }
+05 IDE AlunoEngenharia
+05 DEL ;
+07 DEL }
+>>>>>>> c2e01116914583dc4d3e61489ac3e0ab4c22e3f9
 
 Sucesso, código pronto para a análise semântica!
