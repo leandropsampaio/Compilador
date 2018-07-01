@@ -1,7 +1,7 @@
-start() {
-    while (a == b) {
+start({
 
-    }
+    typedef struct extends Aluno{
+        float matematica, fisica, media;
+    } AlunoEngenharia;
 
 }
-
