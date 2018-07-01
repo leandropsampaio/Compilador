@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 start () {
 
     typedef struct{
@@ -20,5 +21,40 @@ start () {
     populacao[4].altura = 1.89;
 
     maria = populacao[4];
+=======
+start(){
+
+    struct Students{
+        string name;
+        float math, physics, mean;
+    };
+
+    var {
+        struct Students [] students;
+        int count;
+    }
+
+    while(count < 5){
+
+        print("Nome do aluno: ", count + 1);
+        scan(students[count].name);
+
+        print("Nota de matematica: ");
+        scan(students[count].math);
+
+        print("Nota de fisica: ");
+        scan(students[count].physics);
+
+        students[count].mean = (students[count].math + students[count].physics)/2;
+    }
+
+    print("\nExibindo nomes e medias:\n");
+
+    while(count < 5){
+        print("Aluno ", count + 1);
+        print("Nome: ", students[count].name);
+        print("Media:", students[count].mean);
+    }
+>>>>>>> c10b2e7887d98b4adf93926d4cd2fb694124ea22
 
 }
