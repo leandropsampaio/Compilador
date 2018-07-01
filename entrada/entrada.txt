@@ -1,6 +1,7 @@
-start(){
-var{
-	int a = 10;
+start() {
+    while (a == b) {
+
+    }
+
 }
-print("abc", a);
-}
+
