@@ -2,21 +2,14 @@
 01 DEL (
 01 DEL )
 01 DEL {
-02 PRE var
+02 PRE while
+02 DEL (
+02 IDE a
+02 REL ==
+02 IDE b
+02 DEL )
 02 DEL {
-03 PRE int
-03 IDE a
-03 REL =
-03 NRO 10
-03 DEL ;
 04 DEL }
-05 PRE print
-05 DEL (
-05 CAD "abc"
-05 DEL ,
-05 IDE a
-05 DEL )
-05 DEL ;
 06 DEL }
 
 Sucesso, código pronto para a análise semântica!
