@@ -1,7 +1,27 @@
-start() {
-    while (a == b) {
+start () {
 
+    var {
+        int a, b;
+        float c;
+    }
+
+    const{
+        int lim = 50;
+    }
+
+    a = 1;
+    b = 2;
+
+    while (a < b){
+        a ++;
+    }
+
+    c = a + b * 2;
+
+    if (c < lim) then {
+        print ("O valor de c eh: ", c);
+    } else {
+        print ("Passou o limite");
     }
 
 }
-
