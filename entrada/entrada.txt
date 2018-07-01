@@ -1,35 +1,35 @@
-<<<<<<< HEAD
-start () {
+start(){
+
+    struct Students{
+        string name;
+        float math, physics, mean;
+    };
 
     var {
-        int a, b;
-        float c;
+        struct Students [] students;
+        int count;
     }
 
-    const{
-        int lim = 50;
+    while(count < 5){
+
+        print("Nome do aluno: ", count + 1);
+        scan(students[count].name);
+
+        print("Nota de matematica: ");
+        scan(students[count].math);
+
+        print("Nota de fisica: ");
+        scan(students[count].physics);
+
+        students[count].mean = (students[count].math + students[count].physics)/2;
     }
 
-    a = 1;
-    b = 2;
+    print("\nExibindo nomes e medias:\n");
 
-    while (a < b){
-        a ++;
+    while(count < 5){
+        print("Aluno ", count + 1);
+        print("Nome: ", students[count].name);
+        print("Media:", students[count].mean);
     }
-
-    c = a + b * 2;
-
-    if (c < lim) then {
-        print ("O valor de c eh: ", c);
-    } else {
-        print ("Passou o limite");
-    }
-=======
-start({
-
-    typedef struct extends Aluno{
-        float matematica, fisica, media;
-    } AlunoEngenharia;
->>>>>>> c2e01116914583dc4d3e61489ac3e0ab4c22e3f9
 
 }
