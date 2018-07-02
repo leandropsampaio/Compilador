@@ -1,2 +1,9 @@
 Análise Sintática iniciada para o arquivo entrada.txt
-Análise Sintática finalizada com sucesso para o arquivo entrada.txt
+
+faltou ) do print  na linha:4
+- Faltou ; da instrucao na linha:6
+- Faltou o fecha } do bloco na linha:6
+- Faltou o fecha } do bloco na linha:6
+
+
+Análise Sintática finalizada com erro para o arquivo entrada.txt
