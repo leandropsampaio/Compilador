@@ -122,10 +122,10 @@ public class AnalisadorSintatico1 {
     private Token showProx() {
         System.out.println("");
         if (posicao + 1 < tokens.size()) {
-            System.out.println("MOSTRARRRRRRRRRRRRRRRR:           "+tokens.get(posicao + 1));
+            System.out.println("MOSTRARRRRRRRRRRRRRRRR:           " + tokens.get(posicao + 1));
             return tokens.get(posicao + 1);
         }
-        
+
         System.out.println("NULLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!");
         return null;
     }
@@ -444,7 +444,7 @@ public class AnalisadorSintatico1 {
     private boolean declaracaoDeStructAux() {
         System.out.println("DECLARACAO DE STRUCT AUX");
         if (validarToken("IDE")) {
-            if(tokenAtual.getTipo().equals("IDE")){
+            if (tokenAtual.getTipo().equals("IDE")) {
                 System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 tokenAnterior(1);
                 return false;
@@ -523,7 +523,7 @@ public class AnalisadorSintatico1 {
         System.out.println("EXPRESSAO IDENTIFICADOR STRUCT");
         if (validarToken("IDE")) {
             return true;
-        } 
+        }
         //System.out.println("erro sintatico: expressaoIdentificadorStruct");
         System.out.println("SAIDA EXPRESSAO IDENTIFICADOR STRUCT");
         return false;
@@ -536,7 +536,7 @@ public class AnalisadorSintatico1 {
             panicMode("declaracaoDeStructCorpo");
             return true;
         } else if (!validarToken(",")) {
-            System.out.println("PROXIMOOOOOOOOOOOOO: "+showProx().getNome());
+            System.out.println("PROXIMOOOOOOOOOOOOO: " + showProx().getNome());
             if (tokenAtual.getTipo().equals("IDE")) {
                 System.out.println("FALTOU A VIRGULA" + tokenAtual.getLinha());
                 panicMode("expressaoIdentificadoresStruct");
@@ -658,14 +658,17 @@ public class AnalisadorSintatico1 {
 
     private boolean parametro() {
         System.out.println("PARAMETRO");
-        tipo();
-        if (!validarToken("IDE")) {
-            System.out.println("FALTOU O IDENTIFICADOR DO PARAMETRO" + tokenAtual.getLinha());
-            panicMode("parametrosAux");
-            return false;
+        if (tipo()) {
+            System.out.println("TOKENNNN ATUALLLLLLL>>>>> " + tokenAtual);
+            if (!validarToken("IDE")) {
+                System.out.println("FALTOU O IDENTIFICADOR DO PARAMETRO" + tokenAtual.getLinha());
+                panicMode("parametrosAux");
+                return false;
+            }
+            return true;
         }
         System.out.println("SAIDA PARAMETRO");
-        return true;
+        return false;
     }
 
     private boolean parametrosAux() {
@@ -1429,14 +1432,14 @@ public class AnalisadorSintatico1 {
     private boolean parametrosFuncaoAux() {
         System.out.println("PARAMETROS FUNCAO AUX");
         if (!validarToken(",")) {
-            if (!showProx().getTipo().equals(")")) {
+            if (!tokenAtual.getNome().equals(")")) { ///////////////////////***//**/*/**/*/*/*/*/*//*/**/*/*/*/*/*/*/*/
                 System.out.println("FALTOU A VÍRGULA" + tokenAtual.getLinha());
                 panicMode("parametros");
             }
             return true;
         }
         parametrosFuncao();
-        System.out.println("SAIDA SPARAMETROS FUNCAO AUX");
+        System.out.println("SAIDA PARAMETROS FUNCAO AUX");
         return true;
     }
 
