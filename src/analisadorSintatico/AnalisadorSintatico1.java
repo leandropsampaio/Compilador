@@ -111,7 +111,7 @@ public class AnalisadorSintatico1 {
         System.out.println("METODO VALIDAR TOKEN:" + tipo + tokenAtual.getNome());
         //System.out.println("TESTE!");
         if (tokenAtual.getTipo().equals(tipo) || tokenAtual.getNome().equals(tipo)) {
-            System.out.println("Validou!, token:" + tokenAtual);
+            System.out.println("                                                Validou!, token:" + tokenAtual);
             proximoToken();
             return true;
         }
@@ -120,9 +120,13 @@ public class AnalisadorSintatico1 {
     }
 
     private Token showProx() {
+        System.out.println("");
         if (posicao + 1 < tokens.size()) {
+            System.out.println("MOSTRARRRRRRRRRRRRRRRR:           "+tokens.get(posicao + 1));
             return tokens.get(posicao + 1);
         }
+        
+        System.out.println("NULLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!");
         return null;
     }
 
@@ -400,15 +404,15 @@ public class AnalisadorSintatico1 {
         if (validarToken("IDE")) {
             System.out.println("3");
             return true;
+        } else if (escalar()) {
+            return true;
+        } else if (declaracaoDeStruct()) { // VERIFICAR
+            return true;
         } else if (validarToken("struct")) {
             if (!validarToken("IDE")) {
                 System.out.println("FALTOU O IDENTIFICADOR DO STRUCT" + tokenAtual.getLinha());
                 panicMode("tipoAux");
             }
-            return true;
-        } else if (escalar()) {
-            return true;
-        } else if (declaracaoDeStruct()) { // VERIFICAR
             return true;
         }
         System.out.println("SAIDA TIPO BASE");
@@ -440,6 +444,11 @@ public class AnalisadorSintatico1 {
     private boolean declaracaoDeStructAux() {
         System.out.println("DECLARACAO DE STRUCT AUX");
         if (validarToken("IDE")) {
+            if(tokenAtual.getTipo().equals("IDE")){
+                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                tokenAnterior(1);
+                return false;
+            }
             Extends();// LEMBRARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
             if (!validarToken("{")) {
                 System.out.println("FALTOU O { DE STRUCT" + tokenAtual.getLinha());
@@ -512,24 +521,26 @@ public class AnalisadorSintatico1 {
 
     private boolean expressaoIdentificadorStruct() {
         System.out.println("EXPRESSAO IDENTIFICADOR STRUCT");
-        if (!validarToken("IDE")) {
-            System.out.println("FALTOU O IDENTIFICADOR DO STRUCT" + tokenAtual.getLinha());
-            panicMode("expressaoIdentificadoresStruct");
-        }
-        System.out.println("erro sintatico: expressaoIdentificadorStruct");
+        if (validarToken("IDE")) {
+            return true;
+        } 
+        //System.out.println("erro sintatico: expressaoIdentificadorStruct");
         System.out.println("SAIDA EXPRESSAO IDENTIFICADOR STRUCT");
         return false;
     }
 
     private boolean expressaoIdentificadoresStructAux() {
         System.out.println("EXPRESSAO IDENTIFICADORES STRUCT AUX");
-        if (!validarToken(";")) {
+        if (!validarToken(";") && !tokenAtual.getNome().equals(",")) {
             System.out.println("FALTOU O ; DO STRUCT" + tokenAtual.getLinha());
             panicMode("declaracaoDeStructCorpo");
             return true;
         } else if (!validarToken(",")) {
-            System.out.println("FALTOU A ," + tokenAtual.getLinha());
-            panicMode("expressaoIdentificadoresStruct");
+            System.out.println("PROXIMOOOOOOOOOOOOO: "+showProx().getNome());
+            if (tokenAtual.getTipo().equals("IDE")) {
+                System.out.println("FALTOU A VIRGULA" + tokenAtual.getLinha());
+                panicMode("expressaoIdentificadoresStruct");
+            }
         }
         expressaoIdentificadoresStruct();
 
@@ -654,7 +665,7 @@ public class AnalisadorSintatico1 {
             return false;
         }
         System.out.println("SAIDA PARAMETRO");
-        return false;
+        return true;
     }
 
     private boolean parametrosAux() {
