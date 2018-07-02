@@ -1,2 +1,8 @@
 Análise Sintática iniciada para o arquivo entrada.txt
+
+faltou identificador do parametro na linha:1
+faltou identificador do parametro na linha:7
+faltou ,  na linha:9
+faltou )  na linha:12
+faltou ; da instrucao na linha:13
 Análise Sintática finalizada com erro para o arquivo entrada.txt
