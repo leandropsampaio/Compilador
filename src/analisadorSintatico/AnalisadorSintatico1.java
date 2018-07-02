@@ -123,9 +123,11 @@ public class AnalisadorSintatico1 {
     private Token showProx() {
         System.out.println("");
         if (posicao + 1 < tokens.size()) {
+
             System.out.println("MOSTRARRRRRRRRRRRRRRRR:           " + tokens.get(posicao + 1));
             return tokens.get(posicao + 1);
-        }
+        }      
+        
 
         System.out.println("NULLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!");
         return null;
@@ -461,8 +463,10 @@ public class AnalisadorSintatico1 {
     /*ARRUMAR O STRUCT*/
     private boolean declaracaoDeStructAux() {
         System.out.println("DECLARACAO DE STRUCT AUX");
-        if (validarToken("IDE")) {
-            if (tokenAtual.getTipo().equals("IDE")) {
+        if (validarToken("IDE")) {            
+
+            if(tokenAtual.getTipo().equals("IDE")){
+
                 System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 tokenAnterior(1);
                 return false;
@@ -551,7 +555,10 @@ public class AnalisadorSintatico1 {
         System.out.println("EXPRESSAO IDENTIFICADOR STRUCT");
         if (validarToken("IDE")) {
             return true;
-        }
+
+
+        } 
+
         //System.out.println("erro sintatico: expressaoIdentificadorStruct");
         System.out.println("SAIDA EXPRESSAO IDENTIFICADOR STRUCT");
         return false;
@@ -560,16 +567,22 @@ public class AnalisadorSintatico1 {
     private boolean expressaoIdentificadoresStructAux() {
         System.out.println("EXPRESSAO IDENTIFICADORES STRUCT AUX");
         if (!validarToken(";") && !tokenAtual.getNome().equals(",")) {
+
             String mensagemErro = "faltou ; da struct ";
             this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
+
+
             System.out.println("FALTOU O ; DO STRUCT" + tokenAtual.getLinha());
             panicMode("declaracaoDeStructCorpo");
             return true;
         } else if (!validarToken(",")) {
+
             System.out.println("PROXIMOOOOOOOOOOOOO: " + showProx().getNome());
             if (tokenAtual.getTipo().equals("IDE")) {
                 String mensagemErro = "faltou identificador da struct";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
+
+            
                 System.out.println("FALTOU A VIRGULA" + tokenAtual.getLinha());
                 panicMode("expressaoIdentificadoresStruct");
             }
