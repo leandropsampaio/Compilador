@@ -1,14 +1,11 @@
-function int nomeDaFuncao (int parametroUm, float parametroDois) {
-    nomeDaFuncao();
-    algumaOutraVariavel = nomeDaFuncao();
-    return algo;
-}
-
-procedure nomeDoProcedimento (tipoDefinidoPeloUsuario parametroDois, int algo) {
-    nomeDaFuncao();
-    algumaOutraVariavel = nomeDaFuncao(parametroDois, parametroUm);
-}
-
 start () {
-    nomeDoProcedimento();
+
+    struct fichaAluno
+        string nome;
+        string disciplina;
+        float nota_prova1;
+        float nota_prova2;
+    };
+    
+
 }
