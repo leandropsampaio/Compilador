@@ -192,15 +192,14 @@ public class AnalisadorSintatico1 {
         if (validarToken("function")) {
             funcId();
             if (!validarToken("(")) {
-
-                String mensagemErro = "faltou ( declaracao de fuction ";
-                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
+                String mensagemErro = "- Faltou ( na declaração de fuction ";
+                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
+                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
                 System.out.println("FALTOU O ( DE FUNCAO" + tokenAtual.getLinha());
-
                 panicMode("funcaoProcedimentoFim");
             }
             funcaoProcedimentoFim();
+            return true;
         }
         System.out.println("SAIDA DECLARACAO DE FUNCAO");
         return false;
@@ -211,14 +210,15 @@ public class AnalisadorSintatico1 {
         System.out.println("DECLARACAO DE PROCEDIMENTO");
         if (validarToken("procedure")) {
             if (!validarToken("IDE")) {
-                String mensagemErro = "faltou identificador declaracao de precedure";
-                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
+                errosSintaticos++;
+                String mensagemErro = "- Faltou o identificador na declaração do procedure";
+                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
                 System.out.println("FALTOU O IDENTIFICADOR" + tokenAtual.getLinha());
-                panicMode("funcaoProcedimentoFim");
+                //panicMode("funcaoProcedimentoFim");
             }
             if (!validarToken("(")) {
-                String mensagemErro = "faltou ( declaracao de precedure";
-                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
+                String mensagemErro = "- Faltou o ( na declaração do procedure";
+                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
                 System.out.println("FALTOU O (" + tokenAtual.getLinha());
                 panicMode("funcaoProcedimentoFim");
             }
@@ -234,13 +234,13 @@ public class AnalisadorSintatico1 {
         System.out.println("DECLARACAO DE INICIO");
         if (validarToken("start")) {
             if (!validarToken("(")) {
-                String mensagemErro = "- Faltou ( declaracao de start";
+                String mensagemErro = "- Faltou ( na declaracao de start";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
                 System.out.println("FALTOU O (" + tokenAtual.getLinha());
                 panicMode("bloco");
             }
             if (!validarToken(")")) {
-                String mensagemErro = "- Faltou ) declaracao de start";
+                String mensagemErro = "- Faltou ) na declaracao de start";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
                 System.out.println("FALTOU O )" + tokenAtual.getLinha());
                 panicMode("bloco");
@@ -257,14 +257,14 @@ public class AnalisadorSintatico1 {
         System.out.println("DECLARACAO DE VAR");
         if (validarToken("var")) {
             if (!validarToken("{")) {
-                String mensagemErro = "faltou { declaracao de var";
+                String mensagemErro = "- Faltou a { na declaração de var";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
                 System.out.println("FALTOU O { DO VAR" + tokenAnterior.getLinha());
                 panicMode("declaracaoDeVariavelCorpo");
             }
             declaracaoDeVariavelCorpo();
             if (!validarToken("}")) {
-                String mensagemErro = "faltou } declaracao de var";
+                String mensagemErro = "- Faltou a } na declaracao de var";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
                 System.out.println("FALTOU O } DO VAR" + tokenAnterior.getLinha());
                 panicMode("declaracao");
@@ -442,7 +442,7 @@ public class AnalisadorSintatico1 {
             return true;
         } else if (validarToken("struct")) {
             if (!validarToken("IDE")) {
-                String mensagemErro = "faltou identificador da struct ";
+                String mensagemErro = "- Faltou o identificador da struct";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
                 System.out.println("FALTOU O IDENTIFICADOR DO STRUCT" + tokenAtual.getLinha());
                 panicMode("tipoAux");
@@ -474,7 +474,6 @@ public class AnalisadorSintatico1 {
         return false;
     }
 
-    /*ARRUMAR O STRUCT*/
     private boolean declaracaoDeStructAux() {
         System.out.println("DECLARACAO DE STRUCT AUX");
         if (validarToken("IDE")) {
@@ -485,14 +484,14 @@ public class AnalisadorSintatico1 {
             }
             Extends();// LEMBRARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
             if (!validarToken("{")) {
-                String mensagemErro = "faltou { da struct ";
+                String mensagemErro = "- Faltou a { da struct";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
                 System.out.println("FALTOU O { DE STRUCT" + tokenAtual.getLinha());
                 panicMode("structCorpo");
             }
             declaracaoDeStructCorpo();
             if (!validarToken("}")) {
-                String mensagemErro = "faltou } da struct ";
+                String mensagemErro = "- Faltou a } da struct ";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
                 System.out.println("FALTOU O } DE STRUCT" + tokenAtual.getLinha());
                 panicMode("listaDeInstrucoes");
@@ -500,14 +499,14 @@ public class AnalisadorSintatico1 {
             return true;
         } else if (Extends()) {
             if (!validarToken("{")) {
-                String mensagemErro = "faltou { da struct ";
+                String mensagemErro = "- Faltou a { da struct";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
                 System.out.println("faltou { da struct" + tokenAtual.getLinha());
                 panicMode("structCorpo");
             }
             declaracaoDeStructCorpo();
             if (!validarToken("}")) {
-                String mensagemErro = "faltou } da struct ";
+                String mensagemErro = "- Faltou a } da struct ";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
                 System.out.println("FALTOU O } DE STRUCT" + tokenAtual.getLinha());
                 panicMode("listaDeInstrucoes");
@@ -522,7 +521,7 @@ public class AnalisadorSintatico1 {
         System.out.println("EXTENDS");
         if (validarToken("extends")) {
             if (!validarToken("IDE")) {
-                String mensagemErro = "faltou identificador do extends ";
+                String mensagemErro = "- Faltou o identificador do extends";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
                 System.out.println("FALTOU O IDENTIFICADOR DO EXTENDS" + tokenAtual.getLinha());
                 panicMode("declaracaoDeStructCorpo");
@@ -578,16 +577,15 @@ public class AnalisadorSintatico1 {
         System.out.println("EXPRESSAO IDENTIFICADORES STRUCT AUX");
         if (!validarToken(";") && !tokenAtual.getNome().equals(",")) {
 
-            String mensagemErro = "faltou ; da struct ";
+            String mensagemErro = "- Faltou o ; da struct";
             this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
             System.out.println("FALTOU O ; DO STRUCT" + tokenAtual.getLinha());
             panicMode("declaracaoDeStructCorpo");
             return true;
         } else if (!validarToken(",")) {
             System.out.println("PROXIMOOOOOOOOOOOOO: " + showProx().getNome());
             if (tokenAtual.getTipo().equals("IDE")) {
-                String mensagemErro = "faltou identificador da struct";
+                String mensagemErro = "- Faltou o identificador da struct";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
 
                 System.out.println("FALTOU A VIRGULA" + tokenAtual.getLinha());
@@ -627,7 +625,7 @@ public class AnalisadorSintatico1 {
         System.out.println("TIPO VETOR DECLARADO");
         if (validarToken("[")) {
             if (!validarToken("]")) {
-                String mensagemErro = "faltou ] do vetor";
+                String mensagemErro = "- Faltou ] do vetor";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
                 System.out.println("FALTOU O ] do vetor" + tokenAtual.getLinha());
                 panicMode("tipoVetorDeclarando");
@@ -668,7 +666,7 @@ public class AnalisadorSintatico1 {
         } else if (parametros()) {
             //System.out.println("BBBBBBBBBBBBBBBBBBb");
             if (!validarToken(")")) {
-                String mensagemErro = "faltou )";
+                String mensagemErro = "- Faltou o )";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
                 System.out.println("FALTOU O ) DA FUNCAO" + tokenAnterior.getLinha());
                 panicMode("bloco");
@@ -721,6 +719,8 @@ public class AnalisadorSintatico1 {
         if (tipo()) {
             System.out.println("TOKENNNN ATUALLLLLLL>>>>> " + tokenAtual);
             if (!validarToken("IDE")) {
+                String mensagemErro = "- Faltou o identificador do parâmetro";
+                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
                 System.out.println("FALTOU O IDENTIFICADOR DO PARAMETRO" + tokenAtual.getLinha());
                 panicMode("parametrosAux");
                 return false;
@@ -1094,13 +1094,13 @@ public class AnalisadorSintatico1 {
     }
 
     private boolean declaracaoDeVariavelLinha() {
-        System.out.println("DECLARACAO DE VARIAVEL CORPO");
+        System.out.println("DECLARACAO DE VARIAVEL LINHA");
         if (tipo()) {
             if (expressaoIdentificadoresVar()) {
                 return true;
             }
         }
-        System.out.println("SAIDA DECLARACAO DE VARIAVEL CORPO");
+        System.out.println("SAIDA DECLARACAO DE VARIAVEL LINHA");
         return false;
     }
 
@@ -1174,7 +1174,7 @@ public class AnalisadorSintatico1 {
         }
 
         System.out.println("SAIDA EXPRESSAO IDENTIFICADOR VAR AUX");
-        return false;
+        return true;
     }
 
     private boolean expressaoIdentificadorVarAux() {
@@ -1293,7 +1293,7 @@ public class AnalisadorSintatico1 {
         }
 
         System.out.println("SAIDA EXPRESSAO IDENTIFICADOR CONST AUX");
-        return false;
+        return true;
     }
 
     private boolean declaracaoDeTypedefAux() {
