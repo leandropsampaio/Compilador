@@ -1,5 +1,6 @@
 01 PRE start
 01 DEL (
+<<<<<<< HEAD
 01 DEL )
 01 DEL {
 03 PRE struct
@@ -19,5 +20,25 @@
 08 DEL }
 08 DEL ;
 11 DEL }
+=======
+01 PRE int
+01 IDE a
+01 DEL ,
+01 DEL )
+01 DEL {
+02 IDE nomeDaFuncao
+02 DEL (
+02 DEL )
+02 DEL ;
+03 IDE algumaOutraVariavel
+03 REL =
+03 IDE nomeDaFuncao
+03 DEL (
+03 DEL )
+03 DEL ;
+04 PRE return
+04 DEL ;
+05 DEL }
+>>>>>>> 07a03f7512cee39a53d429a191ba88ea6c8ecd60
 
 Sucesso, código pronto para a análise semântica!

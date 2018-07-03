@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 start () {
 
     struct fichaAluno
@@ -9,3 +10,10 @@ start () {
     
 
 }
+=======
+function int nomeDaFuncao (int a,) {
+    nomeDaFuncao();
+    algumaOutraVariavel = nomeDaFuncao();
+    return;
+}
+>>>>>>> 07a03f7512cee39a53d429a191ba88ea6c8ecd60

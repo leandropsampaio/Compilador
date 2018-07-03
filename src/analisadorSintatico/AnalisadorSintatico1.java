@@ -54,8 +54,7 @@ public class AnalisadorSintatico1 {
                 
                 saidaSintatico.write(this.StringErrosSintaticos);
                 saidaSintatico.write("\n\n");
-               
-              
+
                 saidaSintatico.write("Análise Sintática finalizada com erro para o arquivo " + nomeArquivo);
             }
             saidaSintatico.close();
@@ -190,13 +189,12 @@ public class AnalisadorSintatico1 {
                 errosSintaticos++;
                 String mensagemErro = "- Faltou o identificador na declaração do procedure";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-              
-               
+
             }
             if (!validarToken("(")) {
                 String mensagemErro = "- Faltou o ( na declaração do procedure";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-               
+
                 panicMode("funcaoProcedimentoFim");
             }
             funcaoProcedimentoFim();
@@ -266,7 +264,7 @@ public class AnalisadorSintatico1 {
             if (!validarToken("}")) {
                 String mensagemErro = "- Faltou a } na declaracao de const";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-             
+
                 panicMode("declaracao");
             }
             return true;
@@ -388,7 +386,6 @@ public class AnalisadorSintatico1 {
             errosSintaticos++;
             String mensagemErro = "- Faltou o nome da função";
             this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-          
 
         }
 
@@ -918,10 +915,12 @@ public class AnalisadorSintatico1 {
                 String mensagemErro = "- Faltou a expressão do While";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
 
+
             }
             if (!validarToken(")")) {
                 String mensagemErro = "- Faltou ) do while ";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
+
 
                 panicMode("bloco");
             }
@@ -961,6 +960,7 @@ public class AnalisadorSintatico1 {
             expressaoAux();
             return true;
         }
+
 
         return false;
     }
@@ -1105,8 +1105,10 @@ public class AnalisadorSintatico1 {
             String mensagemErro = "- Faltou o ;";
             this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
 
+
             return true;
         }
+
 
         return true;
     }
@@ -1191,6 +1193,7 @@ public class AnalisadorSintatico1 {
         return false;
     }
 
+    /*
     private boolean expressaoIdentificadoresConstAux() {
 
         if (tokenAtual.getTipo().equals("IDE")) {
@@ -1214,6 +1217,31 @@ public class AnalisadorSintatico1 {
 
         return true;
     }
+     */
+    private boolean expressaoIdentificadoresConstAux() {
+        System.out.println("EXPRESSAO IDENTIFICADORES CONST AUX");
+        if (tokenAtual.getTipo().equals("IDE")) {
+            errosSintaticos++;
+            String mensagemErro = "- Faltou a ,";
+            this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
+            System.out.println("Faltou a ,");
+        }
+        if (validarToken(",") || tokenAtual.getTipo().equals("IDE")) {
+            if (expressaoIdentificadoresConst()) {
+                return true;
+            }
+        }
+        if (!validarToken(";")) {
+            errosSintaticos++;
+            String mensagemErro = "- Faltou o ;";
+            this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
+            System.out.println("Faltou o ;");
+            return true;
+        }
+
+        System.out.println("SAIDA EXPRESSAO IDENTIFICADOR CONST AUX");
+        return true;
+    }
 
     private boolean declaracaoDeTypedefAux() {
 
@@ -1227,6 +1255,18 @@ public class AnalisadorSintatico1 {
             errosSintaticos++;
             String mensagemErro = "- Faltou o identificador do typedef";
             this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
+
+
+
+            System.out.println("Faltou o identificador do typedef");
+            //panicMode("listaDeInstrucoes");
+        }
+        if (!validarToken(";")) {
+            errosSintaticos++;
+            String mensagemErro = "- Faltou ; do typedef ";
+            this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
+            System.out.println("FALTOU O ; NA DECLARACAO DE TYPEDEF ");
+            //panicMode("listaDeInstrucoes");
 
         }
         if (!validarToken(";")) {
