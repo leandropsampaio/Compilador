@@ -1,6 +1,6 @@
 Análise Sintática iniciada para o arquivo entrada.txt
 
-- Faltou o ( do print  na linha:3
+- Faltou o fecha } do bloco na linha:2
 
 
 Análise Sintática finalizada com erro para o arquivo entrada.txt

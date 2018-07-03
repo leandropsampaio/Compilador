@@ -2,23 +2,13 @@
 01 DEL (
 01 DEL )
 01 DEL {
-03 PRE print
-03 CAD "Este eh um print"
-03 DEL ,
-03 IDE a
-03 DEL ,
-03 IDE v
-03 DEL [
-03 NRO 1
-03 DEL ]
-03 DEL ,
-03 NRO 3
-03 DEL ,
-03 IDE nome
-03 DEL .
-03 IDE algo
-03 DEL )
-03 DEL ;
-05 DEL }
+02 PRE while
+02 DEL (
+02 IDE a
+02 REL ==
+02 IDE b
+02 DEL )
+02 DEL {
+06 DEL }
 
 Sucesso, código pronto para a análise semântica!
