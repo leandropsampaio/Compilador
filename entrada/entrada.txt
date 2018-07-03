@@ -1,8 +1,24 @@
 start () {
-    if (a == b) then {
-		print(abc");
-    } else {
 
+    typedef struct{
+        float peso;
+        int idade; 
+        float altura;
+    } Pessoa;
+
+    var {
+        Pessoa joao, maria;
+        Pessoa[] populacao;
     }
+
+    joao.idade = 15;
+    joao.peso = 60.5;
+    joao.altura = 1.75;
+
+    populacao[4].idade = 23;
+    populacao[4].peso = 75.3;
+    populacao[4].altura = 1.89;
+
+    maria = populacao[4];
 
 }

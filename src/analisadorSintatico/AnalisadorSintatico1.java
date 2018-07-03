@@ -401,12 +401,19 @@ public class AnalisadorSintatico1 {
 
     private boolean funcId() {
         System.out.println("FUNC ID");
-        tipo();
+        if (!tipo()) {
+            errosSintaticos++;
+            String mensagemErro = "- Faltou o tipo da função";
+            this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
+            System.out.println("FALTOU O TIPO" + tokenAtual.getLinha());
+            //panicMode("funcaoProcedimentoFim");
+        }
         if (!validarToken("IDE")) {
-            String mensagemErro = "faltou identificador ";
+            errosSintaticos++;
+            String mensagemErro = "- Faltou o nome da função";
             this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
             System.out.println("FALTOU O IDENTIFICADOR" + tokenAtual.getLinha());
-            panicMode("funcaoProcedimentoFim");
+            //panicMode("funcaoProcedimentoFim");
         }
 
         System.out.println("SAIDA FUNC ID");
@@ -662,8 +669,8 @@ public class AnalisadorSintatico1 {
             //System.out.println("BBBBBBBBBBBBBBBBBBb");
             if (!validarToken(")")) {
                 String mensagemErro = "faltou )";
-                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-                System.out.println("FALTOU O ) DA FUNCAO" + tokenAtual.getLinha());
+                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
+                System.out.println("FALTOU O ) DA FUNCAO" + tokenAnterior.getLinha());
                 panicMode("bloco");
             }
             if (bloco()) {
@@ -671,9 +678,9 @@ public class AnalisadorSintatico1 {
             }
             return true;
         } else {
-            String mensagemErro = "faltou )";
-            this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-            System.out.println("FALTOU O ) DA FUNCAO" + tokenAtual.getLinha());
+            String mensagemErro = "- Faltou o )";
+            this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
+            System.out.println("FALTOU O ) DA FUNCAO" + tokenAnterior.getLinha());
             panicMode("bloco");
 
             if (bloco()) {
@@ -1169,7 +1176,7 @@ public class AnalisadorSintatico1 {
         System.out.println("SAIDA EXPRESSAO IDENTIFICADOR VAR AUX");
         return false;
     }
-    
+
     private boolean expressaoIdentificadorVarAux() {
         System.out.println("EXPRESSAO IDENTIFICADOR VAR AUX");
         if (validarToken("=")) {
@@ -1291,15 +1298,25 @@ public class AnalisadorSintatico1 {
 
     private boolean declaracaoDeTypedefAux() {
         System.out.println("DECLARACAO DE TYPEDEF AUX");
-        tipo();
-        if (validarToken("IDE")) {
-            System.out.println("14");
-            if (!validarToken(";")) {
-                String mensagemErro = "faltou ; do typedef ";
-                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-                System.out.println("FALTOU O ; NA DECLARACAO DE TYPEDEF ");
-                panicMode("listaDeInstrucoes");
-            }
+        if (!tipo()) {
+            errosSintaticos++;
+            String mensagemErro = "- Faltou o tipo do Typedef";
+            this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
+            System.out.println("- Faltou o tipo do Typedef");
+        }
+        if (!validarToken("IDE")) {
+            errosSintaticos++;
+            String mensagemErro = "- Faltou o identificador do typedef";
+            this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
+            System.out.println("Faltou o identificador do typedef");
+            //panicMode("listaDeInstrucoes");
+        }
+        if (!validarToken(";")) {
+            errosSintaticos++;
+            String mensagemErro = "- Faltou ; do typedef ";
+            this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
+            System.out.println("FALTOU O ; NA DECLARACAO DE TYPEDEF ");
+            //panicMode("listaDeInstrucoes");
         }
         System.out.println("SAIDA DECLARACAO DE TYPEDEF AUX");
         return false;
