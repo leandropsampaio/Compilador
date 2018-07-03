@@ -1,24 +1,24 @@
-01 PRE function
-01 PRE int
-01 IDE nomeDaFuncao
+01 PRE start
 01 DEL (
-01 PRE int
-01 IDE a
-01 DEL ,
 01 DEL )
 01 DEL {
-02 IDE nomeDaFuncao
-02 DEL (
-02 DEL )
-02 DEL ;
-03 IDE algumaOutraVariavel
-03 REL =
-03 IDE nomeDaFuncao
-03 DEL (
+03 PRE print
+03 CAD "Este eh um print"
+03 DEL ,
+03 IDE a
+03 DEL ,
+03 IDE v
+03 DEL [
+03 NRO 1
+03 DEL ]
+03 DEL ,
+03 NRO 3
+03 DEL ,
+03 IDE nome
+03 DEL .
+03 IDE algo
 03 DEL )
 03 DEL ;
-04 PRE return
-04 DEL ;
 05 DEL }
 
 Sucesso, código pronto para a análise semântica!

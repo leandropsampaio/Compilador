@@ -14,10 +14,9 @@ import java.util.logging.Logger;
  */
 public class AnalisadorSintatico1 {
 
-    private Token tokenAtual, tokenAnterior, tokenProximo;
+    private Token tokenAtual, tokenAnterior;
     private int posicao = -1;
     private ArrayList<Token> tokens;
-    private BufferedWriter saidaSintatico;
     private int errosSintaticos = 0;
     private int contador = 0;
     private String StringErrosSintaticos = null;
@@ -28,7 +27,7 @@ public class AnalisadorSintatico1 {
      * Método que inicia a análise sintática.
      *
      * @param tokens lista de tokens extraídos da análise léxica
-     * @param file diretório para armazenar os resultados
+     * @param nomeArquivo 
      */
     public void iniciar(ArrayList tokens, String nomeArquivo) throws IOException {
         FileWriter saidaSintatico = new FileWriter("entrada\\saidaSintatico\\saida-" + nomeArquivo + ".txt");
@@ -61,7 +60,7 @@ public class AnalisadorSintatico1 {
             saidaSintatico.close();
 
         } catch (IOException ex) {
-            Logger.getLogger(AnalisadorSintatico.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AnalisadorSintatico1.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -576,9 +575,8 @@ public class AnalisadorSintatico1 {
     private boolean expressaoIdentificadoresStructAux() {
         System.out.println("EXPRESSAO IDENTIFICADORES STRUCT AUX");
         if (!validarToken(";") && !tokenAtual.getNome().equals(",")) {
-
-            String mensagemErro = "- Faltou o ; da struct";
-            this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
+            String mensagemErro = "- Faltou o ;";
+            this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
             System.out.println("FALTOU O ; DO STRUCT" + tokenAtual.getLinha());
             panicMode("declaracaoDeStructCorpo");
             return true;
@@ -808,7 +806,7 @@ public class AnalisadorSintatico1 {
         if (operacaoDeAtribuicao()) {
             if (!validarToken(";")) {
                 errosSintaticos++;
-                String mensagemErro = "- Faltou ; da instrucao";
+                String mensagemErro = "- Faltou o ; da instrucao";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
                 System.out.println("FALTOU O ; DA INSTRUÇÃO" + tokenAnterior.getLinha());
                 //panicMode("listaDeInstrucoes");
@@ -817,7 +815,7 @@ public class AnalisadorSintatico1 {
         } else if (declaracaoDeStruct()) {
             if (!validarToken(";")) {
                 errosSintaticos++;
-                String mensagemErro = "- Faltou ; da instrucao";
+                String mensagemErro = "- Faltou o ; da Struct";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
                 System.out.println("FALTOU O ; DA INSTRUÇÃO" + tokenAnterior.getLinha());
                 //panicMode("listaDeInstrucoes");
@@ -826,7 +824,7 @@ public class AnalisadorSintatico1 {
         } else if (Print()) {
             if (!validarToken(";")) {
                 errosSintaticos++;
-                String mensagemErro = "- Faltou ; da instrucao";
+                String mensagemErro = "- Faltou o ; do Print";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
                 System.out.println("FALTOU O ; DA INSTRUÇÃO" + tokenAnterior.getLinha());
                 //panicMode("listaDeInstrucoes");
@@ -835,7 +833,7 @@ public class AnalisadorSintatico1 {
         } else if (scan()) {
             if (!validarToken(";")) {
                 errosSintaticos++;
-                String mensagemErro = "- Faltou ; da instrucao";
+                String mensagemErro = "- Faltou o ; do Scan";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
                 System.out.println("FALTOU O ; DA INSTRUÇÃO" + tokenAnterior.getLinha());
                 //panicMode("listaDeInstrucoes");
@@ -844,7 +842,7 @@ public class AnalisadorSintatico1 {
         } else if (instrucaoDeRetorno()) {
             if (!validarToken(";")) {
                 errosSintaticos++;
-                String mensagemErro = "- Faltou ; da instrucao";
+                String mensagemErro = "- Faltou ; do retorno";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
                 System.out.println("FALTOU O ; DA INSTRUÇÃO" + tokenAnterior.getLinha());
                 //panicMode("listaDeInstrucoes");
@@ -906,18 +904,20 @@ public class AnalisadorSintatico1 {
         System.out.println("PRINT");
         if (validarToken("print")) {
             if (!validarToken("(")) {
-                String mensagemErro = "faltou ( do print ";
-                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
+                errosSintaticos++;
+                String mensagemErro = "- Faltou o ( do print ";
+                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
                 System.out.println("FALTOU O ( DO PRINT");
-                panicMode("saida");
+                //panicMode("saida");
             }
             saida();
             outrasSaidas();
             if (!validarToken(")")) {
-                String mensagemErro = "faltou ) do print ";
-                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
+                errosSintaticos++;
+                String mensagemErro = "- Faltou o ) do print ";
+                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
                 System.out.println("FALTOU O ) DO PRINT");
-                panicMode("listaDeInstrucoes");
+                //panicMode("listaDeInstrucoes");
             }
             return true;
         }
@@ -929,18 +929,20 @@ public class AnalisadorSintatico1 {
         System.out.println("SCAN");
         if (validarToken("scan")) {
             if (!validarToken("(")) {
-                String mensagemErro = "faltou ( do scan ";
+                errosSintaticos++;
+                String mensagemErro = "- Faltou o ( do scan";
                 this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
                 System.out.println("FALTOU O ( DO SCAN");
-                panicMode("entrada");
+                //panicMode("entrada");
             }
             entrada();
             outrasEntradas();
             if (!validarToken(")")) {
-                String mensagemErro = "faltou ) do scan ";
-                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
+                errosSintaticos++;
+                String mensagemErro = "- Faltou o ) do scan ";
+                this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
                 System.out.println("FALTOU O ) DO SCAN");
-                panicMode("listaDeInstrucoes");
+                //panicMode("listaDeInstrucoes");
             }
             return true;
         }
@@ -1051,8 +1053,11 @@ public class AnalisadorSintatico1 {
     private boolean entrada() {
         System.out.println("ENTRADAS");
         Final();
-        if (validarToken("IDE")) {
-            //System.out.println("11");
+        if (!validarToken("IDE")) {
+            errosSintaticos++;
+            String mensagemErro = "- Faltou o identificador";
+            this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
+            System.out.println("- Faltou o identificador");
             return true;
         }
         System.out.println("SAIDA ENTRADAS");

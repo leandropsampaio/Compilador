@@ -2,7 +2,6 @@ package analisadorLexico;
 
 import java.io.File;
 import java.util.ArrayList;
-import analisadorSintatico.AnalisadorSintatico;
 import analisadorSintatico.AnalisadorSintatico1;
 import analisadorSintatico.Token;
 import java.io.IOException;
