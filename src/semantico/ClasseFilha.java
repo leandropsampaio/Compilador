@@ -7,7 +7,7 @@ package semantico;
 
 /**
  *
- * @author Emerson
+ * @author Leandro
  */
 public class ClasseFilha extends Classe{
     private Classe mae;

@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  *
- * @author Emerson
+ * @author Leandro
  */
 public class Global {
     private List <Variavel> variaveis;

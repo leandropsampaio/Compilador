@@ -9,7 +9,7 @@ import java.util.Objects;
 
 /**
  *
- * @author Emerson
+ * @author Leandro
  */
 public class Variavel{
     

@@ -2,6 +2,7 @@ package analisadorLexico;
 
 import java.io.File;
 import java.util.ArrayList;
+import analisadorSintatico.AnalisadorSintatico;
 import analisadorSintatico.AnalisadorSintatico1;
 import analisadorSintatico.Token;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class LeitorArquivos {
         Iterator iterador = tokens.listIterator();
         while(iterador.hasNext()){
             Token token = (Token) iterador.next();
-            //System.out.println(token.getTipo());
+            System.out.println(token.getTipo());
         }
         System.out.println("---------------------------");
         AnalisadorSintatico1 analisadorSintatico = new AnalisadorSintatico1();

@@ -97,13 +97,13 @@ public class AnalisadorLexico {
         expressoes[3] = expressaoNumerico;
         expressoes[4] = expressaoErroComentarioBloco;
         expressoes[5] = expressaoCadeiaCaracteres;
-        expressoes[6] = expressaoRelacional;
+        expressoes[6] = expressaoLogico;
         expressoes[7] = expressaoDelimitador;
         expressoes[8] = expressaoEspaco;
         expressoes[9] = expressaoErroCadeiaCaractere;
         expressoes[10] = expressaoQuebraLinha;
         expressoes[11] = expressaoIdentificador;
-        expressoes[12] = expressaoLogico;
+        expressoes[12] = expressaoRelacional;
         expressoes[13] = expressaoErroSimbolo;
         expressoes[14] = expressaoAritmerico;
 
@@ -114,13 +114,13 @@ public class AnalisadorLexico {
         tokens[3] = tokenNumerico;
         tokens[4] = tokenExpressaoErroComentarioBloco;
         tokens[5] = tokenCadeiaCaractere;
-        tokens[6] = tokenExpressaoRelacional;
+        tokens[6] = tokenExpressaoLogico;
         tokens[7] = tokenDelimitador;
         //tokens[8] = tokenEspaco;
         tokens[9] = tokenErroCadeiraCaractere;
         //tokens[10] = tokenExpressaoQuebraLinha;
         tokens[11] = tokenIdentificador;
-        tokens[12] = tokenExpressaoLogico;
+        tokens[12] = tokenExpressaoRelacional;
         tokens[13] = tokenErroSimbolico;
         tokens[14] = tokenAritmerico;
 

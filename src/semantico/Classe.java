@@ -11,7 +11,7 @@ import java.util.Objects;
 
 /**
  *
- * @author Emerson
+ * @author Leandro
  */
 public class Classe{
     private String nome;

@@ -1,82 +1,68 @@
-package analisadorSemantico;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package analisadorSintatico;
 
-import analisadorSintatico.Token;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import semantico.Classe;
-import semantico.ClasseFilha;
-import semantico.Global;
-import semantico.Metodo;
-import semantico.Variavel;
 
 /**
  *
- * @author Leandro Pereira Sampaio e Elvis Huges
+ * @author Leandro Sampaio e Elvis Huges
  */
-public class AnalisadorSemantico2 {
+public class teste {
 
-    private String objetoChamadaMetodo;
-    private String tipoOperacao;
-    private Metodo metodoChamado;
-    private String nomeVariavelAtribuicao;
-    private int parametroAtual = 0;
-    private int escopoVariavel = 0; //-1 atual, 0 - global, 1 - classe
-    private int nivel = 0; //variavel que indica em qual nivel a analise está: nivel 0 - corpo principal, nivel 1 - classe, nivel 2 - metodo
     private Token tokenAtual, tokenAnterior;
     private int posicao = -1;
     private ArrayList<Token> tokens;
-    private int errosSemanticos = 0;
+    private BufferedWriter saidaSintatico;
+    private int errosSintaticos = 0;
     private int contador = 0;
-    private String StringErrosSemanticos = null;
-    private Classe classeAtual = null;
-    private Metodo metodoAtual = null;
-    private Variavel variavelAtual = null;
-    private List<Variavel> parametrosAtuais;
-    private Global global = Global.getInstance();
-    private FileWriter saidaSemantico;
-
     private boolean proximoToken = false;
 
     /**
      * Método que inicia a análise sintática.
      *
      * @param tokens lista de tokens extraídos da análise léxica
-     * @param nomeArquivo
+     * @param file diretório para armazenar os resultados
      */
     public void iniciar(ArrayList tokens, String nomeArquivo) throws IOException {
-        saidaSemantico = new FileWriter("entrada\\saidaSintatico\\saida-" + nomeArquivo + ".txt");
+        FileWriter saidaSintatico = new FileWriter("entrada\\saidaSintatico\\saida-" + nomeArquivo + ".txt");
         try {
-            saidaSemantico.write("Análise Semântica iniciada para o arquivo " + nomeArquivo + "\n");
 
-            System.out.println("Análise Semântica iniciada para o arquivo " + nomeArquivo);
+            saidaSintatico.write("Análise Sintática iniciada para o arquivo " + nomeArquivo);
+            saidaSintatico.append("/n");
+            System.out.println("Análise Sintática iniciada para o arquivo " + nomeArquivo);
             this.tokens = tokens;
             proximoToken();
-            this.StringErrosSemanticos = "\n";
             Iterator iterador = this.tokens.listIterator();
-            programa();
-
-            if (errosSemanticos == 0 && !proximoToken) {
-
-                System.out.println("Análise Semântica finalizada com sucesso para o arquivo " + nomeArquivo + "\n");
-                saidaSemantico.write("Análise Semântica finalizada com sucesso para o arquivo " + nomeArquivo + "\n");
-            } else {
-
-                saidaSemantico.write(this.StringErrosSemanticos);
-                saidaSemantico.write("\n\n");
-
-                saidaSemantico.write("Análise Semântica finalizada com erro para o arquivo " + nomeArquivo);
+            while (iterador.hasNext()) {
+                Token token = (Token) iterador.next();
+                System.out.println(token.getNome());
             }
-            saidaSemantico.close();
+            programa();
+            if (errosSintaticos == 0 && !proximoToken) { // adicionar verificador de main !!!
+                System.out.println("Análise Sintática finalizada com sucesso para o arquivo " + nomeArquivo);
+                saidaSintatico.write("Análise Sintática finalizada com sucesso para o arquivo " + nomeArquivo);
+            } else {
+                System.out.println("\n\n");
+                System.out.println("ERROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!");
+                System.out.println("Análise Sintática finalizada com erro para o arquivo " + nomeArquivo);
+                saidaSintatico.write("Análise Sintática finalizada com erro para o arquivo " + nomeArquivo);
+            }
+            saidaSintatico.close();
 
         } catch (IOException ex) {
-            Logger.getLogger(AnalisadorSemantico.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AnalisadorSintatico.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     /*
@@ -312,6 +298,7 @@ public class AnalisadorSemantico2 {
                 System.out.println("4");
                 return true;
             } else {
+                tokenAnterior(1);
                 panicMode();
             }
         }
@@ -341,7 +328,6 @@ public class AnalisadorSemantico2 {
     }
 
     private boolean declaracaoDeStructAux() {
-        System.out.println("DECLARACAO DE STRUCT AUX");
         if (validarToken("IDE")) {
             if (Extends()) { // LEMBRARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
                 if (validarToken("{")) {
@@ -350,11 +336,11 @@ public class AnalisadorSemantico2 {
                             return true;
                         }
                     } else {
-                        //tokenAnterior(1);
+                        tokenAnterior(1);
                     }
                 }
             } else {
-                //tokenAnterior(1);
+                tokenAnterior(1);
             }
         } else if (Extends()) {
             if (validarToken("{")) {
@@ -365,12 +351,10 @@ public class AnalisadorSemantico2 {
                 }
             }
         }
-        System.out.println("SAIDA DECLARACAO DE STRUCT AUX");
         return false;
     }
 
     private boolean Extends() {
-        System.out.println("EXTENDS");
         if (validarToken("extends")) {
             if (validarToken("IDE")) {
                 //System.out.println("6");
@@ -379,7 +363,6 @@ public class AnalisadorSemantico2 {
                 panicMode();
             }
         } // PODE SER VAZIO        
-        System.out.println("SAIDA EXTENDS");
         return true;
     }
 
@@ -433,6 +416,7 @@ public class AnalisadorSemantico2 {
             if (expressaoIdentificadoresStruct()) {
                 return true;
             }
+            tokenAnterior(1);
         }
         System.out.println("SAIDA EXPRESSAO IDENTIFICADORES STRUCT AUX");
         return false;
@@ -475,20 +459,16 @@ public class AnalisadorSemantico2 {
     }
 
     private boolean tipoVetorDeclarandoAux() {
-        System.out.println("TIPO VETOR DECLARANDO AUX");
         if (tipoVetorDeclarando()) {
             return true;
         }
-        System.out.println("SAIDA TIPO VETOR DECLARANDO AUX");
         return true;
     }
 
     private boolean declaracaoDeStructCorpoAux() {
-        System.out.println("DECLARACAO DE STRUCT CORPO AUX");
         if (declaracaoDeStructCorpo()) {
             return true;
         }
-        System.out.println("SAIDA DECLARACAO DE STRUCT CORPO AUX");
         return true;
     }
 
@@ -503,12 +483,14 @@ public class AnalisadorSemantico2 {
                 if (bloco()) {
                     return true;
                 }
+                tokenAnterior(1);
             }
         } else if (validarToken(")")) {
             //System.out.println("AAAAAAAAAAAAAA");
             if (bloco()) {
                 return true;
             }
+            tokenAnterior(1);
         }
         System.out.println("SIM PROCEDIMENTO FIM");
         return false;
@@ -532,6 +514,7 @@ public class AnalisadorSemantico2 {
                 //System.out.println("2");
                 return true;
             }
+            tokenAnterior(1);
         }
         System.out.println("SAIDA BLOCO");
         return false;
@@ -555,6 +538,7 @@ public class AnalisadorSemantico2 {
             if (parametros()) {
                 return true;
             }
+            tokenAnterior(1);
         }
         System.out.println("SAIDA PARAMETROS AUX");
         return true;
@@ -661,8 +645,13 @@ public class AnalisadorSemantico2 {
             }
             tokenAnterior(1);
         }
-        if (Final()) {
+        if (expressao()) {
             System.out.println("2222222222222222222222222222222222222222222222222222222222222222222222222222");
+            System.out.println("EXPRESSAO!");
+            return true;
+        }
+        if (Final()) {
+            System.out.println("3333333333333333333333333333333333333333333333333333333333333333333333333333");
             System.out.println("FINAL!");
             if (validarToken("=")) {
                 if (expressao()) {
@@ -671,13 +660,6 @@ public class AnalisadorSemantico2 {
                 tokenAnterior(1);
             }
         }
-        if (expressao()) {
-            System.out.println("3333333333333333333333333333333333333333333333333333333333333333333333333333");
-            System.out.println("EXPRESSAO!");
-            return true;
-        }
-
-        System.out.println("4444444444444444444444444444444444444444444444444444444444444444444444444444444444444");
         System.out.println("SAIDA OPERACAO DE ATRIBUICAO");
         return false;
     }
@@ -688,6 +670,7 @@ public class AnalisadorSemantico2 {
             if (instrucaoDeRetornoAux()) {
                 return true;
             }
+            tokenAnterior(1);
         }
         System.out.println("SAIDA INSTRUÇÃO DE RETORNO");
         return false;
@@ -759,6 +742,7 @@ public class AnalisadorSemantico2 {
             if (declaracaoDeTypedefAux()) {
                 return true;
             }
+            tokenAnterior(1);
         }
         System.out.println("SAIDA DECLARACAO DE TYPEDEF");
         return false;
@@ -815,6 +799,7 @@ public class AnalisadorSemantico2 {
                     return true;
                 }
             }
+            tokenAnterior(1);
         }
         System.out.println("SAIDA OUTRAS SAIDAS");
         return true;
@@ -839,9 +824,11 @@ public class AnalisadorSemantico2 {
                 if (outrasEntradas()) {
                     return true;
                 } else {
+                    tokenAnterior(1);
                     return false;
                 }
             } else {
+                tokenAnterior(1);
                 return false;
             }
         }
@@ -874,6 +861,7 @@ public class AnalisadorSemantico2 {
             if (bloco()) {
                 return true;
             } else {
+                tokenAnterior(1);
                 return false;
             }
         }
@@ -930,14 +918,7 @@ public class AnalisadorSemantico2 {
             if (expressaoIdentificadorVarAux()) {
                 return true;
             }
-            /**
-             * ****************************** VERIFICAR
-             * *******************************
-             */
-            //tokenAnterior(1);
-            /**
-             * ************************************************************************
-             */
+            tokenAnterior(1);
         }
         System.out.println("SAIDA EXPRESSAO IDENTIFICADOR VAR");
         return false;
@@ -951,6 +932,7 @@ public class AnalisadorSemantico2 {
             if (expressaoIdentificadoresVar()) {
                 return true;
             }
+            tokenAnterior(1);
         }
         System.out.println("SAIDA EXPRESSAO IDENTIFICADOR VAR AUX");
         return false;
@@ -962,6 +944,7 @@ public class AnalisadorSemantico2 {
             if (expressao()) {
                 return true;
             } else {
+                tokenAnterior(1);
                 return false;
             }
         }
@@ -1011,7 +994,6 @@ public class AnalisadorSemantico2 {
         return false;
     }
 
-    /* VERIFICAR TOKEN ANTERIOR NO CONST*/
     private boolean expressaoIdentificadorConst() {
         System.out.println("EXPRESSAO IDENTIFICADOR CONST");
         if (validarToken("IDE")) {
@@ -1020,9 +1002,9 @@ public class AnalisadorSemantico2 {
                 if (expressao()) {
                     return true;
                 }
-                //tokenAnterior(2);
+                tokenAnterior(2);
             }
-            //tokenAnterior(1);
+            tokenAnterior(1);
         }
         System.out.println("SAIDA EXPRESSAO IDENTIFICADOR CONST");
         return false;
@@ -1036,6 +1018,7 @@ public class AnalisadorSemantico2 {
             if (expressaoIdentificadoresConst()) {
                 return true;
             }
+            tokenAnterior(1);
         }
         System.out.println("SAIDA EXPRESSAO IDENTIFICADORES CONST AUX");
         return false;
@@ -1049,6 +1032,7 @@ public class AnalisadorSemantico2 {
                 if (validarToken(";")) {
                     return true;
                 }
+                tokenAnterior(1);
             }
         }
         System.out.println("SAIDA DECLARACAO DE TYPEDEF AUX");
@@ -1073,12 +1057,14 @@ public class AnalisadorSemantico2 {
                 System.out.println("15");
                 return true;
             }
+            tokenAnterior(1);
         } else if (validarToken("[")) {
             if (expressao()) {
                 if (validarToken("]")) {
                     return true;
                 }
             }
+            tokenAnterior(1);
         }
         System.out.println("SAIDA ACESSO");
         return false;
@@ -1110,6 +1096,7 @@ public class AnalisadorSemantico2 {
             if (expressao()) {
                 return true;
             } else {
+                tokenAnterior(1);
                 return false;
             }
         }
@@ -1134,6 +1121,7 @@ public class AnalisadorSemantico2 {
             if (opE()) {
                 return true;
             } else {
+                tokenAnterior(1);
                 return false;
             }
         }
@@ -1181,9 +1169,11 @@ public class AnalisadorSemantico2 {
                 if (valorRelacionalAux()) {
                     return true;
                 } else {
+                    tokenAnterior(1);
                     return false;
                 }
             } else {
+                tokenAnterior(1);
                 return false;
             }
         } else if (validarToken("-")) {
@@ -1191,9 +1181,11 @@ public class AnalisadorSemantico2 {
                 if (valorRelacionalAux()) {
                     return true;
                 } else {
+                    tokenAnterior(1);
                     return false;
                 }
             } else {
+                tokenAnterior(1);
                 return false;
             }
         }
@@ -1229,14 +1221,17 @@ public class AnalisadorSemantico2 {
             if (opUnary()) {
                 return true;
             }
+            tokenAnterior(1);
         } else if (validarToken("++")) {
             if (opUnary()) {
                 return true;
             }
+            tokenAnterior(1);
         } else if (validarToken("--")) {
             if (opUnary()) {
                 return true;
             }
+            tokenAnterior(1);
         } else if (Final()) {
             if (simboloUnario()) {
                 return true;
@@ -1257,9 +1252,11 @@ public class AnalisadorSemantico2 {
                 if (opMultAux()) {
                     return true;
                 } else {
+                    tokenAnterior(1);
                     return false;
                 }
             } else {
+                tokenAnterior(1);
                 return false;
             }
         } else if (validarToken("/")) {
@@ -1267,9 +1264,11 @@ public class AnalisadorSemantico2 {
                 if (opMultAux()) {
                     return true;
                 } else {
+                    tokenAnterior(1);
                     return false;
                 }
             } else {
+                tokenAnterior(1);
                 return false;
             }
         }
@@ -1302,6 +1301,7 @@ public class AnalisadorSemantico2 {
                     return true;
                 }
             }
+            tokenAnterior(1);
         } else if (validarToken("NRO")) {
             return true;
         } else if (validarToken("CAD")) {
@@ -1321,6 +1321,7 @@ public class AnalisadorSemantico2 {
             if (valorAux2()) {
                 return true;
             } else {
+                tokenAnterior(1);
                 return false;
             }
         }
@@ -1358,6 +1359,7 @@ public class AnalisadorSemantico2 {
             if (parametrosFuncao()) {
                 return true;
             } else {
+                tokenAnterior(1);
                 return false;
             }
         }
@@ -1365,207 +1367,4 @@ public class AnalisadorSemantico2 {
         return true;
     }
 
-    private boolean isFloat() {
-        return tokenAnterior.getNome().contains(".");
-    }
-
-    private void verificarTipoConstante() {
-        if (variavelAtual.getTipo().equals("int") && isFloat()) {
-            System.out.println("erro tipo incompativel atribuido a constante");
-            salvarMensagemArquivo("Tipo incompatível atribuido a constante. Linha: " + tokenAnterior.getLinha());
-        } else if (variavelAtual.getTipo().equals("float") && !isFloat()) {
-            System.out.println("erro tipo incompativel atribuido a constante");
-            salvarMensagemArquivo("Tipo incompatível atribuido a constante. Linha: " + tokenAnterior.getLinha());
-        }
-    }
-
-    private void verificarAcessoVetor() {
-        if (isFloat() || Integer.parseInt(tokenAtual.getNome()) < 0) {
-            System.out.println("erro indice invalido");
-            salvarMensagemArquivo("Índice inválido. Linha: " + tokenAnterior.getLinha());
-        }
-    }
-
-    private void verificarDeclaracaoVariavel() {
-        if (escopoVariavel == 0) { //global
-            variavelAtual = global.getVariavel(nomeVariavelAtribuicao);
-            if (variavelAtual == null) {
-                System.out.println("variavel não declada nesse escopo");
-                salvarMensagemArquivo("Variável nao declarada nesse escopo. Linha: " + tokenAnterior.getLinha());
-            }
-        } else if (escopoVariavel == 1) { //classe
-            if (classeAtual == null) {
-                System.out.println("variavel não declada nesse escopo");
-                salvarMensagemArquivo("Variável nao declarada nesse escopo. Linha: " + tokenAnterior.getLinha());
-            } else {
-                variavelAtual = classeAtual.getVariavel(nomeVariavelAtribuicao);
-                if (variavelAtual == null) {
-                    System.out.println("variavel não declada nesse escopo");
-                    salvarMensagemArquivo("Variável nao declarada nesse escopo. Linha: " + tokenAnterior.getLinha());
-
-                }
-            }
-        } else if (escopoVariavel == -1) {
-            if (nivel == 0) {
-                variavelAtual = global.getVariavel(nomeVariavelAtribuicao);
-            } else if (nivel == 1) {
-                variavelAtual = classeAtual.getVariavel(nomeVariavelAtribuicao);
-            } else if (nivel == 2) {
-                variavelAtual = metodoAtual.getVariavel(nomeVariavelAtribuicao);
-            }
-        }
-    }
-
-    private Variavel buscarObjeto() {
-        Variavel objetoAtual = metodoAtual.getVariavel(objetoChamadaMetodo);
-        if (objetoAtual == null) {
-            objetoAtual = classeAtual.getVariavel(objetoChamadaMetodo);
-        }
-        if (objetoAtual == null) {
-            objetoAtual = global.getVariavel(objetoChamadaMetodo);
-        }
-        if (objetoAtual == null) {
-            //erro objeto não encontrado
-            salvarMensagemArquivo("Objeto não encontrado. Linha: " + tokenAnterior.getLinha());
-        }
-        return objetoAtual;
-    }
-
-    private void buscarChamadaMetodo(Variavel objetoAtual) {
-        String tipo = objetoAtual.getTipo();
-        if (tipo == null || tipo.equals("float") || tipo.equals("int") || tipo.equals("string") || tipo.equals("bool")) {
-            //erro tipo do objeto incompativel
-            salvarMensagemArquivo("Tipo do Objeto incompatível. Linha: " + tokenAnterior.getLinha());
-        } else {
-            Classe c = global.getClasse(tipo);
-            if (c == null) {
-                //tipo do objeto não existe
-            } else {
-                metodoChamado = c.getMetodo(tokenAnterior.getNome());
-                if (metodoChamado == null) {
-                    //metodo não declarado nesse escopo
-                    salvarMensagemArquivo("Método não declarado no escopo. Linha: " + tokenAnterior.getLinha());
-                }
-            }
-        }
-    }
-
-    private Variavel buscarObjeto(Variavel obj) {
-        String tipo = obj.getTipo();
-        if (tipo == null || tipo.equals("float") || tipo.equals("int") || tipo.equals("string") || tipo.equals("bool")) {
-            //erro tipo do objeto incompativel
-            salvarMensagemArquivo("Tipos incompativeis dos Objetos. Linha: " + tokenAnterior.getLinha());
-        } else {
-            Classe c = global.getClasse(tipo);
-            if (c == null) {
-                //tipo do objeto não existe
-                salvarMensagemArquivo("Tipo do Objeto desconhecido. Linha: " + tokenAnterior.getLinha());
-            } else {
-                return c.getVariavel(objetoChamadaMetodo);
-            }
-        }
-        return null;
-    }
-
-    private Variavel buscarVariavel() {
-        Variavel v;
-        if (metodoAtual != null) {
-            v = metodoAtual.getVariavel(tokenAnterior.getNome());
-        } else if (classeAtual != null) {
-            v = classeAtual.getVariavel(tokenAnterior.getNome());
-        } else {
-            v = global.getVariavel(tokenAnterior.getNome());
-        }
-        return v;
-    }
-
-    private String getTipoTokenAtual() {
-        String tipo = tokenAnterior.getTipo();
-        if (tipo.equals("identificador")) {
-            Variavel v = buscarVariavel();
-            if (v != null) {
-                return v.getTipo();
-            } else {
-                //erro variavel não declarada
-                salvarMensagemArquivo("Variável não declarada. Linha: " + tokenAnterior.getLinha());
-            }
-        } else if (tipo.equals("true") || tipo.equals("false")) {
-            return "bool";
-        } else if (tipo.equals("Cadeia de Caracteres")) {
-            return "string";
-        } else if (tipo.equals("Número") && isFloat()) {
-            return "float";
-        } else if (tipo.equals("Número") && !isFloat()) {
-            return "int";
-        }
-        return "";
-    }
-
-    private void verificarTipoOperacao(String tipo) {
-        if (tipo == null) {
-            //erro tipo desconhecido
-            salvarMensagemArquivo("Tipos desconhecidos. Linha: " + tokenAnterior.getLinha());
-            return;
-        }
-        if (tipoOperacao == null) {
-            tipoOperacao = tipo;
-        } else if (!tipoOperacao.equals(tipo)) {
-            //erro tipo incompativel
-            salvarMensagemArquivo("Tipos incompatíveis na operação. Linha: " + tokenAnterior.getLinha());
-        }
-
-    }
-
-    /*
-        VERIFICAR PARAMETROATUAL2
-     */
-    private void verificarParametroAtual() {
-        if (metodoChamado != null) {
-            List<Variavel> parametros = metodoChamado.getParametros();
-            if (parametroAtual < parametros.size()) {
-                if (!parametros.get(parametroAtual).getTipo().equals(tipoOperacao)) {
-                    //parametro com tipo incompativel
-                }
-            } else {
-                //quantidade de parametros invalida
-            }
-        } else {
-            //metodo não encontrado
-        }
-    }
-
-    private void verificarInstancia() {
-        if (variavelAtual != null && tokenAnterior.getNome().equals(variavelAtual.getTipo())) {
-            Classe c = global.getClasse(tokenAnterior.getNome());
-            if (c != null && c instanceof ClasseFilha) {
-                Classe mae = ((ClasseFilha) c).getMae();
-                if (mae != null && !mae.getNome().equals(tokenAnterior.getNome())) {
-                    //instancia de tipos incompativeis
-                }
-            }
-        }
-    }
-
-    private void verificarInstanciaConstruct() {
-        Classe c = global.getClasse(tokenAnterior.getNome());
-        if (c != null) {
-            metodoChamado = c.getMetodo(tokenAnterior.getNome());
-            if (metodoChamado == null) {
-                //erro construtor invalido
-                salvarMensagemArquivo("Construtor inválido. Linha: " + tokenAnterior.getLinha());
-            }
-        } else {
-            //construtor não encontrado
-            salvarMensagemArquivo("Construtor não declarado. Linha: " + tokenAnterior.getLinha());
-        }
-    }
-
-    private void salvarMensagemArquivo(String mensagem) {
-        try {
-            saidaSemantico.write(mensagem);
-            errosSemanticos++;
-        } catch (IOException ex) {
-            Logger.getLogger(AnalisadorSemantico.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 }

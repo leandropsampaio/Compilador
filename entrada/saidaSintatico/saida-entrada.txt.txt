@@ -1,7 +1,1 @@
-Análise Sintática iniciada para o arquivo entrada.txt
-
-- Faltou ; do typedef  na linha:5
-- Faltou o ; na linha:8
-
-
-Análise Sintática finalizada com erro para o arquivo entrada.txt
+Análise Sintática iniciada para o arquivo entrada.txt/nAnálise Sintática finalizada com sucesso para o arquivo entrada.txt

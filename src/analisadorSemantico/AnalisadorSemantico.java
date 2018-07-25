@@ -75,51 +75,58 @@ public class AnalisadorSemantico {
 
     }
 
+    /*
+        Caso tenha '|' na grámatica seria if - if ...
+        Caso seja direto na grámatica seria if - else if ...
+     */
     private boolean proximoToken() {
-
         if (posicao + 1 < tokens.size()) {
             posicao++;
             tokenAnterior = tokenAtual;
             tokenAtual = tokens.get(posicao);
+            // Pulando comentários de linha e bloco
+            //validarToken("Comentário de Linha");
+            //validarToken("Comentário de Bloco");
             proximoToken = true;
             return true;
         }
-        Token tokenFinal = new Token("", "", tokenAnterior.getLinha() + 1);
-        tokens.add(tokenFinal);
-        tokenAtual = tokens.get(posicao + 1);
         proximoToken = false;
         return false;
     }
 
     private void tokenAnterior(int contador) {
 
+        System.out.println("**********************************************************CONTADOR: " + contador);
         for (int i = 1; i <= contador; i++) {
-
+            System.out.println(i);
             if (posicao - 1 < tokens.size()) {
+                System.out.println("*************************************************************PASSOU!");
                 posicao--;
                 tokenAtual = tokens.get(posicao);
                 tokenAnterior = tokens.get(posicao - 1);
+                // Pulando comentários de linha e bloco
+                //validarToken("Comentário de Linha");
+                //validarToken("Comentário de Bloco");
             }
         }
     }
 
     private boolean validarToken(String tipo) {
-
+        System.out.println("VALIDANDO TOKEN: " + tipo);
+        //System.out.println("TESTE!");
         if (tokenAtual.getTipo().equals(tipo) || tokenAtual.getNome().equals(tipo)) {
+            System.out.println(tokenAtual);
             proximoToken();
             return true;
         }
-
+        //System.out.println("VALIDANDO TOKEN: " + tipo);
         return false;
     }
 
     private Token showProx() {
-
         if (posicao + 1 < tokens.size()) {
-
             return tokens.get(posicao + 1);
         }
-
         return null;
     }
 
@@ -139,8 +146,14 @@ public class AnalisadorSemantico {
         return true;
     }
 
+    /**
+     * **********************************************************************************
+     * ************************* TERMINAR AS DECLARAÇÕES E VERIFICAR OS QUE
+     * ********************* POSSUEM VAZIO PARA ADICIONAR O ELSE(RETURN FALSE)
+     * **********************************************************************************
+     */
     public boolean declaracao() {
-
+        System.out.println("DECLARACAO");
         if (declaracaoDeFuncao()) {
             return true;
         } else if (declaracaoDeProcedimento()) {
@@ -155,473 +168,337 @@ public class AnalisadorSemantico {
             return true;
         } else if (declaracaoDeTypedef()) {
             return true;
-        } else if (proximoToken) {
-
-            String mensagemErro = "- ERRO DE DECLARAÇÃO";
-            this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-            panicMode("declaracao");
-            return true;
         }
-
+        System.out.println("SAIDA DECLARACAO");
         return false;
+
     }
 
     private boolean declaracaoDeFuncao() {
-
+        System.out.println("DECLARACAO DE FUNCAO");
         if (validarToken("function")) {
-            funcId();
-            if (!validarToken("(")) {
-                String mensagemErro = "- Faltou ( na declaração de fuction ";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-                panicMode("funcaoProcedimentoFim");
+            if (funcId()) {
+                if (validarToken("(")) {
+                    if (funcaoProcedimentoFim()) {
+                        return true;
+                    }
+                }
             }
-            funcaoProcedimentoFim();
-            return true;
         }
-
+        System.out.println("SAIDA DECLARACAO DE FUNCAO");
         return false;
-
     }
 
     private boolean declaracaoDeProcedimento() {
-
+        System.out.println("DECLARACAO DE PROCEDIMENTO");
         if (validarToken("procedure")) {
-            if (!validarToken("IDE")) {
-                errosSemanticos++;
-                String mensagemErro = "- Faltou o identificador na declaração do procedure";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
+            //System.out.println("1");
+            if (validarToken("IDE")) {
+                //System.out.println("17");
+                if (validarToken("(")) {
+                    if (funcaoProcedimentoFim()) {
+                        return true;
+                    }
+                } else {
+                    panicMode();
+                }
             }
-            if (!validarToken("(")) {
-                String mensagemErro = "- Faltou o ( na declaração do procedure";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-                panicMode("funcaoProcedimentoFim");
-            }
-            funcaoProcedimentoFim();
-            return true;
 
         }
-
+        System.out.println("SAIDA DECLARACAO DE PROCEDIMENTO");
         return false;
     }
 
     private boolean declaracaoDeInicio() {
-
+        System.out.println("DECLARACAO DE INICIO");
         if (validarToken("start")) {
             main = true;
-            if (!validarToken("(")) {
-                String mensagemErro = "- Faltou ( na declaracao de start";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
-                panicMode("bloco");
+            if (validarToken("(")) {
+                if (validarToken(")")) {
+                    if (bloco()) {
+                        return true;
+                    }
+                } else {
+                    panicMode();
+                }
+            } else {
+                panicMode();
             }
-            if (!validarToken(")")) {
-                String mensagemErro = "- Faltou ) na declaracao de start";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-                panicMode("bloco");
-            }
-            bloco();
-            return true;
 
         }
-
+        System.out.println("SAIDA DECLARACAO DE INICIO");
         return false;
     }
 
     private boolean declaracaoDeVar() {
-
+        System.out.println("DECLARACAO DE VAR");
         if (validarToken("var")) {
-
-            if (!validarToken("{")) {
-                String mensagemErro = "- Faltou a { na declaração de var";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-                panicMode("declaracaoDeVariavelCorpo");
+            if (validarToken("{")) {
+                if (declaracaoDeVariavelCorpo()) {
+                    if (validarToken("}")) {
+                        return true;
+                    } //verificar !!!!!!
+                } else {
+                    panicMode();
+                }
+            } else {
+                panicMode();
             }
-            declaracaoDeVariavelCorpo();
-            if (!validarToken("}")) {
-                String mensagemErro = "- Faltou a } na declaracao de var";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-                panicMode("declaracao");
-            }
-            return true;
         }
-
+        System.out.println("SAIDA DECLARACAO DE VAR");
         return false;
-
     }
 
     private boolean declaracaoDeConst() {
-
+        System.out.println("DECLARACAO DE CONST");
         if (validarToken("const")) {
-
-            if (!validarToken("{")) {
-                String mensagemErro = "- Faltou a { na declaracao de const";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-                panicMode("declaracaoDeConstanteCorpo");
+            if (validarToken("{")) {
+                if (declaracaoDeConstanteCorpo()) {
+                    if (validarToken("}")) {
+                        return true;
+                    } //verificar !!!!!!
+                } else {
+                    panicMode();
+                }
+            } else {
+                panicMode();
             }
-            declaracaoDeConstanteCorpo();
-            if (!validarToken("}")) {
-                String mensagemErro = "- Faltou a } na declaracao de const";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-                panicMode("declaracao");
-            }
-            return true;
         }
-
+        System.out.println("SAIDA DECLARACAO DE CONST");
         return false;
-    }
-
-    /*IMPLEMENTAR MODO PÂNICO!*/
-    private boolean ifThen() {
-
-        if (validarToken("if")) {
-            if (!validarToken("(")) {
-                String mensagemErro = "- Faltou o ( do If";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-                panicMode("expressao");
-            }
-            if (!expressao()) {
-                errosSemanticos++;
-                String mensagemErro = "- Faltou informar a expressão do IF";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-            }
-            if (!validarToken(")")) {
-                String mensagemErro = "- Faltou o ) do If";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-                panicMode("then");
-            }
-            if (!validarToken("then")) {
-                String mensagemErro = "- Faltou o (then) da declaração do IF";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-                panicMode("bloco");
-            }
-            bloco();
-            return true;
-        }
-
-        return false;
-    }
-
-    private void panicMode(String localSincronizar) {
-        errosSemanticos++;
-        switch (localSincronizar) {
-            case "expressao":
-                searchNextExpressao();
-                break;
-            case "then":
-                searchNextThen();
-                break;
-            case "bloco":
-                searchNextBloco();
-                break;
-            case "saida":
-                searchNextSaida();
-                break;
-            case "entrada":
-                searchNextEntrada();
-                break;
-            case "structCorpo":
-                searchNextstructCorpo();
-                break;
-            case "listaDeInstrucoes":
-                searchNextListaDeInstrucoes();
-                break;
-            case "funcaoProcedimentoFim":
-                searchNextFuncaoProcedimentoFim();
-                break;
-            case "declaracaoDeVariavelCorpo":
-                searchNextDeclaracaoDeVariavelCorpo();
-                break;
-            case "declaracao":
-                searchNextDeclaracao();
-                break;
-            case "declaracaoDeConstanteCorpo":
-                searchNextDeclaracaoDeConstanteCorpo();
-                break;
-            case "tipoAux":
-                searchNextTipoAux();
-                break;
-            case "declaracaoDeStructCorpo":
-                searchNextDeclaracaoDeStructCorpo();
-                break;
-            case "expressaoIdentificadoresStruct":
-                searchNextExpressaoIdentificadoresStruct();
-                break;
-            case "tipoVetorDeclarando":
-                searchNextTipoVetorDeclarando();
-                break;
-            case "parametroAux":
-                searchNextParametroAux();
-                break;
-            case "parametros":
-                searchNextParametros();
-                break;
-            case "simboloUnario":
-                searchNextSimboloUnario();
-                break;
-            case "searchNextExpressaoIdentificadorVarAux":
-                searchNextExpressaoIdentificadorVarAux();
-                break;
-            case "searchNextExpressaoIdentificadoresVarAux":
-                searchNextExpressaoIdentificadoresVarAux();
-                break;
-        }
     }
 
     private boolean funcId() {
         metodoAtual = new Metodo();
         parametrosAtuais = new ArrayList();
 
-        if (!tipo()) {
-
-            errosSemanticos++;
-            String mensagemErro = "- Faltou o tipo da função";
-            this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
+        System.out.println("FUNC ID");
+        if (tipo()) {
+            metodoAtual.setNome(tokenAtual.getNome());
+            if (validarToken("IDE")) {
+                System.out.println("2");
+                return true;
+            }
         }
-        metodoAtual.setNome(tokenAtual.getNome());
-        if (!validarToken("IDE")) {
-            errosSemanticos++;
-            String mensagemErro = "- Faltou o nome da função";
-            this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
-        }
-
+        System.out.println("SAIDA FUNC ID");
         return false;
+    }
+
+    private void panicMode() {
+        System.out.println("Implementar modo pânico!!!!!");
     }
 
     private boolean tipo() {
-
+        System.out.println("TIPO");
         if (tipobase()) {
-            tipoAux();
-            return true;
+            if (tipoAux()) {
+                return true;
+            }
         }
-
+        System.out.println("SAIDA TIPO");
         return false;
     }
 
+    /**
+     * ************************** VERIFICAR A ORDEM DOS IFS ******************************************
+     */
     private boolean tipobase() {
+        System.out.println("TIPO BASE");
         variavelAtual = new Variavel();
-        if (validarToken("IDE")) {
+        if (escalar()) {
             metodoAtual.setTipo(tokenAnterior.getNome());
             variavelAtual.setTipo(tokenAnterior.getNome());
             return true;
-        } else if (escalar()) {
+        } else if (declaracaoDeStruct()) {
+            return true;
+        } else if (validarToken("IDE")) {
             metodoAtual.setTipo(tokenAnterior.getNome());
             variavelAtual.setTipo(tokenAnterior.getNome());
-            return true;
-        } else if (declaracaoDeStruct()) { // VERIFICAR
+            System.out.println("3");
             return true;
         } else if (validarToken("struct")) {
-            if (!validarToken("IDE")) {
-                String mensagemErro = "- Faltou o identificador da struct";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
-                panicMode("tipoAux");
+            if (validarToken("IDE")) {
+                System.out.println("4");
+                return true;
+            } else {
+                panicMode();
             }
-            return true;
         }
         variavelAtual = new Variavel();
+        System.out.println("SAIDA TIPO BASE");
         return false;
     }
 
     private boolean escalar() {
-
+        System.out.println("ESCALAR");
         if (validarToken("int") || validarToken("float") || validarToken("bool") || validarToken("string")) {
-
             return true;
         }
-
+        System.out.println("SAIDA ESCALAR");
         return false;
     }
 
     private boolean declaracaoDeStruct() {
-
+        System.out.println("DECLARACAO DE STRUCT");
         if (validarToken("struct")) {
             if (declaracaoDeStructAux()) {
                 return true;
             }
             tokenAnterior(1);
         }
-
+        System.out.println("SAIDA DECLARACAO DE STRUCT");
         return false;
     }
 
     private boolean declaracaoDeStructAux() {
-
+        System.out.println("DECLARACAO DE STRUCT AUX");
         if (validarToken("IDE")) {
-            if (tokenAtual.getTipo().equals("IDE")) {
-
-                tokenAnterior(1);
-                return false;
+            if (Extends()) { // LEMBRARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+                if (validarToken("{")) {
+                    if (declaracaoDeStructCorpo()) {
+                        if (validarToken("}")) {
+                            return true;
+                        }
+                    } else {
+                        //tokenAnterior(1);
+                    }
+                }
+            } else {
+                //tokenAnterior(1);
             }
-            Extends();
-            if (!validarToken("{")) {
-                String mensagemErro = "- Faltou a { da struct";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
-                panicMode("structCorpo");
-            }
-            declaracaoDeStructCorpo();
-            if (!validarToken("}")) {
-                String mensagemErro = "- Faltou a } da struct ";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
-                panicMode("listaDeInstrucoes");
-            }
-            return true;
         } else if (Extends()) {
-            if (!validarToken("{")) {
-                String mensagemErro = "- Faltou a { da struct";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
-                panicMode("structCorpo");
+            if (validarToken("{")) {
+                if (declaracaoDeStructCorpo()) {
+                    if (validarToken("}")) {
+                        return true;
+                    }
+                }
             }
-            declaracaoDeStructCorpo();
-            if (!validarToken("}")) {
-                String mensagemErro = "- Faltou a } da struct ";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
-                panicMode("listaDeInstrucoes");
-            }
-            return true;
         }
-
+        System.out.println("SAIDA DECLARACAO DE STRUCT AUX");
         return false;
     }
 
     private boolean Extends() {
-
+        System.out.println("EXTENDS");
         if (validarToken("extends")) {
-            if (!validarToken("IDE")) {
-                String mensagemErro = "- Faltou o identificador do extends";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-                panicMode("declaracaoDeStructCorpo");
+            if (validarToken("IDE")) {
+                //System.out.println("6");
+                return true;
+            } else {
+                panicMode();
             }
-        }
-
+        } // PODE SER VAZIO        
+        System.out.println("SAIDA EXTENDS");
         return true;
     }
 
     private boolean declaracaoDeStructCorpo() {
-
+        System.out.println("DECLARACAO DE STRUCT CORPO");
         if (declaracaoDeStructLinha()) {
-            declaracaoDeStructCorpoAux();
-            return true;
+            if (declaracaoDeStructCorpoAux()) {
+                return true;
+            }
         }
-
+        System.out.println("SAIDA DECLARACAO DE STRUCT CORPO");
         return false;
 
     }
 
     private boolean declaracaoDeStructLinha() {
-
+        System.out.println("DECLARACAO DE STRUCT LINHA");
         if (tipo()) {
-            expressaoIdentificadoresStruct();
-            return true;
+            if (expressaoIdentificadoresStruct()) {
+                return true;
+            }
         }
-
+        System.out.println("SAIDA DECLARACAO DE STRUCT LINHA");
         return false;
     }
 
     private boolean expressaoIdentificadoresStruct() {
-
+        System.out.println("EXPRESSAO IDENTIFICADORES STRUCT");
         if (expressaoIdentificadorStruct()) {
-            expressaoIdentificadoresStructAux();
-            return true;
+            if (expressaoIdentificadoresStructAux()) {
+                return true;
+            }
         }
-
+        System.out.println("SAIDA EXPRESSAO IDENTIFICADORES STRUCT");
         return false;
     }
 
     private boolean expressaoIdentificadorStruct() {
-
         if (validarToken("IDE")) {
+            System.out.println("7");
             return true;
         }
         return false;
     }
 
     private boolean expressaoIdentificadoresStructAux() {
-
-        if (!validarToken(";") && !tokenAtual.getNome().equals(",")) {
-            String mensagemErro = "- Faltou o ;";
-            this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-            System.out.println("FALTOU O ; DO STRUCT" + tokenAtual.getLinha());
-
-            panicMode("declaracaoDeStructCorpo");
+        System.out.println("EXPRESSAO IDENTIFICADORES STRUCT AUX");
+        if (validarToken(";")) {
             return true;
-        } else if (!validarToken(",")) {
-
-            if (tokenAtual.getTipo().equals("IDE")) {
-                String mensagemErro = "- Faltou o identificador da struct";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
-                panicMode("expressaoIdentificadoresStruct");
+        } else if (validarToken(",")) {
+            if (expressaoIdentificadoresStruct()) {
+                return true;
             }
         }
-        expressaoIdentificadoresStruct();
-
+        System.out.println("SAIDA EXPRESSAO IDENTIFICADORES STRUCT AUX");
         return false;
     }
 
+    /*
+        TERMINAR!!!!!!!!
+     */
     private boolean tipoAux() {
-
+        System.out.println("TIPO AUX");
         if (tipoVetorDeclarando()) {
             return true;
         }
-
-        return false;
+        System.out.println("SAIDA TIPO AUX");
+        return true;
     }
 
     private boolean tipoVetorDeclarando() {
-
+        System.out.println("TIPO VETOR DECLARANDO");
         if (tipoVetorDeclarado()) {
-            tipoVetorDeclarandoAux();
-            return true;
+            if (tipoVetorDeclarandoAux()) {
+                return true;
+            }
         }
-
+        System.out.println("SAIDA TIPO VETOR DECLARANDO");
         return false;
     }
 
     private boolean tipoVetorDeclarado() {
-
+        System.out.println("TIPO VETOR DECLARADO");
         if (validarToken("[")) {
-            if (!validarToken("]")) {
-                String mensagemErro = "- Faltou ] do vetor";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
-                panicMode("tipoVetorDeclarando");
+            if (validarToken("]")) {
+                return true;
+            } else {
+                panicMode();
             }
-            return true;
         }
-
+        System.out.println("SAIDA TIPO VETOR DECLARADO");
         return false;
     }
 
     private boolean tipoVetorDeclarandoAux() {
-
-        tipoVetorDeclarando();
-
+        System.out.println("TIPO VETOR DECLARANDO AUX");
+        if (tipoVetorDeclarando()) {
+            return true;
+        }
+        System.out.println("SAIDA TIPO VETOR DECLARANDO AUX");
         return true;
     }
 
     private boolean declaracaoDeStructCorpoAux() {
-
-        declaracaoDeStructCorpo();
-
+        System.out.println("DECLARACAO DE STRUCT CORPO AUX");
+        if (declaracaoDeStructCorpo()) {
+            return true;
+        }
+        System.out.println("SAIDA DECLARACAO DE STRUCT CORPO AUX");
         return true;
     }
 
@@ -629,131 +506,98 @@ public class AnalisadorSemantico {
      * ***********************************************************************
      */
     private boolean funcaoProcedimentoFim() {
-
-        if (validarToken(")")) {
-
-            if (bloco()) {
-
+        System.out.println("PROCEDIMENTO FIM");
+        if (parametros()) {
+            //System.out.println("BBBBBBBBBBBBBBBBBBb");
+            if (validarToken(")")) {
+                if (bloco()) {
+                    return true;
+                }
             }
-            return true;
-        } else if (parametros()) {
-
-            if (!validarToken(")")) {
-                String mensagemErro = "- Faltou o )";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-                panicMode("bloco");
-            }
-            if (bloco()) {
-
-            }
-            return true;
-        } else {
-            String mensagemErro = "- Faltou o )";
-            this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-            panicMode("bloco");
-
+        } else if (validarToken(")")) {
+            //System.out.println("AAAAAAAAAAAAAA");
             if (bloco()) {
                 return true;
             }
         }
-
+        System.out.println("SIM PROCEDIMENTO FIM");
         return false;
     }
 
     private boolean parametros() {
-
+        System.out.println("PARAMETROS");
         if (parametro()) {
-            parametrosAux();
-            return true;
+            if (parametrosAux()) {
+                return true;
+            }
         }
-
+        System.out.println("SAIDA PARAMETROS");
         return false;
     }
 
     private boolean bloco() {
-
-        if (!validarToken("{")) {
-            errosSemanticos++;
-            String mensagemErro = "- Faltou { do bloco";
-            this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
+        System.out.println("BLOCO");
+        if (validarToken("{")) {
+            if (blocoAux()) {
+                //System.out.println("2");
+                return true;
+            }
         }
-        blocoAux();
-
+        System.out.println("SAIDA BLOCO");
         return false;
     }
 
     private boolean parametro() {
-
+        System.out.println("PARAMETRO");
         if (tipo()) {
             parametroAtual.setTipo(tokenAnterior.getNome());
-
-            if (!validarToken("IDE")) {
-                String mensagemErro = "- Faltou o identificador do parâmetro";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
-                panicMode("parametrosAux");
-                return false;
+            if (validarToken("IDE")) {
+                parametroAtual.setNome(tokenAnterior.getNome());
+                //System.out.println("8");
+                return true;
             }
-            parametroAtual.setNome(tokenAnterior.getNome());
-            return true;
         }
-
+        System.out.println("SAIDA PARAMETRO");
         return false;
     }
 
     private boolean parametrosAux() {
-
-        if (!validarToken(",")) {
-            if (showProx().getTipo().equals("IDE")) {
-                String mensagemErro = "- Faltou virgula em parametros";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
-                panicMode("parametros");
+        System.out.println("PARAMETROS AUX");
+        if (validarToken(",")) {
+            if (parametros()) {
+                return true;
             }
         }
-        parametros();
-
+        System.out.println("SAIDA PARAMETROS AUX");
         return true;
     }
 
-    /*
-        VERIFICAR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
-     */
     private boolean blocoAux() {
-
+        System.out.println("BLOCO AUX");
         if (listaDeInstrucoes()) {
-
-            if (!validarToken("}")) {
-                errosSemanticos++;
-                String mensagemErro = "- Faltou o fecha } do bloco";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-                panicMode("*********************");
+            if (validarToken("}")) {
+                return true;
             }
-        } else if (!validarToken("}")) {
-            errosSemanticos++;
-            String mensagemErro = "- Faltou o fecha } do bloco";
-            this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
+        } else if (validarToken("}")) {
+            return true;
         }
-
+        System.out.println("SAIDA BLOCO AUX");
         return false;
     }
 
     private boolean listaDeInstrucoes() {
-
+        System.out.println("LISTA DE INSTRUCOES");
         if (instrucao()) {
-            listaDeInstrucoesAux();
-            return true;
+            if (listaDeInstrucoesAux()) {
+                return true;
+            }
         }
-
+        System.out.println("SAIDA LISTA DE INSTRUCOES");
         return false;
     }
 
     private boolean instrucao() {
-
+        System.out.println("INSTRUÇÃO");
         if (instrucaoNormal()) {
             return true;
         } else if (estruturaCondicional()) {
@@ -767,66 +611,60 @@ public class AnalisadorSemantico {
         } else if (declaracaoDeTypedef()) {
             return true;
         }
-
+        System.out.println("SAIDA INSTRUCAO");
         return false;
     }
 
     private boolean listaDeInstrucoesAux() {
-        listaDeInstrucoes();
+        if (listaDeInstrucoes()) {
+            return true;
+        }
+        // Pode ser Vazio
         return true;
     }
 
     private boolean instrucaoNormal() {
-
+        System.out.println("INSTRUCAO NORMAL");
         if (operacaoDeAtribuicao()) {
-            if (!validarToken(";")) {
-                errosSemanticos++;
-                String mensagemErro = "- Faltou o ; da instrucao";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
+            if (validarToken(";")) {
+                return true;
+            } else {
+                panicMode();
             }
-            return true;
         } else if (declaracaoDeStruct()) {
-            if (!validarToken(";")) {
-                errosSemanticos++;
-                String mensagemErro = "- Faltou o ; da Struct";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
+            if (validarToken(";")) {
+                return true;
+            } else {
+                panicMode();
             }
-            return true;
-        } else if (Print()) {
-            if (!validarToken(";")) {
-                errosSemanticos++;
-                String mensagemErro = "- Faltou o ; do Print";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-            }
-            return true;
-        } else if (scan()) {
-            if (!validarToken(";")) {
-                errosSemanticos++;
-                String mensagemErro = "- Faltou o ; do Scan";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-            }
-            return true;
         } else if (instrucaoDeRetorno()) {
-            if (!validarToken(";")) {
-                errosSemanticos++;
-                String mensagemErro = "- Faltou ; do retorno";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
+            if (validarToken(";")) {
+                return true;
+            } else {
+                panicMode();
             }
-            return true;
+        } else if (Print()) {
+            if (validarToken(";")) {
+                return true;
+            } else {
+                panicMode();
+            }
+        } else if (scan()) {
+            if (validarToken(";")) {
+                return true;
+            } else {
+                panicMode();
+            }
         }
-
+        System.out.println("SAIDA INSTRUCAO NORMAL");
         return false;
     }
 
+    /*TRÊS PRIMEIROS COMO IDENTIFICADOR*/
     private boolean operacaoDeAtribuicao() {
-
+        System.out.println("OPERACAO DE ATRIBUICAO");
         if (validarToken("IDE")) {
-
+            System.out.println("111111111111111111111111111111111111111111111111111111111111111111111111111");
             if (validarToken("=")) {
                 if (expressao()) {
                     return true;
@@ -836,7 +674,8 @@ public class AnalisadorSemantico {
             tokenAnterior(1);
         }
         if (Final()) {
-
+            System.out.println("2222222222222222222222222222222222222222222222222222222222222222222222222222");
+            System.out.println("FINAL!");
             if (validarToken("=")) {
                 if (expressao()) {
                     return true;
@@ -845,507 +684,443 @@ public class AnalisadorSemantico {
             }
         }
         if (expressao()) {
+            System.out.println("3333333333333333333333333333333333333333333333333333333333333333333333333333");
+            System.out.println("EXPRESSAO!");
             return true;
         }
 
+        System.out.println("4444444444444444444444444444444444444444444444444444444444444444444444444444444444444");
+        System.out.println("SAIDA OPERACAO DE ATRIBUICAO");
         return false;
     }
 
     private boolean instrucaoDeRetorno() {
-
+        System.out.println("INSTRUÇÃO DE RETORNO");
         if (validarToken("return")) {
             if (instrucaoDeRetornoAux()) {
                 return true;
             }
         }
-
+        System.out.println("SAIDA INSTRUÇÃO DE RETORNO");
         return false;
     }
 
-    private boolean Print() { // revisar...
-
+    private boolean Print() {
+        System.out.println("PRINT");
         if (validarToken("print")) {
-            if (!validarToken("(")) {
-                errosSemanticos++;
-                String mensagemErro = "- Faltou o ( do print ";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
+            if (validarToken("(")) {
+                if (saida()) {
+                    if (outrasSaidas()) {
+                        if (validarToken(")")) {
+                            return true;
+                        }
+                    }
+                }
             }
-            saida();
-            outrasSaidas();
-            if (!validarToken(")")) {
-                errosSemanticos++;
-                String mensagemErro = "- Faltou o ) do print ";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-                System.out.println("FALTOU O ) DO PRINT");
-                //panicMode("listaDeInstrucoes");
-            }
-            return true;
         }
-
+        System.out.println("SAIDA PRINT");
         return false;
     }
 
     private boolean scan() {
-
+        System.out.println("SCAN");
         if (validarToken("scan")) {
-            if (!validarToken("(")) {
-                errosSemanticos++;
-                String mensagemErro = "- Faltou o ( do scan";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-                System.out.println("FALTOU O ( DO SCAN");
-                //panicMode("entrada");
+            if (validarToken("(")) {
+                if (entrada()) {
+                    if (outrasEntradas()) {
+                        if (validarToken(")")) {
+                            return true;
+                        }
+                    }
+                }
             }
-            entrada();
-            outrasEntradas();
-            if (!validarToken(")")) {
-                errosSemanticos++;
-                String mensagemErro = "- Faltou o ) do scan ";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-                System.out.println("FALTOU O ) DO SCAN");
-                //panicMode("listaDeInstrucoes");
-            }
-            return true;
         }
-
+        System.out.println("SAIDA SCAN");
         return false;
     }
 
     private boolean estruturaCondicional() {
         if (ifThen()) {
-            estruturaCondicionalAux();
-            return true;
+            if (estruturaCondicionalAux()) {
+                return true;
+            }
         }
         return false;
     }
 
     private boolean While() {
-
+        System.out.println("WHILE");
         if (validarToken("while")) {
-            if (!validarToken("(")) {
-                String mensagemErro = "- Faltou ( do while ";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
-                panicMode("expressao");
+            if (validarToken("(")) {
+                if (expressao()) {
+                    if (validarToken(")")) {
+                        if (bloco()) {
+                            return true;
+                        }
+                    }
+                }
             }
-            if (!expressao()) {
-                errosSemanticos++;
-                String mensagemErro = "- Faltou a expressão do While";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
-            }
-            if (!validarToken(")")) {
-                String mensagemErro = "- Faltou ) do while ";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-                panicMode("bloco");
-            }
-            bloco();
-            return true;
         }
-
+        System.out.println("SAIDA WHILE");
         return false;
     }
 
     private boolean declaracaoDeTypedef() {
-
+        System.out.println("DECLARACAO DE TYPEDEF");
         if (validarToken("typedef")) {
-            declaracaoDeTypedefAux();
-            return true;
+            if (declaracaoDeTypedefAux()) {
+                return true;
+            }
         }
-
+        System.out.println("SAIDA DECLARACAO DE TYPEDEF");
         return false;
     }
 
     private boolean Final() {
-
+        System.out.println("FINAL");
         if (validarToken("IDE")) {
-
+            System.out.println("------------------------------------------------------------------ 4- " + contador);
+            System.out.println("10");
             if (acessando()) {
                 return true;
             }
             tokenAnterior(1);
         }
-
+        System.out.println("SAIDA FINAL");
         return false;
     }
 
     private boolean expressao() {
-
+        System.out.println("EXPRESSAO");
         if (opE()) {
-            expressaoAux();
-            return true;
+            if (expressaoAux()) {
+                return true;
+            }
         }
-
+        System.out.println("SAIDA EXPRESSAO");
         return false;
     }
 
     private boolean instrucaoDeRetornoAux() {
-
-        expressao();
+        System.out.println("INSTRUCAO DE RETORNO AUX");
+        if (expressao()) {
+            return true;
+        }
+        System.out.println("SAIDA INSTRUCAO DE RETORNO AUX");
         return true;
     }
 
     private boolean saida() {
-
+        System.out.println("SAIDA");
         if (expressao()) {
             return true;
         }
-
+        System.out.println("SAIDA SAIDA");
         return false;
     }
 
     private boolean outrasSaidas() {
-
+        System.out.println("OUTRAS SAIDAS");
         if (validarToken(",")) {
-            saida();
-            if (outrasSaidas()) {
-                return true;
+            if (saida()) {
+                if (outrasSaidas()) {
+                    return true;
+                }
             }
         }
-
+        System.out.println("SAIDA OUTRAS SAIDAS");
         return true;
     }
 
     private boolean entrada() {
-        Final();
-        if (!validarToken("IDE")) {
-            errosSemanticos++;
-            String mensagemErro = "- Faltou o identificador";
-            this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-            System.out.println("- Faltou o identificador");
+        System.out.println("ENTRADAS");
+        if (Final()) {
+            return true;
+        } else if (validarToken("IDE")) {
+            //System.out.println("11");
             return true;
         }
-
+        System.out.println("SAIDA ENTRADAS");
         return false;
     }
 
     private boolean outrasEntradas() {
-
+        System.out.println("OUTRAS ENTRADAS");
         if (validarToken(",")) {
-            entrada();
-            if (outrasEntradas()) {
-                return true;
+            if (entrada()) {
+                if (outrasEntradas()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
             }
         }
-
+        System.out.println("SAIDA OUTRAS ENTRADAS");
         return true;
     }
 
-    private boolean estruturaCondicionalAux() {
+    private boolean ifThen() {
+        System.out.println("IF THEN");
+        if (validarToken("if")) {
+            if (validarToken("(")) {
+                if (expressao()) {
+                    if (validarToken(")")) {
+                        if (validarToken("then")) {
+                            if (bloco()) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("SAIDA IF THEN");
+        return false;
+    }
 
+    private boolean estruturaCondicionalAux() {
+        System.out.println("ESTRUTURA CONDICIONAL AUX");
         if (validarToken("else")) {
             if (bloco()) {
                 return true;
+            } else {
+                return false;
             }
         }
-
+        System.out.println("SAIDA ESTRUTURA CONDICIONAL AUX");
         return true;
     }
 
     private boolean declaracaoDeVariavelCorpo() {
-
+        System.out.println("DECLARACAO DE VARIAVEL CORPO");
         if (declaracaoDeVariavelLinha()) {
             if (declaracaoDeVariavelCorpoAux()) {
                 return true;
             }
         }
-
+        System.out.println("SAIDA DECLARACAO DE VARIAVEL CORPO");
         return false;
     }
 
     private boolean declaracaoDeVariavelLinha() {
-
+        System.out.println("DECLARACAO DE VARIAVEL CORPO");
         if (tipo()) {
             if (expressaoIdentificadoresVar()) {
                 return true;
             }
         }
-
+        System.out.println("SAIDA DECLARACAO DE VARIAVEL CORPO");
         return false;
     }
 
     private boolean declaracaoDeVariavelCorpoAux() {
-
+        System.out.println("DECLARACAO DE VARIAVEL CORPO AUX");
         if (declaracaoDeVariavelCorpo()) {
             return true;
         }
-
+        System.out.println("SAIDA DECLARACAO DE VARIAVEL CORPO AUX");
         return true;
     }
 
     private boolean expressaoIdentificadoresVar() {
-
+        System.out.println("EXPRESSAO IDENTIFICADORES VAR");
         if (expressaoIdentificadorVar()) {
-
+            if (expressaoIdentificadoresVarAux()) {
+                return true;
+            }
         }
-        if (expressaoIdentificadoresVarAux()) {
-            return true;
-        }
-
+        System.out.println("SAIDA EXPRESSAO IDENTIFICADORES VAR");
         return false;
     }
 
     private boolean expressaoIdentificadorVar() {
-
+        System.out.println("EXPRESSAO IDENTIFICADOR VAR");
         if (validarToken("IDE")) {
             variavelAtual.setNome(tokenAnterior.getNome());
-        } else {
-            panicMode("expressaoIdentificadorVarAux");
-
-            String mensagemErro = "- Faltou o Identificador";
-            this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
+            System.out.println("12");
+            if (expressaoIdentificadorVarAux()) {
+                return true;
+            }
+            /**
+             * ****************************** VERIFICAR
+             * *******************************
+             */
+            //tokenAnterior(1);
+            /**
+             * ************************************************************************
+             */
         }
-        if (expressaoIdentificadorVarAux()) {
-            return true;
-        }
-
+        System.out.println("SAIDA EXPRESSAO IDENTIFICADOR VAR");
         return false;
     }
 
     private boolean expressaoIdentificadoresVarAux() {
-
-        if (tokenAtual.getTipo().equals("IDE")) {
-            errosSemanticos++;
-            String mensagemErro = "- Faltou a ,";
-            this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-        }
-        if (validarToken(",") || tokenAtual.getTipo().equals("IDE")) {
+        System.out.println("EXPRESSAO IDENTIFICADORES VAR AUX");
+        if (validarToken(";")) {
+            return true;
+        } else if (validarToken(",")) {
             if (expressaoIdentificadoresVar()) {
+                return true;
             }
-            return true;
         }
-        if (!validarToken(";")) {
-            errosSemanticos++;
-            String mensagemErro = "- Faltou o ;";
-            this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-            return true;
-        }
-
-        return true;
+        System.out.println("SAIDA EXPRESSAO IDENTIFICADOR VAR AUX");
+        return false;
     }
 
     private boolean expressaoIdentificadorVarAux() {
-
+        System.out.println("EXPRESSAO IDENTIFICADOR VAR AUX");
         if (validarToken("=")) {
             if (expressao()) {
                 return true;
-            }//if (showProx().getTipo().equals("IDE")) {
+            } else {
+                return false;
+            }
         }
-
+        System.out.println("SAIDA EXPRESSAO IDENTIFICADOR VAR AUX");
         return true;
     }
 
     private boolean declaracaoDeConstanteCorpo() {
-
+        System.out.println("DECLARACAO DE CONSTANTE CORPO");
         if (declaracaoDeConstanteLinha()) {
             if (declaracaoDeConstanteCorpoAux()) {
                 return true;
             }
         }
-
+        System.out.println("SAIDA DECLARACAO DE CONSTANTE CORPO");
         return false;
     }
 
     private boolean declaracaoDeConstanteLinha() {
-
+        System.out.println("DECLARACAO DE CONSTANTE LINHA");
         if (tipo()) {
             if (expressaoIdentificadoresConst()) {
                 return true;
             }
         }
-
+        System.out.println("DECLARACAO DE CONSTANTE LINHA");
         return false;
     }
 
-    /**
-     * comecei a partir daqui >>>>>>
-     *
-     */
     private boolean declaracaoDeConstanteCorpoAux() {
-
+        System.out.println("DECLARACAO DE CONSTANTE CORPO AUX");
         if (declaracaoDeConstanteCorpo()) {
             return true;
         }
-
+        System.out.println("SAIDA DECLARACAO DE CONSTANTE CORPO AUX");
         return true;
     }
 
     private boolean expressaoIdentificadoresConst() {
-
+        System.out.println("EXPRESSAO IDENTIFICADORES CONST");
         if (expressaoIdentificadorConst()) {
-            expressaoIdentificadoresConstAux();
-            return true;
+            if (expressaoIdentificadoresConstAux()) {
+                return true;
+            }
         }
-
+        System.out.println("SAIDA EXPRESSAO IDENTIFICADORES CONST");
         return false;
     }
 
     /* VERIFICAR TOKEN ANTERIOR NO CONST*/
     private boolean expressaoIdentificadorConst() {
-
+        System.out.println("EXPRESSAO IDENTIFICADOR CONST");
         if (validarToken("IDE")) {
             variavelAtual.setConstante(true);
             variavelAtual.setNome(tokenAnterior.getNome());
-            if (!validarToken("=")) {
-                errosSemanticos++;
-                String mensagemErro = "- Faltou o = da expressão";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
+            System.out.println("13");
+            if (validarToken("=")) {
+                if (expressao()) {
+                    return true;
+                }
+                //tokenAnterior(2);
             }
-            if (!expressao()) {
-                errosSemanticos++;
-                String mensagemErro = "- Faltou informar o valor do atributo";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-            }
-            return true;
             //tokenAnterior(1);
         }
-
+        System.out.println("SAIDA EXPRESSAO IDENTIFICADOR CONST");
         return false;
     }
 
-    /*
-    private boolean expressaoIdentificadoresConstAux() {
-
-        if (tokenAtual.getTipo().equals("IDE")) {
-            errosSemanticos++;
-            String mensagemErro = "- Faltou a ,";
-            this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-        }
-        if (validarToken(",") || tokenAtual.getTipo().equals("IDE")) {
-            if (expressaoIdentificadoresConst()) {
-                return true;
-            }
-        }
-        if (!validarToken(";")) {
-            errosSemanticos++;
-            String mensagemErro = "- Faltou o ;";
-            this.StringErrosSintaticos = this.StringErrosSintaticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-            return true;
-        }
-
-        return true;
-    }
-     */
     private boolean expressaoIdentificadoresConstAux() {
         System.out.println("EXPRESSAO IDENTIFICADORES CONST AUX");
-        if (tokenAtual.getTipo().equals("IDE")) {
-            errosSemanticos++;
-            String mensagemErro = "- Faltou a ,";
-            this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-            System.out.println("Faltou a ,");
-        }
-        if (validarToken(",") || tokenAtual.getTipo().equals("IDE")) {
+        if (validarToken(";")) {
+            return true;
+        } else if (validarToken(",")) {
             if (expressaoIdentificadoresConst()) {
                 return true;
             }
         }
-        if (!validarToken(";")) {
-            errosSemanticos++;
-            String mensagemErro = "- Faltou o ;";
-            this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-            System.out.println("Faltou o ;");
-            return true;
-        }
-
-        System.out.println("SAIDA EXPRESSAO IDENTIFICADOR CONST AUX");
-        return true;
+        System.out.println("SAIDA EXPRESSAO IDENTIFICADORES CONST AUX");
+        return false;
     }
 
     private boolean declaracaoDeTypedefAux() {
-
-        if (!tipo()) {
-            errosSemanticos++;
-            String mensagemErro = "- Faltou o tipo do Typedef";
-            this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
+        System.out.println("DECLARACAO DE TYPEDEF AUX");
+        if (tipo()) {
+            if (validarToken("IDE")) {
+                System.out.println("14");
+                if (validarToken(";")) {
+                    return true;
+                }
+            }
         }
-        if (!validarToken("IDE")) {
-            errosSemanticos++;
-            String mensagemErro = "- Faltou o identificador do typedef";
-            this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-            System.out.println("Faltou o identificador do typedef");
-            //panicMode("listaDeInstrucoes");
-        }
-        if (!validarToken(";")) {
-            errosSemanticos++;
-            String mensagemErro = "- Faltou ; do typedef ";
-            this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-            System.out.println("FALTOU O ; NA DECLARACAO DE TYPEDEF ");
-            //panicMode("listaDeInstrucoes");
-
-        }
-        if (!validarToken(";")) {
-            errosSemanticos++;
-            String mensagemErro = "- Faltou ; do typedef ";
-            this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAnterior.getLinha() + "\n";
-
-            //panicMode("listaDeInstrucoes");
-        }
-
+        System.out.println("SAIDA DECLARACAO DE TYPEDEF AUX");
         return false;
     }
 
     private boolean acessando() {
-
+        System.out.println("ACESSANDO");
         if (acesso()) {
-            acessandoAux();
-            return true;
+            if (acessandoAux()) {
+                return true;
+            }
         }
-
+        System.out.println("SAIDA ACESSANDO");
         return false;
     }
 
     private boolean acesso() {
-
+        System.out.println("ACESSO");
         if (validarToken(".")) {
-            if (!validarToken("IDE")) {
-                String mensagemErro = "- Faltou identificador no acesso ";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
-                panicMode("listaDeInstrucoes");
+            if (validarToken("IDE")) {
+                System.out.println("15");
+                return true;
             }
-            return true;
         } else if (validarToken("[")) {
-            expressao();
-            if (!validarToken("]")) {
-                String mensagemErro = "- Faltou ] ";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
-                panicMode("listaDeInstrucoes");
+            if (expressao()) {
+                if (validarToken("]")) {
+                    return true;
+                }
             }
-            return true;
         }
-
+        System.out.println("SAIDA ACESSO");
         return false;
     }
 
     private boolean acessandoAux() {
-
-        acessando();
-
+        System.out.println("ACESSANDO AUX");
+        if (acessando()) {
+            return true;
+        }
+        System.out.println("SAIDA ACESSANDO AUX");
         return true;
     }
 
     private boolean opE() {
-
+        System.out.println("OPE");
         if (opRelacional()) {
-            opEAux();
-            return true;
+            if (opEAux()) {
+                return true;
+            }
         }
-
+        System.out.println("SAIDA OPE");
         return false;
     }
 
     private boolean expressaoAux() {
-
+        System.out.println("EXPRESSAO AUX");
         if (validarToken("||")) {
             if (expressao()) {
                 return true;
@@ -1353,79 +1128,96 @@ public class AnalisadorSemantico {
                 return false;
             }
         }
-
+        System.out.println("SAIDA EXPRESSAO AUX");
         return true;
     }
 
     private boolean opRelacional() {
-
+        System.out.println("OP RELACIONAL");
         if (valorRelacional()) {
-            opRelacionalAux();
-            return true;
+            if (opRelacionalAux()) {
+                return true;
+            }
         }
-
+        System.out.println("SAIDA OP RELACIONAL");
         return false;
     }
 
     private boolean opEAux() {
-
+        System.out.println("OP AUX");
         if (validarToken("&&")) {
-            opE();
-            return true;
+            if (opE()) {
+                return true;
+            } else {
+                return false;
+            }
         }
-
+        System.out.println("SAIDA OP AUX");
         return true;
     }
 
     private boolean valorRelacional() {
-
+        System.out.println("VALOR RELACIONAL");
         if (opMult()) {
-            valorRelacionalAux();
-            return true;
-
+            if (valorRelacionalAux()) {
+                return true;
+            }
         }
-
+        System.out.println("SAIDA VALOR RELACIONAL");
         return false;
     }
 
     private boolean opRelacionalAux() {
-
+        System.out.println("OP RELACIONAL AUX");
         if (escalarRelacional()) {
-            opRelacional();
-            return true;
+            if (opRelacional()) {
+                return true;
+            }
         }
-
+        System.out.println("SAIDA OP RELACIONAL AUX");
         return true;
     }
 
     private boolean opMult() {
-
+        System.out.println("OP MULT");
         if (opUnary()) {
-            opMultAux();
-            return true;
+            if (opMultAux()) {
+                return true;
+            }
         }
-
+        System.out.println("SAIDA OP MULT");
         return false;
     }
 
     private boolean valorRelacionalAux() {
-
+        System.out.println("VALOR RELACIONAL AUX");
         if (validarToken("+")) {
-            opMult();
-            valorRelacionalAux();
-            return true;
-
+            if (opMult()) {
+                if (valorRelacionalAux()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         } else if (validarToken("-")) {
-            opMult();
-            valorRelacionalAux();
-            return true;
+            if (opMult()) {
+                if (valorRelacionalAux()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         }
-
+        System.out.println("SAIDA VALOR RELACIONAL AUX");
         return true;
     }
 
     private boolean escalarRelacional() {
-
+        System.out.println("ESCALAR RELACIONAL");
         if (validarToken("!=")) {
             return true;
         } else if (validarToken("==")) {
@@ -1439,12 +1231,15 @@ public class AnalisadorSemantico {
         } else if (validarToken(">=")) {
             return true;
         }
-
+        System.out.println("SAIDA ESCALAR RELACIONAL");
         return false;
     }
 
+    /*
+     * VALOR E FINAL POSSUEM O IDENTIFICADOR COMO PRIMEIRO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     */
     private boolean opUnary() {
-
+        System.out.println("OP UNARY");
         if (validarToken("!")) {
             if (opUnary()) {
                 return true;
@@ -1466,47 +1261,62 @@ public class AnalisadorSemantico {
                 return true;
             }
         }
-
+        System.out.println("SAIDA OP UNARY");
         return false;
     }
 
     private boolean opMultAux() {
-
+        System.out.println("OP MULT AUX");
         if (validarToken("*")) {
-            opUnary();
-            opMultAux();
-            return true;
-
+            if (opUnary()) {
+                if (opMultAux()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         } else if (validarToken("/")) {
-            opUnary();
-            opMultAux();
-            return true;
+            if (opUnary()) {
+                if (opMultAux()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         }
-
+        System.out.println("SAIDA OP MULT AUX");
         return true;
     }
 
     private boolean simboloUnario() {
-
+        System.out.println("SIMBOLO UNARIO");
         if (validarToken("++")) {
             return true;
         } else if (validarToken("--")) {
             return true;
         }
-
+        System.out.println("SAIDA SIMBOLO UNARIO");
         return true;
     }
 
     private boolean valor() {
-
-        if (validarToken("(")) {
-            expressao();
-            if (!validarToken(")")) {
-                String mensagemErro = "- Faltou ) ";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-                panicMode("simboloUnario");
+        System.out.println("VALOR");
+        if (validarToken("IDE")) {
+            System.out.println("16");
+            if (valorAux1()) {
+                return true;
             }
-            return true;
+            tokenAnterior(1);
+        } else if (validarToken("(")) {
+            if (expressao()) {
+                if (validarToken(")")) {
+                    return true;
+                }
+            }
         } else if (validarToken("NRO")) {
             return true;
         } else if (validarToken("CAD")) {
@@ -1515,320 +1325,59 @@ public class AnalisadorSemantico {
             return true;
         } else if (validarToken("false")) {
             return true;
-        } else if (validarToken("IDE")) {
-
-            if (valorAux1()) {
-                return true;
-            }
-            tokenAnterior(1);
         }
-
+        System.out.println("SAIDA VALOR");
         return false;
     }
 
     private boolean valorAux1() {
-
+        System.out.println("VALOR AUX1");
         if (validarToken("(")) {
-            valorAux2();
+            if (valorAux2()) {
+                return true;
+            } else {
+                return false;
+            }
         }
-
+        System.out.println("SAIDA VALOR AUX1");
         return true;
     }
 
     private boolean valorAux2() {
-
+        System.out.println("VALOR AUX 2");
         if (parametrosFuncao()) {
-            if (!validarToken(")")) {
-                String mensagemErro = "- Faltou ) ";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
-                panicMode("simboloUnario");
+            if (validarToken(")")) {
+                return true;
             }
+        } else if (validarToken(")")) {
             return true;
-        } else if (!validarToken(")")) {
-            panicMode("simboloUnario");
         }
-
+        System.out.println("SAIDA VALOR AUX 2");
         return false;
     }
 
     private boolean parametrosFuncao() {
-
+        System.out.println("PARAMETROS FUNCAO");
         if (expressao()) {
-            parametrosFuncaoAux();
-            return true;
+            if (parametrosFuncaoAux()) {
+                return true;
+            }
         }
-
+        System.out.println("SAIDA PARAMETROS FUNCAO");
         return false;
     }
 
     private boolean parametrosFuncaoAux() {
-
-        if (!validarToken(",")) {
-            if (!tokenAtual.getNome().equals(")")) { ///////////////////////***//**/*/**/*/*/*/*/*//*/**/*/*/*/*/*/*/*/
-                String mensagemErro = "- Faltou , ";
-                this.StringErrosSemanticos = this.StringErrosSemanticos + mensagemErro + " na linha:" + tokenAtual.getLinha() + "\n";
-
-                panicMode("parametros");
+        System.out.println("PARAMETROS FUNCAO AUX");
+        if (validarToken(",")) {
+            if (parametrosFuncao()) {
+                return true;
+            } else {
+                return false;
             }
-            return true;
         }
-        parametrosFuncao();
-
+        System.out.println("SAIDA SPARAMETROS FUNCAO AUX");
         return true;
-    }
-
-    private boolean firstForaDeBloco() {
-        return tokenAtual.getNome().equals("const") || tokenAtual.getNome().equals("var") || tokenAtual.getNome().equals("struct")
-                || tokenAtual.getNome().equals("typedef") || tokenAtual.getNome().equals("procedure") || tokenAtual.getNome().equals("function")
-                || tokenAtual.getNome().equals("return") || tokenAtual.getNome().equals("start")
-                || tokenAtual.getNome().equals("then") || tokenAtual.getNome().equals("else") || tokenAtual.getNome().equals("while")
-                || tokenAtual.getNome().equals("scan") || tokenAtual.getNome().equals("print") || tokenAtual.getNome().equals("int")
-                || tokenAtual.getNome().equals("float") || tokenAtual.getNome().equals("bool") || tokenAtual.getNome().equals("string")
-                || tokenAtual.getNome().equals("true") || tokenAtual.getNome().equals("false") || tokenAtual.getNome().equals("extends");
-    }
-
-    private boolean firstDentroDeBloco() {
-        return tokenAtual.getNome().equals("int") || tokenAtual.getNome().equals("float") || tokenAtual.getTipo().equals("IDE")
-                || tokenAtual.getNome().equals("string") || tokenAtual.getNome().equals("bool");
-
-    }
-
-    /**
-     * Procura o proximo token de sincronização
-     */
-    private void searchNextExpressao() {
-        if (tokenAtual.getNome().equals("--") || tokenAtual.getNome().equals("!") || tokenAtual.getNome().equals("(")
-                || tokenAtual.getNome().equals("++") || tokenAtual.getTipo().equals("CAD")
-                || tokenAtual.getTipo().equals("DIG") || tokenAtual.getNome().equals("false")
-                || tokenAtual.getTipo().equals("IDE") || tokenAtual.getNome().equals("true")) {
-
-        } else if (firstForaDeBloco()) {
-
-        } else if (firstDentroDeBloco()) {
-
-        } else if (proximoToken()) {
-            searchNextExpressao();
-        }
-    }
-
-    private void searchNextThen() {
-        if (tokenAtual.getNome().equals("then")) {
-        } else if (firstForaDeBloco()) {
-
-        } else if (firstDentroDeBloco()) {
-
-        } else if (proximoToken()) {
-            searchNextThen();
-        }
-    }
-
-    private void searchNextBloco() {
-
-        if (tokenAtual.getNome().equals("{")) {
-
-        } else if (firstForaDeBloco()) {
-
-        } else if (firstDentroDeBloco()) {
-
-        } else if (proximoToken()) {
-            searchNextBloco();
-        }
-    }
-
-    private void searchNextListaDeInstrucoes() {
-        if (tokenAtual.getNome().equals("--") || tokenAtual.getNome().equals("!")
-                || tokenAtual.getNome().equals("(") || tokenAtual.getNome().equals("++")
-                || tokenAtual.getTipo().equals("CAD") || tokenAtual.getTipo().equals("DIG")
-                || tokenAtual.getNome().equals("false") || tokenAtual.getTipo().equals("IDE")
-                || tokenAtual.getNome().equals("print") || tokenAtual.getNome().equals("return")
-                || tokenAtual.getNome().equals("scan") || tokenAtual.getNome().equals("struct")
-                || tokenAtual.getNome().equals("true") || tokenAtual.getNome().equals("typedef")
-                || tokenAtual.getNome().equals("var") || tokenAtual.getNome().equals("while")
-                || tokenAtual.getNome().equals(")")) {
-
-        } else if (firstDentroDeBloco()) {
-
-        } else if (proximoToken()) {
-            searchNextListaDeInstrucoes();
-        }
-    }
-
-    private void searchNextstructCorpo() {
-        if (tokenAtual.getNome().equals("bool") || tokenAtual.getNome().equals("float")
-                || tokenAtual.getTipo().equals("IDE") || tokenAtual.getNome().equals("int")
-                || tokenAtual.getNome().equals("string") || tokenAtual.getNome().equals("struct")) {
-        } else if (firstForaDeBloco()) {
-
-        } else if (firstDentroDeBloco()) {
-
-        } else if (proximoToken()) {
-            searchNextstructCorpo();
-        }
-    }
-
-    private void searchNextSaida() {
-        if (tokenAtual.getNome().equals("--") || tokenAtual.getNome().equals("!")
-                || tokenAtual.getNome().equals("(") || tokenAtual.getNome().equals("++")
-                || tokenAtual.getTipo().equals("CAD") || tokenAtual.getTipo().equals("DIG")
-                || tokenAtual.getNome().equals("false") || tokenAtual.getTipo().equals("IDE")
-                || tokenAtual.getNome().equals("true")) {
-        } else if (firstDentroDeBloco()) {
-
-        } else if (proximoToken()) {
-            searchNextSaida();
-        }
-    }
-
-    private void searchNextEntrada() {
-        if (tokenAtual.getTipo().equals("IDE")) {
-        } else if (firstDentroDeBloco()) {
-        } else if (proximoToken()) {
-            searchNextEntrada();
-        }
-    }
-
-    private void searchNextDeclaracaoDeStructCorpo() {
-        if (tokenAtual.getNome().equals("bool") || tokenAtual.getNome().equals("float")
-                || tokenAtual.getTipo().equals("IDE") || tokenAtual.getNome().equals("int")
-                || tokenAtual.getNome().equals("string") || tokenAtual.getNome().equals("struct")) {
-        } else if (firstDentroDeBloco()) {
-        } else if (firstForaDeBloco()) {
-        } else if (proximoToken()) {
-            searchNextDeclaracaoDeStructCorpo();
-        }
-    }
-
-    private void searchNextFuncaoProcedimentoFim() {
-        if (tokenAtual.getNome().equals(")") || tokenAtual.getNome().equals("bool")
-                || tokenAtual.getNome().equals("float") || tokenAtual.getTipo().equals("IDE")
-                || tokenAtual.getNome().equals("int") || tokenAtual.getNome().equals("string")
-                || tokenAtual.getNome().equals("struct")) {
-        } else if (firstForaDeBloco()) {
-
-        } else if (proximoToken()) {
-            searchNextFuncaoProcedimentoFim();
-        }
-    }
-
-    private void searchNextDeclaracaoDeVariavelCorpo() {
-        if (tokenAtual.getNome().equals("bool") || tokenAtual.getNome().equals("float")
-                || tokenAtual.getTipo().equals("IDE") || tokenAtual.getNome().equals("int")
-                || tokenAtual.getNome().equals("string") || tokenAtual.getNome().equals("struct")) {
-        } else if (firstForaDeBloco()) {
-
-        } else if (firstDentroDeBloco()) {
-
-        } else if (proximoToken()) {
-            searchNextDeclaracaoDeVariavelCorpo();
-        }
-    }
-
-    private void searchNextDeclaracao() {
-        if (tokenAtual.getNome().equals("const") || tokenAtual.getNome().equals("function")
-                || tokenAtual.getNome().equals("procedure") || tokenAtual.getNome().equals("start")
-                || tokenAtual.getNome().equals("typedef") || tokenAtual.getNome().equals("var")) {
-
-        } else if (proximoToken()) {
-            searchNextDeclaracao();
-        }
-    }
-
-    private void searchNextDeclaracaoDeConstanteCorpo() {
-        if (tokenAtual.getNome().equals("bool") || tokenAtual.getNome().equals("float")
-                || tokenAtual.getTipo().equals("IDE") || tokenAtual.getNome().equals("int")
-                || tokenAtual.getNome().equals("string") || tokenAtual.getNome().equals("struct")) {
-        } else if (firstForaDeBloco()) {
-
-        } else if (firstDentroDeBloco()) {
-
-        } else if (proximoToken()) {
-            searchNextDeclaracaoDeConstanteCorpo();
-        }
-    }
-
-    private void searchNextTipoAux() {
-        if (tokenAtual.getNome().equals("[")) {
-        } else if (firstDentroDeBloco()) {
-
-        } else if (proximoToken()) {
-            searchNextTipoAux();
-        }
-    }
-
-    private void searchNextExpressaoIdentificadoresStruct() {
-        if (tokenAtual.getTipo().equals("IDE")) {
-        } else if (firstForaDeBloco()) {
-
-        } else if (firstDentroDeBloco()) {
-
-        } else if (proximoToken()) {
-            searchNextExpressaoIdentificadoresStruct();
-        }
-    }
-
-    private void searchNextTipoVetorDeclarando() {
-        if (tokenAtual.getNome().equals("{")) {
-        } else if (firstDentroDeBloco()) {
-
-        } else if (proximoToken()) {
-            searchNextTipoVetorDeclarando();
-        }
-    }
-
-    private void searchNextParametroAux() {
-        if (tokenAtual.getNome().equals(",")) {
-        } else if (firstForaDeBloco()) {
-
-        } else if (firstDentroDeBloco()) {
-
-        } else if (proximoToken()) {
-            searchNextParametroAux();
-        }
-    }
-
-    private void searchNextParametros() {
-        if (tokenAtual.getNome().equals("bool") || tokenAtual.getNome().equals("float")
-                || tokenAtual.getTipo().equals("IDE") || tokenAtual.getNome().equals("int")
-                || tokenAtual.getNome().equals("string") || tokenAtual.getNome().equals("struct")) {
-        } else if (firstForaDeBloco()) {
-
-        } else if (firstDentroDeBloco()) {
-
-        } else if (proximoToken()) {
-            searchNextParametros();
-        }
-    }
-
-    private void searchNextSimboloUnario() {
-        if (tokenAtual.getNome().equals("--") || tokenAtual.getNome().equals("++")) {
-        } else if (firstDentroDeBloco()) {
-
-        } else if (proximoToken()) {
-            searchNextSimboloUnario();
-        }
-    }
-
-    private void searchNextExpressaoIdentificadorVarAux() {
-        if (tokenAtual.getNome().equals("=") || tokenAtual.getNome().equals(",") || tokenAtual.getNome().equals(";")) {
-        } else if (firstForaDeBloco()) {
-
-        } else if (firstDentroDeBloco()) {
-
-        } else if (proximoToken()) {
-            searchNextExpressaoIdentificadorVarAux();
-        }
-    }
-
-    private void searchNextExpressaoIdentificadoresVarAux() {
-        if (tokenAtual.getNome().equals(",") || tokenAtual.getNome().equals(";")) {
-        } else if (firstForaDeBloco()) {
-
-        } else if (firstDentroDeBloco()) {
-
-        } else if (proximoToken()) {
-            searchNextExpressaoIdentificadoresVarAux();
-        }
     }
 
     private void addVariavel() {
