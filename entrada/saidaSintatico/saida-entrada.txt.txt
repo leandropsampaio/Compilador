@@ -1,6 +1,7 @@
 Análise Sintática iniciada para o arquivo entrada.txt
 
-- Faltou o fecha } do bloco na linha:2
+- Faltou ; do typedef  na linha:5
+- Faltou o ; na linha:8
 
 
 Análise Sintática finalizada com erro para o arquivo entrada.txt
