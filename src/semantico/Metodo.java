@@ -101,21 +101,19 @@ public class Metodo {
             System.out.println(nome);
             System.out.println(m.getNome());
             if (m.getNome().equals(nome)) { //verifica se os nomes são iguais
-                System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
                 Iterator iterador = this.parametros.listIterator();
+                Iterator iterador2 = m.getParametros().listIterator();
                 while (iterador.hasNext()) {
-                    Token token = (Token) iterador.next();
-                    System.out.println(token.getNome());
+                    Variavel parametro = (Variavel) iterador.next();
+                    Variavel parametro2 = (Variavel) iterador2.next();
+                    if (parametro.getTipo().equals(parametro2.getTipo())) {
+                    } else {
+                        return false;
+                    }
                 }
 
-                iterador = m.getParametros().listIterator();
-                while (iterador.hasNext()) {
-                    Token token = (Token) iterador.next();
-                    System.out.println(token.getNome());
-                }
-                if (m.getParametros().equals(parametros)) {
-                    return true;
-                }
+                return true;
+
             }
         }
         return false;

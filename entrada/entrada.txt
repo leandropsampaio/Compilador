@@ -6,18 +6,14 @@ start () {
 
 }
 
-function  int a (int abc) {
-    var{
-int a;
-int abc;
+function  int a (int aaa, int bbb) {
+	
 }
 
+function  int aaa (int aaa, int ccc) {
+	
+}
  
-}
-
-   var{
-int a;
-int abc;
 }
 
 
