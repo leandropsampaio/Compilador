@@ -2,22 +2,23 @@ start () {
 
 }
 
-start () {
 
-}
 
 function  int a (int abc) {
     var{
-int a;
-int abc;
+      int a;
+      int as;
+       }
 }
 
- 
+var{
+  int a;
+  int abc;
 }
 
-   var{
-int a;
-int abc;
+var{
+  int a;
+  int abc;
 }
 
 

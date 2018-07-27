@@ -319,7 +319,7 @@ public class AnalisadorSemantico {
     private boolean tipobase() {
         System.out.println("TIPO BASE");
         variavelAtual = new Variavel();
-        if (escalar()) {
+        if (escalar()) {            
             variavelAtual.setTipo(tokenAnterior.getNome());
             return true;
         } else if (declaracaoDeStruct()) {
@@ -524,19 +524,21 @@ public class AnalisadorSemantico {
         linhaErro = tokenAtual.getLinha();
         if (parametros()) {
             if (validarToken(")")) {
-
                 metodoAtual.setParametros(parametrosAtuais);
                 if (bloco()) {
                     addMetodo();
+                    metodoAtual = null;
                     return true;
                 }
             }
         } else if (validarToken(")")) {
             if (bloco()) {
                 addMetodo();
+                metodoAtual = null;
                 return true;
             }
         }
+        
         System.out.println("FIM PROCEDIMENTO FIM");
         return false;
     }
@@ -912,6 +914,7 @@ public class AnalisadorSemantico {
                 return false;
             }
         }
+        metodoAtual = null;
         System.out.println("SAIDA ESTRUTURA CONDICIONAL AUX");
         return true;
     }
@@ -930,8 +933,8 @@ public class AnalisadorSemantico {
     private boolean declaracaoDeVariavelLinha() {
         System.out.println("DECLARACAO DE VARIAVEL CORPO");
         if (tipo()) {
-            if (expressaoIdentificadoresVar()) {
-                addVariavel();
+            if (expressaoIdentificadoresVar()) {                
+                addVariavel();                
                 return true;
             }
         }
@@ -967,14 +970,7 @@ public class AnalisadorSemantico {
             if (expressaoIdentificadorVarAux()) {
                 return true;
             }
-            /**
-             * ****************************** VERIFICAR
-             * *******************************
-             */
-            //tokenAnterior(1);
-            /**
-             * ************************************************************************
-             */
+          
         }
         System.out.println("SAIDA EXPRESSAO IDENTIFICADOR VAR");
         return false;
@@ -1406,7 +1402,9 @@ public class AnalisadorSemantico {
     }
 
     private void addVariavel() {
+        
         if (metodoAtual == null) {
+            
             if (!global.addVariavel(variavelAtual)) {
                 //erro ao add variavel
                 salvarMensagemArquivo("Variável global já existente com esse nome. Linha: " + tokenAnterior.getLinha());
