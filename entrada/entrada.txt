@@ -1,39 +1,14 @@
-start () {
+start(){
 
-}
-
-
-
-<<<<<<< HEAD
-function  int a (int abc) {
-    var{
-      int a;
-      int as;
-       }
-}
-
-var{
-  int a;
-  int abc;
-}
-
-var{
-  int a;
-  int abc;
-=======
-function  int a (int aaa, int bbb) {
+    var {
+	int nome;
+        int[] vetor1 = 10;
+        float[][] vetor2;
+        bool[] vetor3, vetor4;
+        nomeStruct[] vetor5;
+	}
 	
-}
-
-function  int aaa (int aaa, int ccc) {
+	vetor12[nome] = 10;
 	
+
 }
- 
->>>>>>> 92489f2ff11da9c99877f1204f443440bb814cfa
-}
-
-
-
-
-
-

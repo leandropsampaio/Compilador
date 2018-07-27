@@ -1,4 +1,4 @@
-    package analisadorSemantico;
+package analisadorSemantico;
 
 import analisadorSintatico.*;
 import java.io.BufferedWriter;
@@ -36,6 +36,7 @@ public class AnalisadorSemantico {
     private FileWriter saidaSemantico;
     private boolean start = false;
     private int linhaErro;
+    private String nomeVariavelAtribuicao;
 
     private boolean proximoToken = false;
 
@@ -319,7 +320,7 @@ public class AnalisadorSemantico {
     private boolean tipobase() {
         System.out.println("TIPO BASE");
         variavelAtual = new Variavel();
-        if (escalar()) {            
+        if (escalar()) {
             variavelAtual.setTipo(tokenAnterior.getNome());
             return true;
         } else if (declaracaoDeStruct()) {
@@ -538,7 +539,7 @@ public class AnalisadorSemantico {
                 return true;
             }
         }
-        
+
         System.out.println("FIM PROCEDIMENTO FIM");
         return false;
     }
@@ -933,8 +934,8 @@ public class AnalisadorSemantico {
     private boolean declaracaoDeVariavelLinha() {
         System.out.println("DECLARACAO DE VARIAVEL CORPO");
         if (tipo()) {
-            if (expressaoIdentificadoresVar()) {                
-                addVariavel();                
+            if (expressaoIdentificadoresVar()) {
+                addVariavel();
                 return true;
             }
         }
@@ -970,7 +971,7 @@ public class AnalisadorSemantico {
             if (expressaoIdentificadorVarAux()) {
                 return true;
             }
-          
+
         }
         System.out.println("SAIDA EXPRESSAO IDENTIFICADOR VAR");
         return false;
@@ -1111,6 +1112,7 @@ public class AnalisadorSemantico {
             }
         } else if (validarToken("[")) {
             if (expressao()) {
+                verificarTamanhoVetor();
                 if (validarToken("]")) {
                     return true;
                 }
@@ -1402,9 +1404,9 @@ public class AnalisadorSemantico {
     }
 
     private void addVariavel() {
-        
+
         if (metodoAtual == null) {
-            
+
             if (!global.addVariavel(variavelAtual)) {
                 //erro ao add variavel
                 salvarMensagemArquivo("Variável global já existente com esse nome. Linha: " + tokenAnterior.getLinha());
@@ -1418,7 +1420,7 @@ public class AnalisadorSemantico {
     private void addParametro() {
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++==");
         System.out.println("******&&&&********");
-        System.out.println("PARAMETRO ATUAL: "+ parametroAtual.getNome());
+        System.out.println("PARAMETRO ATUAL: " + parametroAtual.getNome());
         Iterator iterador = this.parametrosAtuais.listIterator();
         while (iterador.hasNext()) {
             Variavel variavel = (Variavel) iterador.next();
@@ -1475,7 +1477,35 @@ public class AnalisadorSemantico {
         if (numero.contains(".")) {
             System.out.println("Erro! Somente permitidos numero inteiros para tamanho de vetor");
             salvarMensagemArquivo("Erro! Somente são permitidos números inteiros para tamanho de vetor. Linha: " + tokenAnterior.getLinha());
-        } //removeu o else
+        } else if (tokenAnterior.getTipo().equals("IDE")) {
+            // VERIFICAR SE EXISTE A VARIÁVEL
+            nomeVariavelAtribuicao = tokenAnterior.getNome();
+            verificarDeclaracaoVariavel();
+        } else {
+            int num = Integer.parseInt(numero);
+            if (num < 0) {
+                System.out.println("Erro! Tamanho do vetor menor que 0");
+                salvarMensagemArquivo("Erro! Tamanho do vetor menor que 0. Linha: " + tokenAnterior.getLinha());
+            }
+        }
+    }
+
+    private void verificarDeclaracaoVariavel() {
+        variavelAtual = global.getVariavel(nomeVariavelAtribuicao);
+        if (variavelAtual == null) {
+            if (metodoAtual != null) {
+                variavelAtual = metodoAtual.getVariavel(nomeVariavelAtribuicao);
+                if (variavelAtual == null) {
+                    System.out.println("variavel não declada nesse escopo");
+                    salvarMensagemArquivo("Variável nao declarada nesse escopo. Linha: " + tokenAnterior.getLinha());
+
+                }
+            } else {
+                System.out.println("variavel não declada nesse escopo");
+                salvarMensagemArquivo("Variável nao declarada nesse escopo. Linha: " + tokenAnterior.getLinha());
+            }
+        }
+
     }
 
     private void salvarMensagemArquivo(String mensagem) {
