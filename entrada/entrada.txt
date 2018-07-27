@@ -4,6 +4,7 @@ start () {
 
 
 
+<<<<<<< HEAD
 function  int a (int abc) {
     var{
       int a;
@@ -19,6 +20,16 @@ var{
 var{
   int a;
   int abc;
+=======
+function  int a (int aaa, int bbb) {
+	
+}
+
+function  int aaa (int aaa, int ccc) {
+	
+}
+ 
+>>>>>>> 92489f2ff11da9c99877f1204f443440bb814cfa
 }
 
 

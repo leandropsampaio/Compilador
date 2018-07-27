@@ -1,5 +1,10 @@
 Análise Semântica iniciada para o arquivo entrada.txt
+<<<<<<< HEAD
 Variável global já existente com esse nome. Linha: 22Variável global já existente com esse nome. Linha: 23
+=======
+Erro! Método Start já declarado. Linha: 5
+
+>>>>>>> 92489f2ff11da9c99877f1204f443440bb814cfa
 
 
 Análise Semântica finalizada com erro para o arquivo entrada.txt

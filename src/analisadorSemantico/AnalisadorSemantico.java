@@ -1,4 +1,4 @@
-package analisadorSemantico;
+    package analisadorSemantico;
 
 import analisadorSintatico.*;
 import java.io.BufferedWriter;
@@ -1428,6 +1428,7 @@ public class AnalisadorSemantico {
         if (!parametrosAtuais.contains(parametroAtual)) {
             System.out.println("AQUIIIIIIIIIIIIIIIIIIIIIIII");
             parametrosAtuais.add(parametroAtual);
+            parametroAtual = new Variavel();
         } else {
             //erro parametro já existe com esse nome
             salvarMensagemArquivo("Parâmetro já existente com esse nome . Linha: " + +tokenAtual.getLinha());

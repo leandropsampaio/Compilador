@@ -15,6 +15,7 @@
 08 DEL {
 09 PRE int
 09 IDE a
+<<<<<<< HEAD
 09 DEL ;
 10 PRE int
 10 IDE as
@@ -39,5 +40,29 @@
 23 IDE abc
 23 DEL ;
 24 DEL }
+=======
+09 DEL (
+09 PRE int
+09 IDE aaa
+09 DEL ,
+09 PRE int
+09 IDE bbb
+09 DEL )
+09 DEL {
+11 DEL }
+13 PRE function
+13 PRE int
+13 IDE aaa
+13 DEL (
+13 PRE int
+13 IDE aaa
+13 DEL ,
+13 PRE int
+13 IDE ccc
+13 DEL )
+13 DEL {
+15 DEL }
+17 DEL }
+>>>>>>> 92489f2ff11da9c99877f1204f443440bb814cfa
 
 Sucesso, código pronto para a análise semântica!
