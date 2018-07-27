@@ -181,6 +181,7 @@ public class AnalisadorSemantico2 {
     private boolean declaracaoDeFuncao() {
         System.out.println("DECLARACAO DE FUNCAO");
         if (validarToken("function")) {
+            
             if (funcId()) {
                 if (validarToken("(")) {
                     if (funcaoProcedimentoFim()) {
@@ -198,6 +199,7 @@ public class AnalisadorSemantico2 {
         if (validarToken("procedure")) {
             //System.out.println("1");
             if (validarToken("IDE")) {
+
                 //System.out.println("17");
                 if (validarToken("(")) {
                     if (funcaoProcedimentoFim()) {
@@ -275,6 +277,8 @@ public class AnalisadorSemantico2 {
         System.out.println("FUNC ID");
         if (tipo()) {
             if (validarToken("IDE")) {
+                metodoAtual = global.getMetodo(tokenAnterior.getNome());
+                nivel = 1;
                 System.out.println("2");
                 return true;
             }

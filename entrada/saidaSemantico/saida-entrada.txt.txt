@@ -1,0 +1,6 @@
+Análise Semântica iniciada para o arquivo entrada.txt
+Erro! Método Start já declarado. Linha: 5
+Variável já existente com esse nome no metodo. Linha: 19Variável já existente com esse nome no metodo. Linha: 20
+
+
+Análise Semântica finalizada com erro para o arquivo entrada.txt

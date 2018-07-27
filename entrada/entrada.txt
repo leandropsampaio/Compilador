@@ -1,4 +1,27 @@
 start () {
-    operacao[a] = algumacoisa;
-    operacao[b][c] = outraCoisa[a];
+
 }
+
+start () {
+
+}
+
+function  int a (int abc) {
+    var{
+int a;
+int abc;
+}
+
+ 
+}
+
+   var{
+int a;
+int abc;
+}
+
+
+
+
+
+

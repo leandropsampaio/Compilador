@@ -1,5 +1,6 @@
 package analisadorLexico;
 
+import analisadorSemantico.AnalisadorSemantico;
 import java.io.File;
 import java.util.ArrayList;
 import analisadorSintatico.AnalisadorSintatico;
@@ -40,13 +41,18 @@ public class LeitorArquivos {
     private static void analiseSintatica(ArrayList tokens, String nomeArquivo) throws IOException {
         System.out.println(nomeArquivo);
         System.out.println("---------------------------");
-        Iterator iterador = tokens.listIterator();
+        //Iterator iterador = tokens.listIterator();
+        /*
         while(iterador.hasNext()){
             Token token = (Token) iterador.next();
             System.out.println(token.getTipo());
         }
+        */
         System.out.println("---------------------------");
-        AnalisadorSintatico1 analisadorSintatico = new AnalisadorSintatico1();
-        analisadorSintatico.iniciar(tokens, nomeArquivo);
+        //AnalisadorSintatico1 analisadorSintatico = new AnalisadorSintatico1();
+        //analisadorSintatico.iniciar(tokens, nomeArquivo);
+        //System.out.println(nomeArquivo);
+        AnalisadorSemantico analisadorSemantico = new AnalisadorSemantico();
+        analisadorSemantico.iniciar(tokens, nomeArquivo);
     }
 }

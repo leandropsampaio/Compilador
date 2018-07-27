@@ -15,6 +15,7 @@ import java.util.List;
 public class Global {
     private List <Variavel> variaveis;
     private List <Classe> classes;
+    private List <Metodo> metodos;
     private static Global instance;
     
     /**
@@ -23,6 +24,7 @@ public class Global {
     private Global(){
         variaveis = new ArrayList<>();
         classes = new ArrayList<>();
+        metodos = new ArrayList<>();
     }
     
     public static Global getInstance(){
@@ -58,6 +60,14 @@ public class Global {
         return false;
     }
     
+     public boolean addMetodo(Metodo c){
+        if(!metodos.contains(c)){
+            metodos.add(c);
+            return true;
+        }
+        return false;
+    }
+    
     /**
      * Retorna uma classe caso exista, caso não retorna null
      * @param identificador
@@ -65,6 +75,19 @@ public class Global {
      */
     public Classe getClasse(String identificador){
         for(Classe c:classes){
+            if(c.getNome().equals(identificador)){
+                return c;
+            }
+        }
+        return null;
+    }
+    /**
+     * Retorna uma metodo caso exista, caso não retorna null
+     * @param identificador
+     * @return 
+     */
+    public Metodo getMetodo(String identificador){
+        for(Metodo c:metodos){
             if(c.getNome().equals(identificador)){
                 return c;
             }
@@ -88,5 +111,9 @@ public class Global {
 
     public List<Classe> getClasses() {
         return classes;
+    }
+    
+    public List<Metodo> getMetodos() {
+        return metodos;
     }
 }

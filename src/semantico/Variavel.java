@@ -13,8 +13,9 @@ import java.util.Objects;
  */
 public class Variavel{
     
-    private String tipo;
+    private String tipo;    
     private String nome;
+    private String valor;
     private boolean constante = false;
 
     public Variavel() {
@@ -42,6 +43,13 @@ public class Variavel{
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+    
+    public void setValor(String valor) {
+        this.valor = valor;
+    }
+    public String getValor() {
+        return valor;
     }
 
     public boolean isConstante() {

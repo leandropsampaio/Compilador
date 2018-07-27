@@ -5,7 +5,9 @@
  */
 package semantico;
 
+import analisadorSintatico.Token;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,18 +16,19 @@ import java.util.Objects;
  * @author Leandro
  */
 public class Metodo {
-    
+
     private String tipo;
     private String nome;
-    private List <Variavel> variaveis;
-    private List <Variavel> parametros;
-    
-    public Metodo(){
+    private List<Variavel> variaveis;
+    private List<Variavel> parametros;
+
+    public Metodo() {
         this.variaveis = new ArrayList<>();
     }
-    
+
     /**
      * Construtor para caso o metodo possua parametros
+     *
      * @param tipo
      */
     public Metodo(String tipo) {
@@ -36,10 +39,10 @@ public class Metodo {
     public String getNome() {
         return nome;
     }
-    
-    public Variavel getVariavel(String identificador){
-        for(Variavel v:variaveis){
-            if(v.getNome().equals(identificador)){
+
+    public Variavel getVariavel(String identificador) {
+        for (Variavel v : variaveis) {
+            if (v.getNome().equals(identificador)) {
                 return v;
             }
         }
@@ -61,14 +64,15 @@ public class Metodo {
     public void setParametros(List<Variavel> parametros) {
         this.parametros = parametros;
     }
-    
+
     /**
      * Adiciona uma variavel caso não exista nesse metodo
+     *
      * @param v
-     * @return 
+     * @return
      */
-    public boolean addVariavel(Variavel v){
-        if(!variaveis.contains(v)){
+    public boolean addVariavel(Variavel v) {
+        if (!variaveis.contains(v)) {
             variaveis.add(v);
             return true;
         }
@@ -85,15 +89,33 @@ public class Metodo {
 
     /**
      * Verifica se os metodos são iguais: tem o mesmo nome
+     *
      * @param o
-     * @return 
+     * @return
      */
     @Override
-    public boolean equals(Object o){
-        if(o instanceof Metodo){
-            Metodo m = ((Metodo)o);
-            if(m.getNome().equals(nome)){ //verifica se os nomes são iguais
-                return true;
+    public boolean equals(Object o) {
+        if (o instanceof Metodo) {
+            Metodo m = ((Metodo) o);
+            System.out.println("#####");
+            System.out.println(nome);
+            System.out.println(m.getNome());
+            if (m.getNome().equals(nome)) { //verifica se os nomes são iguais
+                System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+                Iterator iterador = this.parametros.listIterator();
+                while (iterador.hasNext()) {
+                    Token token = (Token) iterador.next();
+                    System.out.println(token.getNome());
+                }
+
+                iterador = m.getParametros().listIterator();
+                while (iterador.hasNext()) {
+                    Token token = (Token) iterador.next();
+                    System.out.println(token.getNome());
+                }
+                if (m.getParametros().equals(parametros)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -106,5 +128,4 @@ public class Metodo {
         return hash;
     }
 
-  
 }
