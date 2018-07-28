@@ -740,8 +740,9 @@ public class AnalisadorSemantico {
 
     private boolean instrucaoDeRetorno() {
         System.out.println("INSTRUÇÃO DE RETORNO");
-        if (validarToken("return")) {
+        if (validarToken("return")) {            
             if (instrucaoDeRetornoAux()) {
+                verificarTipoRetorno();
                 return true;
             }
         }
@@ -1357,11 +1358,11 @@ public class AnalisadorSemantico {
     private boolean valor() {
         System.out.println("VALOR");
         if (validarToken("IDE")) {
-            if (metodoAtual != null) {
-                verificarTipoRetorno();
+            if (metodoAtual != null && !metodoAtual.getNome().equals("start")) {
+               // verificarTipoRetorno();
             }
             //global.BuscaVariavelConstantePorNome(tokenAnterior.getNome());
-            System.out.println("999 retorno foi" + tokenAnterior.getTipo());
+            //System.out.println("999 retorno foi" + tokenAnterior.getTipo());
             System.out.println("16");
             if (valorAux1()) {
                 return true;
@@ -1375,22 +1376,22 @@ public class AnalisadorSemantico {
             }
         } else if (validarToken("NRO")) {
             // System.out.println("4321"+ metodoAtual.getTipo());
-            if (metodoAtual != null) {
-                verificarTipoRetorno();
+            if (metodoAtual != null && !metodoAtual.getNome().equals("start")) {
+              //  verificarTipoRetorno();
             }
-            System.out.println("111Token" + tokenAnterior.getTipo());
+            //System.out.println("111Token" + tokenAnterior.getTipo());
             return true;
         } else if (validarToken("CAD")) {
             return true;
         } else if (validarToken("true")) {
             //System.out.println("111Token"+tokenAnterior.getNome());
-            if (metodoAtual != null) {
-                verificarTipoRetorno();
+            if (metodoAtual != null && !metodoAtual.getNome().equals("start")) {
+              //  verificarTipoRetorno();
             }
             return true;
         } else if (validarToken("false")) {
-            if (metodoAtual != null) {
-                verificarTipoRetorno();
+            if (metodoAtual != null && !metodoAtual.getNome().equals("start")) {
+            //    verificarTipoRetorno();
             }
             return true;
         }
