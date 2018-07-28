@@ -1,4 +1,6 @@
 Análise Semântica iniciada para o arquivo entrada.txt
+Variável global <nome> já existente com esse nome. Linha: 6
+Variável <a> não declarada nesse escopo. Linha: 10
 
 
 

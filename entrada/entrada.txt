@@ -1,21 +1,37 @@
-
-    
-
-start () {
-
-}  
-
-
- 
-const {
- int ad = 4;
-
+var{
+	int nome;
+	String valor;
 }
-ad = 0;
-function int nomeDaFuncao (int parametroUm, float parametroDois) {   
-  
-   
-   
+const{
+	string nome = 10;
 }
+
+start (){
+	nome = 5+10+
+	a[nome] = 10;
+	var{
+		int valor;
+	}
+	
+	valor = 5;
+}
+
+function int nomeDaFuncao ( ) {
+    nome = 10;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

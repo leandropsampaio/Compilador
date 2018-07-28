@@ -21,7 +21,7 @@ import semantico.Variavel;
  */
 public class AnalisadorSemantico {
 
-    private Token tokenAtual, tokenAnterior;
+    private Token tokenAtual, tokenAnterior, tokenAnteriorAnterior;
     private int posicao = -1;
     private ArrayList<Token> tokens;
     private int errosSemanticos = 0;
@@ -86,6 +86,7 @@ public class AnalisadorSemantico {
     private boolean proximoToken() {
         if (posicao + 1 < tokens.size()) {
             posicao++;
+            tokenAnteriorAnterior = tokenAnterior;
             tokenAnterior = tokenAtual;
             tokenAtual = tokens.get(posicao);
             // Pulando comentários de linha e bloco
@@ -225,10 +226,14 @@ public class AnalisadorSemantico {
             } else {
                 start = true;
             }
-
+            metodoAtual = new Metodo();
+            parametrosAtuais = new ArrayList();
+            metodoAtual.setNome("start");
             if (validarToken("(")) {
                 if (validarToken(")")) {
                     if (bloco()) {
+                        addMetodo();
+                        metodoAtual = null;
                         return true;
                     }
                 } else {
@@ -237,7 +242,6 @@ public class AnalisadorSemantico {
             } else {
                 panicMode();
             }
-
         }
         System.out.println("SAIDA DECLARACAO DE INICIO");
         return false;
@@ -621,7 +625,7 @@ public class AnalisadorSemantico {
         System.out.println("SAIDA LISTA DE INSTRUCOES");
         return false;
     }
-     
+
     private boolean instrucao() {
         System.out.println("INSTRUÇÃO");
         if (instrucaoNormal()) { // provavelmente aqui
@@ -692,15 +696,17 @@ public class AnalisadorSemantico {
         System.out.println("OPERACAO DE ATRIBUICAO");
         //System.out.println("777" + tokenAnterior.getNome());
         if (validarToken("IDE")) {
-            System.out.println("777"+tokenAnterior.getNome());
-            if(global.BuscaVariavelConstantePorNome(tokenAnterior.getNome())){
-                 System.out.println("777"+"variavel constante já declarada");
-                 salvarMensagemArquivo("Constante já declarada linha:"+ tokenAnterior.getLinha()+"\n");
-            }
-            
-            System.out.println("111111111111111111111111111111111111111111111111111111111111111111111111111");
+            System.out.println("LINHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA:" + tokenAnterior.getLinha());
+            //System.out.println("111111111111111111111111111111111111111111111111111111111111111111111111111");
             if (validarToken("=")) {
-                if (expressao()) {                    
+                nomeVariavelAtribuicao = tokenAnteriorAnterior.getNome();
+                verificarDeclaracaoVariavel();
+                System.out.println("777" + tokenAnterior.getNome());
+                if (global.BuscaVariavelConstantePorNome(tokenAnterior.getNome())) {
+                    System.out.println("777" + "variavel constante já declarada");
+                    salvarMensagemArquivo("Constante já declarada linha:" + tokenAnterior.getLinha() + "\n");
+                }
+                if (expressao()) {
                     return true;
                 }
                 tokenAnterior(2);
@@ -923,7 +929,7 @@ public class AnalisadorSemantico {
                 return false;
             }
         }
-        metodoAtual = null;
+        //metodoAtual = null;
         System.out.println("SAIDA ESTRUTURA CONDICIONAL AUX");
         return true;
     }
@@ -1120,11 +1126,15 @@ public class AnalisadorSemantico {
     private boolean acesso() {
         System.out.println("ACESSO");
         if (validarToken(".")) {
+            nomeVariavelAtribuicao = tokenAnteriorAnterior.getNome();
+            verificarDeclaracaoVariavel();
             if (validarToken("IDE")) {
                 System.out.println("15");
                 return true;
             }
         } else if (validarToken("[")) {
+            nomeVariavelAtribuicao = tokenAnteriorAnterior.getNome();
+            verificarDeclaracaoVariavel();
             if (expressao()) {
                 verificarTamanhoVetor();
                 if (validarToken("]")) {
@@ -1423,11 +1433,11 @@ public class AnalisadorSemantico {
 
             if (!global.addVariavel(variavelAtual)) {
                 //erro ao add variavel
-                salvarMensagemArquivo("Variável global já existente com esse nome. Linha: " + tokenAnterior.getLinha());
+                salvarMensagemArquivo("Variável global <" + variavelAtual.getNome() + "> já existente com esse nome. Linha: " + tokenAnterior.getLinha());
             }
         } else if (!metodoAtual.addVariavel(variavelAtual)) {
             //erro ao add variavel
-            salvarMensagemArquivo("Variável já existente com esse nome no metodo. Linha: " + tokenAnterior.getLinha());
+            salvarMensagemArquivo("Variável <" + variavelAtual.getNome() + "> já existente com esse nome no método. Linha: " + tokenAnterior.getLinha());
         }
     }
 
@@ -1506,18 +1516,22 @@ public class AnalisadorSemantico {
 // criada por leandro;acessar uma que não existe . o outro é pra duas variaveis com mesmo nome
 
     private void verificarDeclaracaoVariavel() {
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        System.out.println("LINHA" + tokenAnterior.getLinha());
         variavelAtual = global.getVariavel(nomeVariavelAtribuicao);
         if (variavelAtual == null) {
+            System.out.println("ENTROUUUUUUUUUUU!");
             if (metodoAtual != null) {
                 variavelAtual = metodoAtual.getVariavel(nomeVariavelAtribuicao);
                 if (variavelAtual == null) {
                     System.out.println("variavel não declada nesse escopo");
-                    salvarMensagemArquivo("Variável nao declarada nesse escopo. Linha: " + tokenAnterior.getLinha());
+                    System.out.println("PASSOU!");
+                    salvarMensagemArquivo("Variável <" + nomeVariavelAtribuicao + "> não declarada nesse escopo. Linha: " + tokenAnterior.getLinha());
 
                 }
             } else {
                 System.out.println("variavel não declada nesse escopo");
-                salvarMensagemArquivo("Variável nao declarada nesse escopo. Linha: " + tokenAnterior.getLinha());
+                salvarMensagemArquivo("Variável " + nomeVariavelAtribuicao + " não declarada nesse escopo. Linha: " + tokenAnterior.getLinha());
             }
         }
 
@@ -1525,7 +1539,7 @@ public class AnalisadorSemantico {
 
     private void salvarMensagemArquivo(String mensagem) {
         try {
-            saidaSemantico.write(mensagem);
+            saidaSemantico.write(mensagem + "\n");
             errosSemanticos++;
         } catch (IOException ex) {
             Logger.getLogger(AnalisadorSemantico.class.getName()).log(Level.SEVERE, null, ex);
