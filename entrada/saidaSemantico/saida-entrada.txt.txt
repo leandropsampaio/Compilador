@@ -1,6 +1,11 @@
 Análise Semântica iniciada para o arquivo entrada.txt
+<<<<<<< HEAD
 Constante já declarada linha:20
 Retorno de método incompatível. Linha: 29
+=======
+Variável global <nome> já existente com esse nome. Linha: 6
+Variável <a> não declarada nesse escopo. Linha: 10
+>>>>>>> fde7ebe4619de84220d973e9da8e5090ed2cc550
 
 
 
