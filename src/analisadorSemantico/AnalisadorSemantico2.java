@@ -1020,7 +1020,9 @@ public class AnalisadorSemantico2 {
         System.out.println("EXPRESSAO IDENTIFICADOR CONST");
         if (validarToken("IDE")) {
             System.out.println("13");
+            nomeVariavelAtribuicao = tokenAnterior.getNome();
             if (validarToken("=")) {
+               
                 if (expressao()) {
                     return true;
                 }
@@ -1295,6 +1297,7 @@ public class AnalisadorSemantico2 {
     private boolean valor() {
         System.out.println("VALOR");
         if (validarToken("IDE")) {
+            
             System.out.println("16");
             if (valorAux1()) {
                 return true;

@@ -37,6 +37,7 @@ public class AnalisadorSemantico {
     private boolean start = false;
     private int linhaErro;
     private String nomeVariavelAtribuicao;
+    private boolean dentroDeMetodo = false;
 
     private boolean proximoToken = false;
 
@@ -182,7 +183,6 @@ public class AnalisadorSemantico {
         if (validarToken("function")) {
             if (funcId()) {
                 if (validarToken("(")) {
-
                     if (funcaoProcedimentoFim()) {
                         return true;
                     }
@@ -221,7 +221,7 @@ public class AnalisadorSemantico {
         System.out.println("DECLARACAO DE INICIO");
         if (validarToken("start")) {
             if (start) {
-                salvarMensagemArquivo("Erro! Método Start já declarado. Linha: " + tokenAtual.getLinha() + "\n");
+                salvarMensagemArquivo("Método Start já declarado. Linha: " + tokenAtual.getLinha() + "\n");
             } else {
                 start = true;
             }
@@ -621,10 +621,10 @@ public class AnalisadorSemantico {
         System.out.println("SAIDA LISTA DE INSTRUCOES");
         return false;
     }
-
+     
     private boolean instrucao() {
         System.out.println("INSTRUÇÃO");
-        if (instrucaoNormal()) {
+        if (instrucaoNormal()) { // provavelmente aqui
             return true;
         } else if (estruturaCondicional()) {
             return true;
@@ -632,9 +632,10 @@ public class AnalisadorSemantico {
             return true;
         } else if (declaracaoDeVar()) {
             return true;
-        } else if (declaracaoDeConst()) {
-            return true;
-        } else if (declaracaoDeTypedef()) {
+        }// else if (declaracaoDeConst()) {
+        //  return true;
+        //}
+        else if (declaracaoDeTypedef()) {
             return true;
         }
         System.out.println("SAIDA INSTRUCAO");
@@ -689,10 +690,17 @@ public class AnalisadorSemantico {
     /*TRÊS PRIMEIROS COMO IDENTIFICADOR*/
     private boolean operacaoDeAtribuicao() {
         System.out.println("OPERACAO DE ATRIBUICAO");
+        //System.out.println("777" + tokenAnterior.getNome());
         if (validarToken("IDE")) {
+            System.out.println("777"+tokenAnterior.getNome());
+            if(global.BuscaVariavelConstantePorNome(tokenAnterior.getNome())){
+                 System.out.println("777"+"variavel constante já declarada");
+                 salvarMensagemArquivo("Constante já declarada linha:"+ tokenAnterior.getLinha()+"\n");
+            }
+            
             System.out.println("111111111111111111111111111111111111111111111111111111111111111111111111111");
             if (validarToken("=")) {
-                if (expressao()) {
+                if (expressao()) {                    
                     return true;
                 }
                 tokenAnterior(2);
@@ -1049,11 +1057,16 @@ public class AnalisadorSemantico {
     private boolean expressaoIdentificadorConst() {
         System.out.println("EXPRESSAO IDENTIFICADOR CONST");
         if (validarToken("IDE")) {
-            variavelAtual.setConstante(true);
-            variavelAtual.setNome(tokenAnterior.getNome());
+            variavelAtual.setConstante(true); // certo           
+            variavelAtual.setNome(tokenAnterior.getNome());  // certo 
+            addVariavel();
             System.out.println("13");
             if (validarToken("=")) {
+                // verificarDeclaracaoVariavel();
+                //System.out.println("777"+tokenAnterior.getNome());
                 if (expressao()) {
+                    // variavelAtual.setValor(tokenAnterior.getTipo());
+                    //System.out.println("777"+tokenAnterior.getTipo());
                     return true;
                 }
                 //tokenAnterior(2);
@@ -1070,6 +1083,7 @@ public class AnalisadorSemantico {
             return true;
         } else if (validarToken(",")) {
             if (expressaoIdentificadoresConst()) {
+                addVariavel();
                 return true;
             }
         }
@@ -1489,6 +1503,7 @@ public class AnalisadorSemantico {
             }
         }
     }
+// criada por leandro;acessar uma que não existe . o outro é pra duas variaveis com mesmo nome
 
     private void verificarDeclaracaoVariavel() {
         variavelAtual = global.getVariavel(nomeVariavelAtribuicao);

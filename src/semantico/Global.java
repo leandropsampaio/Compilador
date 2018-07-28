@@ -6,6 +6,7 @@
 package semantico;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -13,96 +14,119 @@ import java.util.List;
  * @author Leandro
  */
 public class Global {
-    private List <Variavel> variaveis;
-    private List <Classe> classes;
-    private List <Metodo> metodos;
+
+    private List<Variavel> variaveis;
+    private List<Classe> classes;
+    private List<Metodo> metodos;
     private static Global instance;
-    
+
     /**
      * Construtor da classe
      */
-    private Global(){
+    private Global() {
         variaveis = new ArrayList<>();
         classes = new ArrayList<>();
         metodos = new ArrayList<>();
     }
-    
-    public static Global getInstance(){
-        if(instance==null){
+
+    public static Global getInstance() {
+        if (instance == null) {
             instance = new Global();
         }
         return instance;
     }
-    
+
     /**
      * Adiciona uma variavel caso não exista
+     *
      * @param v
-     * @return 
+     * @return
      */
-    public boolean addVariavel(Variavel v){
-        if(!variaveis.contains(v)){
+    public boolean addVariavel(Variavel v) {
+        if (!variaveis.contains(v)) {
             variaveis.add(v);
             return true;
         }
         return false;
     }
-    
+
     /**
      * Adiciona uma variavel caso não exista
+     *
      * @param c
-     * @return 
+     * @return
      */
-    public boolean addClasse(Classe c){
-        if(!classes.contains(c)){
+    public boolean BuscaVariavelConstantePorNome(String nome) {
+        
+        Iterator iterador = variaveis.listIterator();
+        while (iterador.hasNext()) {
+            Variavel variavel = (Variavel) iterador.next();
+            System.out.println("888nome"+variavel.getNome());
+            if (variavel.getNome().equals(nome) && variavel.isConstante()) {
+                return true;
+            } else {
+
+            }
+        }
+        return false;
+
+    }
+
+    public boolean addClasse(Classe c) {
+        if (!classes.contains(c)) {
             classes.add(c);
             return true;
         }
         return false;
     }
-    
-     public boolean addMetodo(Metodo c){
-        if(!metodos.contains(c)){
+
+    public boolean addMetodo(Metodo c) {
+        if (!metodos.contains(c)) {
             metodos.add(c);
             return true;
         }
         return false;
     }
-    
+
     /**
      * Retorna uma classe caso exista, caso não retorna null
+     *
      * @param identificador
-     * @return 
+     * @return
      */
-    public Classe getClasse(String identificador){
-        for(Classe c:classes){
-            if(c.getNome().equals(identificador)){
+    public Classe getClasse(String identificador) {
+        for (Classe c : classes) {
+            if (c.getNome().equals(identificador)) {
                 return c;
             }
         }
         return null;
     }
+
     /**
      * Retorna uma metodo caso exista, caso não retorna null
+     *
      * @param identificador
-     * @return 
+     * @return
      */
-    public Metodo getMetodo(String identificador){
-        for(Metodo c:metodos){
-            if(c.getNome().equals(identificador)){
+    public Metodo getMetodo(String identificador) {
+        for (Metodo c : metodos) {
+            if (c.getNome().equals(identificador)) {
                 return c;
             }
         }
         return null;
     }
-    
+
     /**
      * Retorna uma variavel caso exista, caso não retorna null
+     *
      * @param identificador
-     * @return 
+     * @return
      */
-    public Variavel getVariavel(String identificador){
-        for(Variavel v:variaveis){
-            if(v.getNome().equals(identificador)){
+    public Variavel getVariavel(String identificador) {
+        for (Variavel v : variaveis) {
+            if (v.getNome().equals(identificador)) {
                 return v;
             }
         }
@@ -112,7 +136,7 @@ public class Global {
     public List<Classe> getClasses() {
         return classes;
     }
-    
+
     public List<Metodo> getMetodos() {
         return metodos;
     }

@@ -15,7 +15,7 @@ public class Variavel{
     
     private String tipo;    
     private String nome;
-    private String valor;
+    private String valor = null;
     private boolean constante = false;
 
     public Variavel() {
@@ -58,6 +58,10 @@ public class Variavel{
 
     public void setConstante(boolean constante) {
         this.constante = constante;
+    }
+    
+    public boolean verificarAtribuicaoConstante( ){
+       return true;
     }
     
     /**

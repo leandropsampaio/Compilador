@@ -1,14 +1,21 @@
-start(){
 
-    var {
-	int nome;
-        int[] vetor1 = 10;
-        float[][] vetor2;
-        bool[] vetor3, vetor4;
-        nomeStruct[] vetor5;
-	}
-	
-	vetor12[nome] = 10;
-	
+    
+
+start () {
+
+}  
+
+
+ 
+const {
+ int ad = 4;
 
 }
+ad = 0;
+function int nomeDaFuncao (int parametroUm, float parametroDois) {   
+  
+   
+   
+}
+
+
