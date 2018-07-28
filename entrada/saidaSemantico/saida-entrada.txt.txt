@@ -1,4 +1,6 @@
 Análise Semântica iniciada para o arquivo entrada.txt
+Constante já declarada linha:20
+Retorno de método incompatível. Linha: 29
 
 
 

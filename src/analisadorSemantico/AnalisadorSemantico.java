@@ -198,6 +198,7 @@ public class AnalisadorSemantico {
         System.out.println("DECLARACAO DE PROCEDIMENTO");
         if (validarToken("procedure")) {
             metodoAtual = new Metodo();
+            System.out.println("new Metodo procedure");
             parametrosAtuais = new ArrayList();
             //System.out.println("1");
             if (validarToken("IDE")) { // adicionei esta parte !!!! 25/07
@@ -283,6 +284,7 @@ public class AnalisadorSemantico {
 
     private boolean funcId() {
         metodoAtual = new Metodo();
+        System.out.println("new Metodo function");
         parametrosAtuais = new ArrayList();
         System.out.println("FUNC ID");
         if (tipo()) {
@@ -528,14 +530,14 @@ public class AnalisadorSemantico {
                 metodoAtual.setParametros(parametrosAtuais);
                 if (bloco()) {
                     addMetodo();
-                    metodoAtual = null;
+                    metodoAtual = new Metodo();
                     return true;
                 }
             }
         } else if (validarToken(")")) {
             if (bloco()) {
                 addMetodo();
-                metodoAtual = null;
+                metodoAtual = new Metodo();
                 return true;
             }
         }
@@ -621,7 +623,7 @@ public class AnalisadorSemantico {
         System.out.println("SAIDA LISTA DE INSTRUCOES");
         return false;
     }
-     
+
     private boolean instrucao() {
         System.out.println("INSTRUÇÃO");
         if (instrucaoNormal()) { // provavelmente aqui
@@ -692,15 +694,15 @@ public class AnalisadorSemantico {
         System.out.println("OPERACAO DE ATRIBUICAO");
         //System.out.println("777" + tokenAnterior.getNome());
         if (validarToken("IDE")) {
-            System.out.println("777"+tokenAnterior.getNome());
-            if(global.BuscaVariavelConstantePorNome(tokenAnterior.getNome())){
-                 System.out.println("777"+"variavel constante já declarada");
-                 salvarMensagemArquivo("Constante já declarada linha:"+ tokenAnterior.getLinha()+"\n");
+            System.out.println("777" + tokenAnterior.getNome());
+            if (global.BuscaVariavelConstantePorNome(tokenAnterior.getNome())) {
+                System.out.println("777" + "variavel constante já declarada");
+                salvarMensagemArquivo("Constante já declarada linha:" + tokenAnterior.getLinha() + "\n");
             }
-            
+
             System.out.println("111111111111111111111111111111111111111111111111111111111111111111111111111");
             if (validarToken("=")) {
-                if (expressao()) {                    
+                if (expressao()) {
                     return true;
                 }
                 tokenAnterior(2);
@@ -923,7 +925,7 @@ public class AnalisadorSemantico {
                 return false;
             }
         }
-        metodoAtual = null;
+        //metodoAtual = null;
         System.out.println("SAIDA ESTRUTURA CONDICIONAL AUX");
         return true;
     }
@@ -1343,6 +1345,11 @@ public class AnalisadorSemantico {
     private boolean valor() {
         System.out.println("VALOR");
         if (validarToken("IDE")) {
+            if (metodoAtual != null) {
+                verificarTipoRetorno();
+            }
+            //global.BuscaVariavelConstantePorNome(tokenAnterior.getNome());
+            System.out.println("999 retorno foi" + tokenAnterior.getTipo());
             System.out.println("16");
             if (valorAux1()) {
                 return true;
@@ -1355,12 +1362,24 @@ public class AnalisadorSemantico {
                 }
             }
         } else if (validarToken("NRO")) {
+            // System.out.println("4321"+ metodoAtual.getTipo());
+            if (metodoAtual != null) {
+                verificarTipoRetorno();
+            }
+            System.out.println("111Token" + tokenAnterior.getTipo());
             return true;
         } else if (validarToken("CAD")) {
             return true;
         } else if (validarToken("true")) {
+            //System.out.println("111Token"+tokenAnterior.getNome());
+            if (metodoAtual != null) {
+                verificarTipoRetorno();
+            }
             return true;
         } else if (validarToken("false")) {
+            if (metodoAtual != null) {
+                verificarTipoRetorno();
+            }
             return true;
         }
         System.out.println("SAIDA VALOR");
@@ -1519,6 +1538,18 @@ public class AnalisadorSemantico {
                 System.out.println("variavel não declada nesse escopo");
                 salvarMensagemArquivo("Variável nao declarada nesse escopo. Linha: " + tokenAnterior.getLinha());
             }
+        }
+
+    }
+
+    private void verificarTipoRetorno() {
+        if (tokenAnterior.getNome().equals("true") && !metodoAtual.getTipo().equals("bool")
+                || tokenAnterior.getNome().equals("false") && !metodoAtual.getTipo().equals("bool")) {
+            salvarMensagemArquivo("Retorno de método incompatível. Linha: " + tokenAnterior.getLinha() + "\n");
+        }
+        // System.out.println("4321"+ metodoAtual.getTipo());
+        if (!metodoAtual.getTipo().equals("int") && tokenAnterior.getTipo().equals("NRO")) {
+            salvarMensagemArquivo("Retorno de método incompatível. Linha: " + tokenAnterior.getLinha() + "\n");
         }
 
     }

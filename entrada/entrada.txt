@@ -1,21 +1,32 @@
 
-    
-
-start () {
-
-}  
 
 
- 
-const {
- int ad = 4;
+
+start (){
+
 
 }
-ad = 0;
+
+
+
+const {
+        int num = 5;
+        bool aprovado = false;
+    }
+
+
+
 function int nomeDaFuncao (int parametroUm, float parametroDois) {   
-  
+   num = 5;
+   return 5;
    
+}
+
+
+
+function bool nomeDaFuncao2 (int parametroUm, float parametroDois) {   
    
+   return 5;   
 }
 
 

@@ -51,13 +51,13 @@ public class Global {
     }
 
     /**
-     * Adiciona uma variavel caso não exista
+     * Busca uma variavel pelo nome
      *
      * @param c
      * @return
      */
     public boolean BuscaVariavelConstantePorNome(String nome) {
-        
+        System.out.println("888BuscaVariavelConstantePorNome");
         Iterator iterador = variaveis.listIterator();
         while (iterador.hasNext()) {
             Variavel variavel = (Variavel) iterador.next();
