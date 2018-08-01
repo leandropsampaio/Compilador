@@ -61,7 +61,7 @@ public class Global {
         Iterator iterador = variaveis.listIterator();
         while (iterador.hasNext()) {
             Variavel variavel = (Variavel) iterador.next();
-            System.out.println("888nome"+variavel.getNome());
+            System.out.println("888nome" + variavel.getNome());
             if (variavel.getNome().equals(nome) && variavel.isConstante()) {
                 return true;
             } else {
@@ -86,6 +86,11 @@ public class Global {
             return true;
         }
         return false;
+    }
+
+    public boolean contemMetodo(String nomeMetodo) {
+        Metodo c = getMetodo(nomeMetodo);
+        return metodos.contains(c);
     }
 
     /**

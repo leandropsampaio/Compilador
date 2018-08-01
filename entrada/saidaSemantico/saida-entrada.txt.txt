@@ -1,8 +1,7 @@
 Análise Semântica iniciada para o arquivo entrada.txt
-Variável global <nome> já existente com esse nome. Linha: 6
-Retorno de método incompatível. Linha: 15
 
-Variável <algumaOutraVariavel> não declarada nesse escopo. Linha: 20
+- Variável <vetor1> não declarada nesse escopo. Linha: 12
+- Variável <vetor1> não declarada nesse escopo. Linha: 14
 
 
 

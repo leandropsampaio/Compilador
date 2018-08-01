@@ -1,36 +1,20 @@
 var{
-    int nome;
-    String valor;
+	int d=5;
+	float a=10.5;
 }
-const{
-    string nome = 10;
+
+function int funcao(int num){
+
+	return 50+50;
 }
+
 start(){
-
-nome = 10+teste;
-}
-
-function bool nomeDaFuncao ( ) {
-    nome = 10+teste;
-    return 12;
-}
-
-procedure nomeDoProcedimento ( ) {
-    nomeDaFuncao();
-    algumaOutraVariavel = nomeDaFuncao();
+    vetor1[10] = 50;
+	a = 10.9+9.5;
+	while (vetor1 + 5 > 10){
+        print(a+d);
+    }
 	
+	funcao();
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
