@@ -1,6 +1,7 @@
 var{
-	int d=5;
+	int d=5, z;
 	float a=10.5;
+	string nome;
 }
 
 function int funcao(int num){
@@ -9,12 +10,18 @@ function int funcao(int num){
 }
 
 start(){
+	a = a+10;
+	nome = nome+"a";
+	
     vetor1[10] = 50;
-	a = 10.9+9.5;
-	while (vetor1 + 5 > 10){
-        print(a+d);
+	a = 10.9+9.1;
+	while (a + 5 > 10+5.2){ // FALTA DIZER ERRO
+        print(a, "nome");
+		print(d+5, z+10);
+		print(a+5); // ERRO
     }
 	
-	funcao();
+	// Verificar tipo de a!
+	funcao(a);
 
 }

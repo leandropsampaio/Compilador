@@ -1,7 +1,8 @@
 Análise Semântica iniciada para o arquivo entrada.txt
 
-- Variável <vetor1> não declarada nesse escopo. Linha: 12
-- Variável <vetor1> não declarada nesse escopo. Linha: 14
+- Valor incompatível com o tipo da declaração (tipos diferentes). Linha: 14
+- Variável <vetor1> não declarada nesse escopo. Linha: 16
+- Expressão do print com tipos diferentes. Linha: 21
 
 
 

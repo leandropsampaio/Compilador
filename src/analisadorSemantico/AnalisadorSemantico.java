@@ -26,7 +26,7 @@ public class AnalisadorSemantico {
     private int posicao = -1, posicaoAux = 0;
     private ArrayList<Token> tokens, tokensAux;
     private int errosSemanticos = 0;
-    private int contador = 0;
+    private int contador = 0, contador2 = 0;
     private String StringErrosSemanticos = null;
     private Classe classeAtual = null;
     private Metodo metodoAtual = null;
@@ -42,7 +42,7 @@ public class AnalisadorSemantico {
     private String tipoOperacao;
     private boolean relacional = false, apenasAritmetico = true;
     private String ultimaOperacao;
-    private String tipo;
+    private String tipo, tipo2;
 
     private boolean proximoToken = false;
 
@@ -244,8 +244,8 @@ public class AnalisadorSemantico {
             metodoAtual.setNome("start");
             if (validarToken("(")) {
                 if (validarToken(")")) {
+                    addMetodo();
                     if (bloco()) {
-                        addMetodo();
                         metodoAtual = null;
                         return true;
                     }
@@ -710,6 +710,7 @@ public class AnalisadorSemantico {
     private boolean operacaoDeAtribuicao() {
         System.out.println("OPERACAO DE ATRIBUICAO");
         //System.out.println("777" + tokenAnterior.getNome());
+        posicaoAux = posicao;
         if (validarToken("IDE")) {
 
             System.out.println("LINHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA:" + tokenAnterior.getLinha());
@@ -722,7 +723,7 @@ public class AnalisadorSemantico {
                     System.out.println("777" + "variavel constante já declarada");
                     salvarMensagemArquivo("- Não se pode alterar o valor de uma constante. Linha: " + tokenAnteriorAnterior.getLinha());
                 }
-                posicaoAux = posicao;
+                //posicaoAux = posicao;
                 if (expressao()) {
                     verificarTipoDeclaracao();
                     return true;
@@ -877,7 +878,11 @@ public class AnalisadorSemantico {
 
     private boolean saida() {
         System.out.println("SAIDA");
+        System.out.println("SAIDA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        posicaoAux = posicao;
         if (expressao()) {
+            System.out.println("KKKKKKKKKKKKKKK");
+            verificarExpressaoPrint();
             return true;
         }
         System.out.println("SAIDA SAIDA");
@@ -1403,17 +1408,41 @@ public class AnalisadorSemantico {
     private boolean valor() {
         System.out.println("VALOR");
         if (validarToken("IDE")) {
-            System.out.println("TOKENATUAL: "+tokenAtual);
-            if (!tokenAtual.getNome().equals("(")) {
+            System.out.println("TOKENATUAL: " + tokenAtual);
+
+            if (tokenAtual.getNome().equals("(")) { // É uma chamada de função
+                System.out.println("*** 22222222222222222222222222222222222222222222222222222 ***");
+                metodoAtual = new Metodo();
+                metodoAtual = global.getMetodo(tokenAnterior.getNome());
+
+                linhaErro = tokenAnterior.getLinha();
+                //verificarMetodoExistente(tokenAnterior.getNome());
+            } else if (tokenAtual.getNome().equals(",") || tokenAtual.getNome().equals(")")) { // É um parâmetro
+                System.out.println("*** 3333333333333333333333333333333333333333333333333333333333 ***");
+                variavelAtual = new Variavel();
+                System.out.println("MM: " + tokenAnterior.getNome());
+                nomeVariavelAtribuicao = tokenAnterior.getNome();
+                verificarDeclaracaoVariavel();
+                parametroAtual = variavelAtual;
+                System.out.println("NOMEE:" + metodoAtual.getNome());
+                //System.out.println("TIPOO: "+parametroAtual.getTipo());
+                System.out.println("PARAMETRO");
+                if (!metodoAtual.getNome().equals("start")) {
+                    variavelAtual = metodoAtual.getParametros().get(0);
+                    /*
+                    if (!parametroAtual.getTipo().equals(variavelAtual.getTipo())) {
+                        System.out.println("ERROOOOOOOOOOO!!!!!!!!!!!!!!!!");
+                    }*/
+                    contador2++;
+                }
+
+            } else {
+                System.out.println("*** 444444444444444444444444444444444444444444444444444444444 ***");
                 nomeVariavelAtribuicao = tokenAnterior.getNome();
                 verificarDeclaracaoVariavel();
                 if (metodoAtual != null && !metodoAtual.getNome().equals("start")) {
                     // verificarTipoRetorno();
                 }
-            } else { // É uma chamada de função
-                System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-                linhaErro = tokenAnterior.getLinha();
-                verificarMetodoExistente(tokenAnterior.getNome());
             }
 
             //global.BuscaVariavelConstantePorNome(tokenAnterior.getNome());
@@ -1468,7 +1497,6 @@ public class AnalisadorSemantico {
 
     private boolean valorAux2() {
         System.out.println("VALOR AUX 2");
-        
         if (parametrosFuncao()) {
             if (validarToken(")")) {
                 return true;
@@ -1553,11 +1581,24 @@ public class AnalisadorSemantico {
         }
     }
 
-    private void verificarMetodoExistente(String nomeMetodo) {
-        if (!global.contemMetodo(nomeMetodo)) {
+    private void verificarMetodoExistente() {
+        if (metodoAtual != null) {
+            System.out.println("||||||||||||||||||||||||||||||||||||||||");
+            System.out.println(metodoAtual.getNome());
+            System.out.println(metodoAtual.getTipo());
+
+            Iterator iterador = this.metodoAtual.getParametros().iterator();
+            while (iterador.hasNext()) {
+                Variavel variavel = (Variavel) iterador.next();
+                System.out.println(variavel.getTipo());
+                System.out.println(variavel.getNome());
+            }
+            System.out.println("||||||||||||||||||||||||||||||||||||||||");
+        }
+        if (!global.contemMetodo(metodoAtual)) {
             //tentando declarar metodo fora da classe erro
-            System.out.println("- Chamada para um método não declarado. Linha: " + linhaErro);
-            salvarMensagemArquivo("- Chamada para um método não declarado. Linha: " + linhaErro);
+            System.out.println("- Chamada para um método não declarado ou parâmetros errados. Linha: " + linhaErro);
+            salvarMensagemArquivo("- Chamada para um método não declarado ou parâmetros errados. Linha: " + linhaErro);
         }
     }
 
@@ -1683,7 +1724,7 @@ public class AnalisadorSemantico {
                     System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxx2");
                     System.out.println(variavelAux.getTipo());
                     if (!variavelAux.getTipo().equals(variavelAtual.getTipo())) {
-                        salvarMensagemArquivo("- Valor (" + variavelAux.getNome() + "), incompatível com o tipo da declaração. Linha: " + tokenAnterior.getLinha());
+                        salvarMensagemArquivo("- Valor incompatível com o tipo da declaração (tipos diferentes). Linha: " + tokenAnterior.getLinha());
                     }
                 }
                 variavelAux = global.getVariavel(tokenAux.getNome());
@@ -1691,26 +1732,109 @@ public class AnalisadorSemantico {
                     System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxx3");
                     System.out.println(variavelAux.getTipo());
                     if (!variavelAux.getTipo().equals(variavelAtual.getTipo())) {
-                        salvarMensagemArquivo("- Valor (" + variavelAux.getNome() + "), incompatível com o tipo da declaração. Linha: " + tokenAnterior.getLinha());
+                        salvarMensagemArquivo("- Valor incompatível com o tipo da declaração (tipos diferentes). Linha: " + tokenAnterior.getLinha());
                     }
                 }
             } else if (tokenAux.getTipo().equals("NRO")) {
+                System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxx444");
                 if (tokenAux.getNome().contains(".")) {
                     if (!"float".equals(variavelAtual.getTipo())) {
-                        salvarMensagemArquivo("- Valor (" + tokenAux.getNome() + "), incompatível com o tipo da declaração. Linha: " + tokenAnterior.getLinha());
+                        salvarMensagemArquivo("- Valor incompatível com o tipo da declaração (tipos diferentes). Linha: " + tokenAnterior.getLinha());
                     }
                 } else if (!"int".equals(variavelAtual.getTipo())) {
-                    salvarMensagemArquivo("- Valor (" + tokenAux.getNome() + "), incompatível com o tipo da declaração. Linha: " + tokenAnterior.getLinha());
+                    salvarMensagemArquivo("- Valor incompatível com o tipo da declaração (tipos diferentes). Linha: " + tokenAnterior.getLinha());
                 }
             } else if ((tokenAux.getTipo().equals("true") || tokenAux.getNome().equals("true")
                     && !variavelAtual.getTipo().equals("bool"))
                     || (tokenAux.getTipo().equals("false") || tokenAux.getNome().equals("false")
                     && !variavelAtual.getTipo().equals("bool"))) {
-                salvarMensagemArquivo("- Valor (" + tokenAux.getNome() + "), incompatível com o tipo da declaração. Linha: " + tokenAnterior.getLinha());
+                salvarMensagemArquivo("- Valor incompatível com o tipo da declaração (tipos diferentes). Linha: " + tokenAnterior.getLinha());
             } else if (tokenAux.getTipo().equals("CAD")) {
                 if (!"string".equals(variavelAtual.getTipo())) {
-                    salvarMensagemArquivo("- Valor (" + tokenAux.getNome() + "), incompatível com o tipo da declaração. Linha: " + tokenAnterior.getLinha());
+                    salvarMensagemArquivo("- Valor incompatível com o tipo da declaração (tipos diferentes). Linha: " + tokenAnterior.getLinha());
                 }
+            }
+        }
+
+        /*
+        if (tokenAnterior.getNome().equals("true") && !metodoAtual.getTipo().equals("bool")
+                || tokenAnterior.getNome().equals("false") && !metodoAtual.getTipo().equals("bool")) {
+            salvarMensagemArquivo("Retorno de método incompatível. Linha: " + tokenAnterior.getLinha());
+        }
+        // System.out.println("4321"+ metodoAtual.getTipo());
+        if (!metodoAtual.getTipo().equals("int") && tokenAnterior.getTipo().equals("NRO")) {
+            salvarMensagemArquivo("Retorno de método incompatível. Linha: " + tokenAnterior.getLinha());
+        }
+         */
+    }
+
+    private void verificarExpressaoPrint() {
+        int posicaoInicial = posicaoAux;
+        tokenAux = tokensAux.get(posicaoInicial);
+        tipo = "";
+        tipo2 = "";
+
+        for (int i = posicaoInicial; i < posicao; i++) {
+            tokenAux = tokensAux.get(i);
+            System.out.println(tokenAux.getTipo());
+            if (tokenAux.getTipo().equals("IDE")) {
+                System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxx1");
+                System.out.println(variavelAtual.getNome());
+                Variavel variavelAux = metodoAtual.getVariavel(tokenAux.getNome());
+
+                if (variavelAux != null) {
+                    if (tipo.equals("")) {
+                        tipo2 = variavelAux.getTipo();
+                    }
+                    tipo = variavelAux.getTipo();
+
+                    if (!tipo.equals(tipo2)) {
+                        salvarMensagemArquivo("- Expressão do print com tipos diferentes. Linha: " + tokenAnterior.getLinha());
+                    }
+                }
+                variavelAux = global.getVariavel(tokenAux.getNome());
+                if (variavelAux != null) {
+                    if (tipo.equals("")) {
+                        tipo2 = variavelAux.getTipo();
+                    }
+                    tipo = variavelAux.getTipo();
+
+                    if (!tipo.equals(tipo2)) {
+                        salvarMensagemArquivo("- Expressão do print com tipos diferentes. Linha: " + tokenAnterior.getLinha());
+                    }
+                }
+            } else if (tokenAux.getTipo().equals("NRO")) {
+                System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxx444");
+                if (tokenAux.getNome().contains(".")) {
+                    if (!"float".equals(variavelAtual.getTipo())) {
+                        salvarMensagemArquivo("- Expressão do print com tipos diferentes. Linha: " + tokenAnterior.getLinha());
+                    }
+                    tipo2 = "float";
+                    return;
+                } else if (!"int".equals(variavelAtual.getTipo())) {
+                    salvarMensagemArquivo("- Expressão do print com tipos diferentes. Linha: " + tokenAnterior.getLinha());
+                }
+                tipo2 = "int";
+            } else if ((tokenAux.getTipo().equals("true") || tokenAux.getNome().equals("true")
+                    && !variavelAtual.getTipo().equals("bool"))
+                    || (tokenAux.getTipo().equals("false") || tokenAux.getNome().equals("false")
+                    && !variavelAtual.getTipo().equals("bool"))) {
+                tipo2 = "bool";
+                salvarMensagemArquivo("- Expressão do print com tipos diferentes. Linha: " + tokenAnterior.getLinha());
+            } else if (tokenAux.getTipo().equals("CAD")) {
+
+                if (tipo.equals("")) {
+                    tipo2 = "string";
+                }
+                tipo = "string";
+                System.out.println("SIMM!");
+                System.out.println(tipo);
+                System.out.println(tipo2);
+                if (!tipo.equals(tipo2)) {
+                    System.out.println("ENTROUUUUUU!");
+                    salvarMensagemArquivo("- Expressão do print com tipos diferentes. Linha: " + tokenAnterior.getLinha());
+                }
+                tipo2 = "string";
             }
         }
 

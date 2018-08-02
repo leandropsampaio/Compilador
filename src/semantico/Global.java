@@ -81,6 +81,7 @@ public class Global {
     }
 
     public boolean addMetodo(Metodo c) {
+        System.out.println("aaa");
         if (!metodos.contains(c)) {
             metodos.add(c);
             return true;
@@ -88,8 +89,7 @@ public class Global {
         return false;
     }
 
-    public boolean contemMetodo(String nomeMetodo) {
-        Metodo c = getMetodo(nomeMetodo);
+    public boolean contemMetodo(Metodo c) {
         return metodos.contains(c);
     }
 
