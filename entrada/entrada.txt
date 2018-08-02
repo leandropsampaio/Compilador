@@ -1,3 +1,4 @@
+
 start () {
 
     struct fichaAluno{
@@ -28,3 +29,32 @@ start () {
     
 
 }
+
+var{
+	int d=5, z;
+	float a=10.5;
+	string nome;
+}
+
+function int funcao(int num){
+
+	return 50+50;
+}
+
+start(){
+	a = a+10;
+	nome = nome+"a";
+	
+    vetor1[10] = 50;
+	a = 10.9+9.1;
+	while (a + 5 > 10+5.2){ // FALTA DIZER ERRO
+        print(a, "nome");
+		print(d+5, z+10);
+		print(a+5); // ERRO
+    }
+	
+	// Verificar tipo de a!
+	funcao(a);
+
+}
+

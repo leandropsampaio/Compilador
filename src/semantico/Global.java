@@ -63,7 +63,7 @@ public class Global {
         Iterator iterador = variaveis.listIterator();
         while (iterador.hasNext()) {
             Variavel variavel = (Variavel) iterador.next();
-            System.out.println("888nome"+variavel.getNome());
+            System.out.println("888nome" + variavel.getNome());
             if (variavel.getNome().equals(nome) && variavel.isConstante()) {
                 return true;
             } else {
@@ -83,6 +83,7 @@ public class Global {
     }
 
     public boolean addMetodo(Metodo c) {
+        System.out.println("aaa");
         if (!metodos.contains(c)) {
             metodos.add(c);
             return true;
@@ -96,6 +97,10 @@ public class Global {
             return true;
         }
         return false;
+    }
+
+    public boolean contemMetodo(Metodo c) {
+        return metodos.contains(c);
     }
 
     /**
