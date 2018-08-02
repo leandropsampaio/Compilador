@@ -1,36 +1,30 @@
-var{
-    int nome;
-    String valor;
-}
-const{
-    string nome = 10;
-}
-start(){
+start () {
 
-nome = 10+teste;
-}
-
-function bool nomeDaFuncao ( ) {
-    nome = 10+teste;
-    return 12;
-}
-
-procedure nomeDoProcedimento ( ) {
-    nomeDaFuncao();
-    algumaOutraVariavel = nomeDaFuncao();
+    struct fichaAluno{
+        string nome;
+        string disciplina;
+        float nota_prova1;
+        float nota_prova2;
+    };
 	
+	struct fichaAluno2 extends fichaAluno{
+        int nome;        
+    };
+	
+	struct fichaAluno3 extends fichaAluno2{
+        float nome;
+        
+    };
+	
+	struct fichaAluno4 extends fichaAluno3{
+        int nome;
+        
+    };
+
+    var{
+        struct fichaAluno2 aluno;
+    }
+
+    
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

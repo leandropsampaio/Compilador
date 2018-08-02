@@ -16,6 +16,7 @@ import java.util.List;
 public class Global {
 
     private List<Variavel> variaveis;
+    private List<Struct> structs;
     private List<Classe> classes;
     private List<Metodo> metodos;
     private static Global instance;
@@ -27,6 +28,7 @@ public class Global {
         variaveis = new ArrayList<>();
         classes = new ArrayList<>();
         metodos = new ArrayList<>();
+        structs = new ArrayList<>();
     }
 
     public static Global getInstance() {
@@ -87,6 +89,14 @@ public class Global {
         }
         return false;
     }
+    
+    public boolean addStruct(Struct c) {
+        if (!structs.contains(c)) {
+            structs.add(c);
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Retorna uma classe caso exista, caso não retorna null
@@ -139,5 +149,70 @@ public class Global {
 
     public List<Metodo> getMetodos() {
         return metodos;
+    }
+    
+    
+    public List<Struct> getStruct() {
+        return structs;
+    }
+    public Struct BuscaStructPorNome(String nome) {
+        System.out.println("888BuscarStructGlobal");
+        Iterator iterador = structs.listIterator();
+        while (iterador.hasNext()) {
+            Struct struct = (Struct) iterador.next();
+            System.out.println("888nome"+struct.getNome());
+            if (struct.getNome().equals(nome)) {
+                return struct;
+            } else {
+
+            }
+        }
+        return null;
+    }
+    
+    public Variavel BuscaVariavelPorNome(String nome) {
+        System.out.println("888BuscarStructGlobal");
+        Iterator iterador = variaveis.listIterator();
+        while (iterador.hasNext()) {
+            Variavel variavel = (Variavel) iterador.next();
+            //System.out.println("888nome"+variaveis.getNome());
+            if (variavel.getNome().equals(nome)) {
+                return variavel;
+            } else {
+
+            }
+        }
+        return null;
+    }
+    
+    
+    
+     public boolean verificarHerancaStruct(String nome) {
+        System.out.println("888BuscaVariavelConstantePorNome");        
+        if(null == this.BuscaStructPorNome(nome)){
+           return false;
+        }        
+        return true;
+
+    }     
+     
+     public boolean verificarVariaveisHerancas(String nomeStruct1,String nomeStruct2) {
+               System.out.println("emMetodoElvis"+nomeStruct1+nomeStruct2);
+               Struct s1 = BuscaStructPorNome(nomeStruct1);
+               Struct s2 = BuscaStructPorNome(nomeStruct2);
+        
+                Iterator iterador1 = s1.getVariaveis().listIterator();
+                Iterator iterador2 = s2.getVariaveis().listIterator();
+                while (iterador1.hasNext() && iterador2.hasNext()) {
+                    Variavel variavel1 = (Variavel) iterador1.next();
+                    Variavel variavel2 = (Variavel) iterador2.next();
+                    System.out.println("variaveismetodo"+variavel1.getNome()+variavel2.getNome());
+                    if (variavel1.getTipo().equals(variavel2.getTipo()) && variavel1.getNome().equals(variavel2.getNome())) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+                return false;
     }
 }

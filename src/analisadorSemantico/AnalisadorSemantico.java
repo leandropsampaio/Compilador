@@ -13,6 +13,7 @@ import semantico.Classe;
 import semantico.ClasseFilha;
 import semantico.Global;
 import semantico.Metodo;
+import semantico.Struct;
 import semantico.Variavel;
 
 /**
@@ -21,16 +22,20 @@ import semantico.Variavel;
  */
 public class AnalisadorSemantico {
 
-    private Token tokenAtual, tokenAnterior, tokenAnteriorAnterior;
+    private Token tokenAtual, tokenAnterior, tokenAnteriorAnterior, tokenAuxIf;
     private int posicao = -1;
+    private int posicaoAuxIf = 0;
     private ArrayList<Token> tokens;
+    private ArrayList<Token> tokensAux = new ArrayList<>();
     private int errosSemanticos = 0;
     private int contador = 0;
     private String StringErrosSemanticos = null;
     private Classe classeAtual = null;
     private Metodo metodoAtual = null;
     private Variavel variavelAtual = null;
+    private Variavel variavelStructAtual = null;
     private Variavel parametroAtual = null;
+    private Struct structAtual = null;
     private List<Variavel> parametrosAtuais;
     private Global global = Global.getInstance();
     private FileWriter saidaSemantico;
@@ -38,8 +43,10 @@ public class AnalisadorSemantico {
     private int linhaErro;
     private String nomeVariavelAtribuicao;
     private boolean dentroDeMetodo = false;
-
+    private boolean emExpressaoIf = false;
     private boolean proximoToken = false;
+    private boolean identificadorComsumido = false;
+    private String nomeStructASerHerdade = null;
 
     /**
      * Método que inicia a análise sintática.
@@ -55,6 +62,7 @@ public class AnalisadorSemantico {
 
             System.out.println("Análise Semântica iniciada para o arquivo " + nomeArquivo);
             this.tokens = tokens;
+            this.tokensAux = tokens;
             proximoToken();
             this.StringErrosSemanticos = "\n";
             Iterator iterador = this.tokens.listIterator();
@@ -89,7 +97,7 @@ public class AnalisadorSemantico {
             tokenAnteriorAnterior = tokenAnterior;
             tokenAnterior = tokenAtual;
             tokenAtual = tokens.get(posicao);
-            // Pulando comentários de linha e bloco
+            //Pulando comentários de linha e bloco
             //validarToken("Comentário de Linha");
             //validarToken("Comentário de Bloco");
             proximoToken = true;
@@ -118,12 +126,17 @@ public class AnalisadorSemantico {
 
     private boolean validarToken(String tipo) {
         System.out.println("VALIDANDO TOKEN: " + tipo);
-        //System.out.println("TESTE!");
+
         if (tokenAtual.getTipo().equals(tipo) || tokenAtual.getNome().equals(tipo)) {
+            if (emExpressaoIf) {
+                Token t = new Token(tokenAtual.getNome(), tokenAtual.getTipo(), tokenAtual.getLinha());
+                //tokensExpressao.add(t);
+            }
             System.out.println(tokenAtual);
             proximoToken();
             return true;
         }
+
         //System.out.println("VALIDANDO TOKEN: " + tipo);
         return false;
     }
@@ -308,7 +321,6 @@ public class AnalisadorSemantico {
     }
 
     private boolean tipo() {
-
         System.out.println("TIPO");
         if (tipobase()) {
             if (tipoAux()) {
@@ -329,14 +341,18 @@ public class AnalisadorSemantico {
         if (escalar()) {
             variavelAtual.setTipo(tokenAnterior.getNome());
             return true;
-        } else if (declaracaoDeStruct()) {
-            return true;
-        } else if (validarToken("IDE")) {
+        } //else if (declaracaoDeStruct()) {
+        //  return true;
+        //} 
+        else if (validarToken("IDE")) {
             variavelAtual.setTipo(tokenAnterior.getNome());
             System.out.println("3");
             return true;
         } else if (validarToken("struct")) {
             if (validarToken("IDE")) {
+                variavelAtual.setTipo(tokenAnterior.getNome());
+                VerificarExistenciaDeStruct();
+                // verificar se struct existe se existe seta o tipo da variavel
                 System.out.println("4");
                 return true;
             } else {
@@ -360,6 +376,7 @@ public class AnalisadorSemantico {
     private boolean declaracaoDeStruct() {
         System.out.println("DECLARACAO DE STRUCT");
         if (validarToken("struct")) {
+            structAtual = new Struct();
             if (declaracaoDeStructAux()) {
                 return true;
             }
@@ -372,10 +389,18 @@ public class AnalisadorSemantico {
     private boolean declaracaoDeStructAux() {
         System.out.println("DECLARACAO DE STRUCT AUX");
         if (validarToken("IDE")) {
-            if (Extends()) { // LEMBRARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+            System.out.println("123" + tokenAnterior.getNome());
+            structAtual.setNome(tokenAnterior.getNome());
+            structAtual.setLinha(tokenAnterior.getLinha());
+            if (Extends()) { // LEMBRAR
                 if (validarToken("{")) {
                     if (declaracaoDeStructCorpo()) {
                         if (validarToken("}")) {
+                            //
+                            addStruct();
+                            verificarVariaveisHeranca();
+                            System.out.println("444teste" + structAtual.getNome() + "--" + structAtual.getVariaveis());                            
+                            structAtual = new Struct();
                             return true;
                         }
                     } else {
@@ -402,7 +427,8 @@ public class AnalisadorSemantico {
         System.out.println("EXTENDS");
         if (validarToken("extends")) {
             if (validarToken("IDE")) {
-                //System.out.println("6");
+                System.out.println("structofMine " + tokenAnterior.getNome() + structAtual.getNome());
+                verificarHerancaStruct();
                 return true;
             } else {
                 panicMode();
@@ -428,6 +454,8 @@ public class AnalisadorSemantico {
         System.out.println("DECLARACAO DE STRUCT LINHA");
         if (tipo()) {
             if (expressaoIdentificadoresStruct()) {
+                System.out.println("lerolero" + structAtual.getVariaveis().size());
+                structAtual.addVariavel(variavelAtual);
                 return true;
             }
         }
@@ -448,6 +476,7 @@ public class AnalisadorSemantico {
 
     private boolean expressaoIdentificadorStruct() {
         if (validarToken("IDE")) {
+            variavelAtual.setNome(tokenAnterior.getNome());
             System.out.println("7");
             return true;
         }
@@ -459,6 +488,7 @@ public class AnalisadorSemantico {
         if (validarToken(";")) {
             return true;
         } else if (validarToken(",")) {
+            variavelAtual.setNome(tokenAnterior.getNome());
             if (expressaoIdentificadoresStruct()) {
                 return true;
             }
@@ -527,6 +557,7 @@ public class AnalisadorSemantico {
     private boolean funcaoProcedimentoFim() {
         System.out.println("PROCEDIMENTO FIM");
         parametroAtual = new Variavel();
+
         System.out.println("@@@@" + tokenAtual.getLinha());
         linhaErro = tokenAtual.getLinha();
         if (parametros()) {
@@ -703,6 +734,7 @@ public class AnalisadorSemantico {
             //System.out.println("111111111111111111111111111111111111111111111111111111111111111111111111111");
             if (validarToken("=")) {
                 nomeVariavelAtribuicao = tokenAnteriorAnterior.getNome();
+                System.out.println("777nomeVariavelAtribuicao" + tokenAnterior.getNome());
                 verificarDeclaracaoVariavel();
                 System.out.println("777" + tokenAnterior.getNome());
                 if (global.BuscaVariavelConstantePorNome(tokenAnterior.getNome())) {
@@ -740,7 +772,8 @@ public class AnalisadorSemantico {
 
     private boolean instrucaoDeRetorno() {
         System.out.println("INSTRUÇÃO DE RETORNO");
-        if (validarToken("return")) {            
+        if (validarToken("return")) {
+            //criar lista aux
             if (instrucaoDeRetornoAux()) {
                 verificarTipoRetorno();
                 return true;
@@ -909,8 +942,11 @@ public class AnalisadorSemantico {
     private boolean ifThen() {
         System.out.println("IF THEN");
         if (validarToken("if")) {
+            //exrpressao if
             if (validarToken("(")) {
+                posicaoAuxIf = posicao;
                 if (expressao()) {
+                    verificarTipoRetornoIf();
                     if (validarToken(")")) {
                         if (validarToken("then")) {
                             if (bloco()) {
@@ -1131,9 +1167,12 @@ public class AnalisadorSemantico {
     private boolean acesso() {
         System.out.println("ACESSO");
         if (validarToken(".")) {
+            //System.out.println("nomestructteste"+tokenAnteriorAnterior+tokenAtual);
             nomeVariavelAtribuicao = tokenAnteriorAnterior.getNome();
             verificarDeclaracaoVariavel();
             if (validarToken("IDE")) {
+                //System.out.println("nomestructteste"+tokens.get(posicao-3)+tokens.get(posicao-1));
+                verificarAcessoStruct();
                 System.out.println("15");
                 return true;
             }
@@ -1359,7 +1398,7 @@ public class AnalisadorSemantico {
         System.out.println("VALOR");
         if (validarToken("IDE")) {
             if (metodoAtual != null && !metodoAtual.getNome().equals("start")) {
-               // verificarTipoRetorno();
+                // verificarTipoRetorno();
             }
             //global.BuscaVariavelConstantePorNome(tokenAnterior.getNome());
             //System.out.println("999 retorno foi" + tokenAnterior.getTipo());
@@ -1377,7 +1416,7 @@ public class AnalisadorSemantico {
         } else if (validarToken("NRO")) {
             // System.out.println("4321"+ metodoAtual.getTipo());
             if (metodoAtual != null && !metodoAtual.getNome().equals("start")) {
-              //  verificarTipoRetorno();
+                //  verificarTipoRetorno();
             }
             //System.out.println("111Token" + tokenAnterior.getTipo());
             return true;
@@ -1386,12 +1425,12 @@ public class AnalisadorSemantico {
         } else if (validarToken("true")) {
             //System.out.println("111Token"+tokenAnterior.getNome());
             if (metodoAtual != null && !metodoAtual.getNome().equals("start")) {
-              //  verificarTipoRetorno();
+                //  verificarTipoRetorno();
             }
             return true;
         } else if (validarToken("false")) {
             if (metodoAtual != null && !metodoAtual.getNome().equals("start")) {
-            //    verificarTipoRetorno();
+                //    verificarTipoRetorno();
             }
             return true;
         }
@@ -1452,7 +1491,6 @@ public class AnalisadorSemantico {
     private void addVariavel() {
 
         if (metodoAtual == null) {
-
             if (!global.addVariavel(variavelAtual)) {
                 //erro ao add variavel
                 salvarMensagemArquivo("Variável global <" + variavelAtual.getNome() + "> já existente com esse nome. Linha: " + tokenAnterior.getLinha());
@@ -1541,6 +1579,9 @@ public class AnalisadorSemantico {
         System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         System.out.println("LINHA" + tokenAnterior.getLinha());
         variavelAtual = global.getVariavel(nomeVariavelAtribuicao);
+
+        System.out.println("em declaracao variavel" + tokenAnteriorAnterior.getNome());
+
         if (variavelAtual == null) {
             System.out.println("ENTROUUUUUUUUUUU!");
             if (metodoAtual != null) {
@@ -1560,6 +1601,7 @@ public class AnalisadorSemantico {
     }
 
     private void verificarTipoRetorno() {
+
         if (tokenAnterior.getNome().equals("true") && !metodoAtual.getTipo().equals("bool")
                 || tokenAnterior.getNome().equals("false") && !metodoAtual.getTipo().equals("bool")) {
             salvarMensagemArquivo("Retorno de método incompatível. Linha: " + tokenAnterior.getLinha() + "\n");
@@ -1567,6 +1609,141 @@ public class AnalisadorSemantico {
         // System.out.println("4321"+ metodoAtual.getTipo());
         if (!metodoAtual.getTipo().equals("int") && tokenAnterior.getTipo().equals("NRO")) {
             salvarMensagemArquivo("Retorno de método incompatível. Linha: " + tokenAnterior.getLinha() + "\n");
+        }
+    }
+
+    private void verificarTipoRetornoIf() {
+
+    }
+
+    private void addStruct() {
+        System.out.println("em add struct");
+        if (metodoAtual == null) {
+            Struct s = global.BuscaStructPorNome(structAtual.getNome());
+            if (s != null) {
+                salvarMensagemArquivo("Struct <" + s.getNome() + "> já declarada. Linha: " + structAtual.getLinha() + "\n");
+            } else {
+                //verificarVariaveisHeranca();
+                global.addStruct(structAtual);
+            }
+        }
+        if (metodoAtual != null) {
+            Struct s = metodoAtual.BuscaStructPorNome(structAtual.getNome());
+            if (s != null) {
+                salvarMensagemArquivo("Struct <" + s.getNome() + "> já declarada. Linha: " + structAtual.getLinha() + "\n");
+            } else {
+                //verificarVariaveisHeranca();
+                metodoAtual.addStruct(structAtual);
+                System.out.println("444mostraStruct" + metodoAtual.getStruct());
+            }
+        }
+
+    }
+
+    private void verificarAcessoStruct() {
+
+        //System.out.println("555nomestructteste" + tokens.get(posicao - 3) + tokens.get(posicao - 1));
+        //System.out.println("passou ponto");
+        if (metodoAtual == null) {
+            Variavel v = global.BuscaVariavelPorNome(tokens.get(posicao - 3).getNome());
+            if (v == null) {
+                salvarMensagemArquivo("Struct declarada como <" + tokens.get(posicao - 3).getNome() + ">  não existe no acesso. Linha: " + tokenAnterior.getLinha() + "\n");
+                return;
+            } else {
+                //System.out.println(tokens.get(posicao - 3).getTipo() + "111minhavarlinda" + tokens.get(posicao - 1).getTipo());
+                Struct s = global.BuscaStructPorNome(v.getTipo());
+                System.out.println("www" + s);
+                if (s != null) {
+                    if (!s.BuscarVariavelPorNome(tokens.get(posicao - 1).getNome())) {
+                        salvarMensagemArquivo("Variavel <" + tokens.get(posicao - 1).getNome() + ">  não existe no acesso. Linha: " + tokenAnterior.getLinha() + "\n");
+                    }
+                    return;
+                }
+            }
+        }
+
+        if (metodoAtual != null) {
+            Variavel v = metodoAtual.BuscaVariavelPorNome(tokens.get(posicao - 3).getNome());
+//            System.out.println(tokens.get(posicao-3).getTipo()+"minhavarlinda"+v.getTipo());
+            if (v == null) {
+                salvarMensagemArquivo("Struct declarada como <" + tokens.get(posicao - 3).getNome() + ">  não existe no acesso. Linha: " + tokenAnterior.getLinha() + "\n");
+                return;
+            } else {
+               // System.out.println(tokens.get(posicao - 3).getTipo() + "111minhavarlinda" + tokens.get(posicao - 1).getTipo());
+                Struct s = metodoAtual.BuscaStructPorNome(v.getTipo());
+               // System.out.println("www" + s);
+                if (s != null) {
+                    if (!s.BuscarVariavelPorNome(tokens.get(posicao - 1).getNome())) {
+                        salvarMensagemArquivo("Variavel <" + tokens.get(posicao - 1).getNome() + ">  não existe no acesso. Linha: " + tokenAnterior.getLinha() + "\n");
+                    }
+                    return;
+                }
+            }
+        }
+
+    }
+
+    private void VerificarExistenciaDeStruct() {
+        if (metodoAtual == null) {
+            Struct s = global.BuscaStructPorNome(tokenAnterior.getNome());
+            if (s == null) {
+                salvarMensagemArquivo("Struct <" + tokenAnterior.getNome() + "> não existe. Linha: " + tokenAnterior.getLinha() + "\n");
+            } else {
+                //variavelAtual.setTipo(tokenAnterior.getNome());
+            }
+        }
+        if (metodoAtual != null) {
+            Struct s = metodoAtual.BuscaStructPorNome(tokenAnterior.getNome());
+            if (s == null) {
+                salvarMensagemArquivo("Struct <" + tokenAnterior.getNome() + "> não existe. Linha: " + tokenAnterior.getLinha() + "\n");
+            } else {
+                //  variavelAtual.setTipo(tokenAnterior.getNome());
+            }
+        }
+    }
+
+    private void verificarHerancaStruct() {
+        
+        if (metodoAtual == null) {
+            if (!global.verificarHerancaStruct(tokenAnterior.getNome())) {
+                salvarMensagemArquivo("Struct não existe neste escopo na declaração do extends. Linha: " + tokenAnterior.getLinha() + "\n");
+            } else {
+                nomeStructASerHerdade = tokenAnterior.getNome();
+            }
+        }
+        if (metodoAtual != null) {
+            if (!metodoAtual.verificarHerancaStruct(tokenAnterior.getNome())) {
+                salvarMensagemArquivo("Struct não existe neste escopo na declaração do extends. Linha: " + tokenAnterior.getLinha() + "\n");
+            } else {
+                nomeStructASerHerdade = tokenAnterior.getNome();
+            }
+        }
+    }
+
+    private void verificarVariaveisHeranca() {
+        if (nomeStructASerHerdade != null) {
+            if (metodoAtual == null) {
+                if (global.verificarVariaveisHerancas(nomeStructASerHerdade, structAtual.getNome())) {
+                    salvarMensagemArquivo("Herança mal formada, atributos repetidos. Linha: " + structAtual.getLinha() + "\n");
+                }
+                else{
+                    System.out.println("");
+                    Struct s = global.BuscaStructPorNome(nomeStructASerHerdade);
+                    System.out.println("");
+                    structAtual.addListaVariaveis(s.getVariaveis());                    
+                }
+                    
+            }
+            if (metodoAtual != null) {
+                if (metodoAtual.verificarVariaveisHerancas(nomeStructASerHerdade, structAtual.getNome())) {
+                    salvarMensagemArquivo("Herança mal formada, atributos repetidos na struct. Linha: " + structAtual.getLinha() + "\n");
+                }
+                else{
+                    Struct s = metodoAtual.BuscaStructPorNome(nomeStructASerHerdade);
+                    structAtual.addListaVariaveis(s.getVariaveis());                    
+                }
+            }
+            this.nomeStructASerHerdade = null;
         }
 
     }
