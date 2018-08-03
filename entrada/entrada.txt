@@ -30,31 +30,32 @@ start () {
 
 }
 
-var{
-	int d=5, z;
+const{
+	int d=5, z = 1;
 	float a=10.5;
-	string nome;
+	string nome = 10;
+	bool x = true;
 }
 
-function int funcao(int num){
+function int funcao(int num, float a, bool c){
 
 	return 50+50;
 }
 
 start(){
-	a = a+10;
+	a[10] = a+10;
 	nome = nome+"a";
 	
     vetor1[10] = 50;
 	a = 10.9+9.1;
 	while (a + 5 > 10+5.2){ // FALTA DIZER ERRO
-        print(a, "nome");
+        print(a, "nome"+"b");
 		print(d+5, z+10);
 		print(a+5); // ERRO
     }
 	
 	// Verificar tipo de a!
-	funcao(a);
+	funcao(d, a, 10);
 
 }
 
