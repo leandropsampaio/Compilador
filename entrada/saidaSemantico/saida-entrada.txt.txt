@@ -5,8 +5,12 @@ Análise Semântica iniciada para o arquivo entrada.txt
 - Não se pode alterar o valor de uma constante. Linha: 47
 - Variável <vetor1> não declarada nesse escopo. Linha: 49
 - Não se pode alterar o valor de uma constante. Linha: 50
+- Expressão com tipos diferentes. Linha: 51
+- Expressão com tipos diferentes. Linha: 54
 - Expressão do print com tipos diferentes. Linha: 54
 - Chamada de função com parâmetros de tipos diferentes. Linha: 58
+- Expressão com tipos diferentes. Linha: 58
+- Expressão com tipos diferentes. Linha: 58
 
 
 

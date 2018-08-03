@@ -842,6 +842,7 @@ public class AnalisadorSemantico {
         System.out.println("WHILE");
         if (validarToken("while")) {
             if (validarToken("(")) {
+                posicaoAux = posicao;
                 if (expressao()) {
                     if (!tokenAnterior.getNome().equals("true") && !tokenAnterior.getNome().equals("false")
                             && apenasAritmetico == true) {
@@ -1347,24 +1348,44 @@ public class AnalisadorSemantico {
 
     private boolean escalarRelacional() {
         System.out.println("ESCALAR RELACIONAL");
+
+        System.out.println("CAIUU!");
         if (validarToken("!=")) {
+            verificarExpressaoIfWhile();
             verificarExpressao();
+            posicaoAux = posicao;
             return true;
         } else if (validarToken("==")) {
+            verificarExpressaoIfWhile();
             verificarExpressao();
+            posicaoAux = posicao;
             return true;
         } else if (validarToken("<")) {
+            verificarExpressaoIfWhile();
             verificarExpressao();
+            posicaoAux = posicao;
             return true;
         } else if (validarToken("<=")) {
+            verificarExpressaoIfWhile();
             verificarExpressao();
+            posicaoAux = posicao;
             return true;
         } else if (validarToken(">")) {
+            verificarExpressaoIfWhile();
             verificarExpressao();
+            posicaoAux = posicao;
             return true;
         } else if (validarToken(">=")) {
+            verificarExpressaoIfWhile();
             verificarExpressao();
+            posicaoAux = posicao;
             return true;
+        }
+
+        System.out.println("PROX:" + tokenAtual.getNome());
+        if (tokenAtual.getNome().equals(")")) {
+            System.out.println("OKKK!");
+            verificarExpressaoIfWhile();
         }
         System.out.println("SAIDA ESCALAR RELACIONAL");
         return false;
@@ -2057,6 +2078,77 @@ public class AnalisadorSemantico {
         }
     }
 
+    private void verificarExpressaoIfWhile() {
+        int posicaoInicial = posicaoAux;
+        tokenAux = tokensAux.get(posicaoInicial);
+        tipo = "";
+        tipo2 = "";
+
+        for (int i = posicaoInicial; i < posicao; i++) {
+            tokenAux = tokensAux.get(i);
+            System.out.println(tokenAux.getTipo());
+            if (tokenAux.getTipo().equals("IDE")) {
+                System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxx1");
+                System.out.println(variavelAtual.getNome());
+                Variavel variavelAux = metodoAtual.getVariavel(tokenAux.getNome());
+
+                if (variavelAux != null) {
+                    if (tipo.equals("")) {
+                        tipo2 = variavelAux.getTipo();
+                    }
+                    tipo = variavelAux.getTipo();
+
+                    if (!tipo.equals(tipo2)) {
+                        salvarMensagemArquivo("- Expressão com tipos diferentes. Linha: " + tokenAnterior.getLinha());
+                    }
+                }
+                variavelAux = global.getVariavel(tokenAux.getNome());
+                if (variavelAux != null) {
+                    if (tipo.equals("")) {
+                        tipo2 = variavelAux.getTipo();
+                    }
+                    tipo = variavelAux.getTipo();
+
+                    if (!tipo.equals(tipo2)) {
+                        salvarMensagemArquivo("- Expressão com tipos diferentes. Linha: " + tokenAnterior.getLinha());
+                    }
+                }
+            } else if (tokenAux.getTipo().equals("NRO")) {
+                System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxx444");
+                if (tokenAux.getNome().contains(".")) {
+                    if (!"float".equals(variavelAtual.getTipo())) {
+                        salvarMensagemArquivo("- Expressão com tipos diferentes. Linha: " + tokenAnterior.getLinha());
+                    }
+                    tipo2 = "float";
+                    return;
+                } else if (!"int".equals(variavelAtual.getTipo())) {
+                    salvarMensagemArquivo("- Expressão com tipos diferentes. Linha: " + tokenAnterior.getLinha());
+                }
+                tipo2 = "int";
+            } else if ((tokenAux.getTipo().equals("true") || tokenAux.getNome().equals("true")
+                    && !variavelAtual.getTipo().equals("bool"))
+                    || (tokenAux.getTipo().equals("false") || tokenAux.getNome().equals("false")
+                    && !variavelAtual.getTipo().equals("bool"))) {
+                tipo2 = "bool";
+                salvarMensagemArquivo("- Expressão com tipos diferentes. Linha: " + tokenAnterior.getLinha());
+            } else if (tokenAux.getTipo().equals("CAD")) {
+
+                if (tipo.equals("")) {
+                    tipo2 = "string";
+                }
+                tipo = "string";
+                System.out.println("SIMM!");
+                System.out.println(tipo);
+                System.out.println(tipo2);
+                if (!tipo.equals(tipo2)) {
+                    System.out.println("ENTROUUUUUU!");
+                    salvarMensagemArquivo("- Expressão com tipos diferentes. Linha: " + tokenAnterior.getLinha());
+                }
+                tipo2 = "string";
+            }
+        }
+    }
+
     private void verificarExpressao() {
         apenasAritmetico = false;
         //tokenAnterior tokenAtual tokenProximo
@@ -2066,13 +2158,19 @@ public class AnalisadorSemantico {
         if (tokenAnterior.getTipo().equals("REL")) {
             System.out.println("RELACIONAL!*************");
             if (relacional == true) {
-                salvarMensagemArquivo("Expressão incorreta. Linha: " + tokenAnterior.getLinha());
+                salvarMensagemArquivo("- Expressão incorreta. Linha: " + tokenAnterior.getLinha());
             }
             relacional = true;
         }
 
         if (tokenAnteriorAnterior.getTipo().equals("IDE")) {
-
+            nomeVariavelAtribuicao = tokenAnteriorAnterior.getNome();
+            verificarDeclaracaoVariavel();
+            if (variavelAtual == null) {
+                salvarMensagemArquivo("- Variável <" + nomeVariavelAtribuicao + "> não declarada no escopo. Linha: " + tokenAnterior.getLinha());
+                return;
+            }
+            tipoOperacao = variavelAtual.getTipo();
         } else if (tokenAnteriorAnterior.getTipo().equals("NRO")) {
             if (tokenAnteriorAnterior.getNome().contains(".")) {
                 tipoOperacao = "float";
@@ -2080,23 +2178,31 @@ public class AnalisadorSemantico {
                 tipoOperacao = "int";
             }
         } else if (tokenAnteriorAnterior.getTipo().equals("PRE")) {
-            salvarMensagemArquivo("Expressão incorreta. Linha: " + tokenAnterior.getLinha());
+            salvarMensagemArquivo("- Expressão incorreta. Linha: " + tokenAnterior.getLinha());
             return;
         }
 
         if (tokenAtual.getTipo().equals("IDE")) {
-            return;
+            nomeVariavelAtribuicao = tokenAnteriorAnterior.getNome();
+            verificarDeclaracaoVariavel();
+            if (variavelAtual == null) {
+                salvarMensagemArquivo("- Variável <" + nomeVariavelAtribuicao + "> não declarada no escopo. Linha: " + tokenAnterior.getLinha());
+                return;
+            }
+            if (!variavelAtual.getTipo().equals(tipoOperacao)) {
+                salvarMensagemArquivo("- Expressão incorreta. Linha: " + tokenAnterior.getLinha());
+            }
         } else if (tokenAtual.getTipo().equals("NRO")) {
             if (tokenAtual.getNome().contains(".")) {
                 if (!tipoOperacao.equals("float")) {
-                    salvarMensagemArquivo("Expressão incorreta. Linha: " + tokenAnterior.getLinha());
+                    salvarMensagemArquivo("- Expressão incorreta. Linha: " + tokenAnterior.getLinha());
                 }
             } else if (!tipoOperacao.equals("int")) {
-                salvarMensagemArquivo("Expressão incorreta. Linha: " + tokenAnterior.getLinha());
+                salvarMensagemArquivo("- Expressão incorreta. Linha: " + tokenAnterior.getLinha());
             }
             return;
         }
-        salvarMensagemArquivo("Expressão incorreta. Linha: " + tokenAnterior.getLinha());
+        salvarMensagemArquivo("- Expressão incorreta. Linha: " + tokenAnterior.getLinha());
     }
 
     private void salvarMensagemArquivo(String mensagem) {

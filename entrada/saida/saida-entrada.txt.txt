@@ -138,13 +138,11 @@
 50 DEL ;
 51 PRE while
 51 DEL (
-51 IDE a
-51 ART +
-51 NRO 5
+51 IDE d
 51 REL >
 51 NRO 10
 51 ART +
-51 NRO 5.2
+51 IDE a
 51 DEL )
 51 DEL {
 52 PRE print
@@ -169,9 +167,9 @@
 53 DEL ;
 54 PRE print
 54 DEL (
-54 IDE a
+54 NRO 10
 54 ART +
-54 NRO 5
+54 IDE a
 54 DEL )
 54 DEL ;
 55 DEL }

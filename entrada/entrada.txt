@@ -48,10 +48,10 @@ start(){
 	
     vetor1[10] = 50;
 	a = 10.9+9.1;
-	while (a + 5 > 10+5.2){ // FALTA DIZER ERRO
+	while (d > 10+a){ // FALTA DIZER ERR
         print(a, "nome"+"b");
 		print(d+5, z+10);
-		print(a+5); // ERRO
+		print(10+a); // ERRO
     }
 	
 	// Verificar tipo de a!
