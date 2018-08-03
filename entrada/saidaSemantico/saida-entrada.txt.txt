@@ -1,8 +1,7 @@
 Análise Semântica iniciada para o arquivo entrada.txt
 
-- Variável <vetors> não declarada nesse escopo. Linha: 20
-- Variavel<nome> não existe no uso do scan. Linha: 20
-
+- Variável <vetor1> não declarada nesse escopo. Linha: 4
+- Variável <d> não declarada nesse escopo. Linha: 4
 
 
 
