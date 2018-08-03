@@ -43,9 +43,9 @@ public class Metodo {
         return nome;
     }
 
-    public Variavel getVariavel(String identificador) {
+    public Variavel getVariavel(String identificador, boolean isVetor) {
         for (Variavel v : variaveis) {
-            if (v.getNome().equals(identificador)) {
+            if (v.getNome().equals(identificador) && v.getIsVetor() == isVetor) {
                 return v;
             }
         }

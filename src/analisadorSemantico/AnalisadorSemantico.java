@@ -50,6 +50,8 @@ public class AnalisadorSemantico {
     private boolean proximoToken = false;
     private boolean identificadorComsumido = false;
     private String nomeStructASerHerdade = null;
+    private boolean isVetor = false;
+    private boolean emScan = false; 
 
     /**
      * Método que inicia a análise sintática.
@@ -530,6 +532,8 @@ public class AnalisadorSemantico {
         System.out.println("TIPO VETOR DECLARADO");
         if (validarToken("[")) {
             if (validarToken("]")) {
+                System.out.println("emIsVetor");
+                variavelAtual.setIsVetor(true);
                 return true;
             } else {
                 panicMode();
@@ -813,9 +817,11 @@ public class AnalisadorSemantico {
         System.out.println("SCAN");
         if (validarToken("scan")) {
             if (validarToken("(")) {
+                emScan = true;
                 if (entrada()) {
                     if (outrasEntradas()) {
                         if (validarToken(")")) {
+                            emScan = false;
                             return true;
                         }
                     }
@@ -870,6 +876,7 @@ public class AnalisadorSemantico {
     private boolean Final() {
         System.out.println("FINAL");
         if (validarToken("IDE")) {
+            
             System.out.println("------------------------------------------------------------------ 4- " + contador);
             System.out.println("10");
             if (acessando()) {
@@ -930,8 +937,10 @@ public class AnalisadorSemantico {
     private boolean entrada() {
         System.out.println("ENTRADAS");
         if (Final()) {
+            VerificarEntradaScanFinal();
             return true;
         } else if (validarToken("IDE")) {
+            VerificarEntradaScan();
             //System.out.println("11");
             return true;
         }
@@ -1210,11 +1219,18 @@ public class AnalisadorSemantico {
                 return true;
             }
         } else if (validarToken("[")) {
+            isVetor = true;
             nomeVariavelAtribuicao = tokenAnteriorAnterior.getNome();
-            verificarDeclaracaoVariavel();
+            System.out.println("nomeVariavelAtribuicao3"+nomeVariavelAtribuicao);
+            if(!nomeVariavelAtribuicao.equals("]")){
+                verificarDeclaracaoVariavel();
+            }            
+            verificarAcessoVetor();
+            
             if (expressao()) {
                 verificarTamanhoVetor();
                 if (validarToken("]")) {
+                    isVetor = false;
                     return true;
                 }
             }
@@ -1661,6 +1677,7 @@ public class AnalisadorSemantico {
             // VERIFICAR SE EXISTE A VARIÁVEL
             nomeVariavelAtribuicao = tokenAnterior.getNome();
             verificarDeclaracaoVariavel();
+
         } else {
             int num = Integer.parseInt(numero);
             if (num < 0) {
@@ -1671,17 +1688,40 @@ public class AnalisadorSemantico {
     }
 // criada por leandro;acessar uma que não existe . o outro é pra duas variaveis com mesmo nome
 
+    private void verificarAcessoVetor() {
+
+        if (variavelAtual != null) {
+            if (metodoAtual != null) {
+                Variavel v = metodoAtual.BuscaVariavelPorNome(nomeVariavelAtribuicao);
+                if (v != null && !v.getIsVetor()) {
+                    salvarMensagemArquivo("- Variável <" + nomeVariavelAtribuicao + "> não declarada como vetor. Linha: " + tokenAnterior.getLinha());
+                }
+
+            }
+            if (metodoAtual == null) {
+                Variavel v = global.BuscaVariavelPorNome(nomeVariavelAtribuicao);
+                if (v != null && !v.getIsVetor()) {
+                    salvarMensagemArquivo("- Variável <" + nomeVariavelAtribuicao + "> não declarada como vetor. Linha: " + tokenAnterior.getLinha());
+                }
+            }
+        }
+
+    }
+
     private void verificarDeclaracaoVariavel() {
+
         System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         System.out.println("LINHA" + tokenAnterior.getLinha());
         variavelAtual = global.getVariavel(nomeVariavelAtribuicao);
 
         System.out.println("em declaracao variavel" + tokenAnteriorAnterior.getNome());
+        System.out.println("nomeTribo" + nomeVariavelAtribuicao);
 
         if (variavelAtual == null) {
             System.out.println("ENTROUUUUUUUUUUU!");
             if (metodoAtual != null) {
-                variavelAtual = metodoAtual.getVariavel(nomeVariavelAtribuicao);
+
+                variavelAtual = metodoAtual.getVariavel(nomeVariavelAtribuicao, isVetor);
                 if (variavelAtual == null) {
                     System.out.println("variavel não declada nesse escopo");
                     System.out.println("PASSOU!");
@@ -1705,7 +1745,7 @@ public class AnalisadorSemantico {
             if (tokenAux.getTipo().equals("IDE")) {
                 System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxx1");
                 System.out.println(metodoAtual.getNome());
-                Variavel variavelAux = metodoAtual.getVariavel(tokenAux.getNome());
+                Variavel variavelAux = metodoAtual.getVariavel(tokenAux.getNome(), isVetor);
                 if (variavelAux != null) {
                     System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxx2");
                     System.out.println(variavelAux.getTipo());
@@ -1751,9 +1791,9 @@ public class AnalisadorSemantico {
             System.out.println(tokenAux.getTipo());
             if (tokenAux.getTipo().equals("IDE")) {
                 System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxx1");
-                System.out.println(variavelAtual.getNome());
-                Variavel variavelAux = metodoAtual.getVariavel(tokenAux.getNome());
-                if (variavelAux != null) {
+//                System.out.println(variavelAtual.getNome());
+                Variavel variavelAux = metodoAtual.getVariavel(tokenAux.getNome(), isVetor);
+                if (variavelAux != null && variavelAtual != null) {
                     System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxx2");
                     System.out.println(variavelAux.getTipo());
                     if (!variavelAux.getTipo().equals(variavelAtual.getTipo())) {
@@ -1918,6 +1958,67 @@ public class AnalisadorSemantico {
             this.nomeStructASerHerdade = null;
         }
     }
+    
+    
+    
+    private void VerificarEntradaScan(){       
+        if (metodoAtual == null) {
+            Variavel v = global.BuscaVariavelPorNome(tokenAnterior.getNome());
+            if(v == null){
+               salvarMensagemArquivo("- Variavel <"+tokenAnterior.getNome()+">  não existe no uso do scan. Linha: " + tokenAnterior.getLinha() + "\n");
+            }
+        }
+        if (metodoAtual != null) {
+            Variavel v = metodoAtual.BuscaVariavelPorNome(tokenAnterior.getNome());
+            if(v == null){
+               salvarMensagemArquivo("- Variavel<"+tokenAnterior.getNome()+"> não existe no uso do scan. Linha: " + tokenAnterior.getLinha() + "\n");
+            }
+        }
+           
+    }
+    
+    
+    private void VerificarEntradaScanFinal(){
+        
+        if(emScan){
+        if (metodoAtual == null ) {
+            
+            Variavel v = global.BuscaVariavelPorNome(tokenAnterior.getNome());
+            if(v == null){
+               salvarMensagemArquivo("- Variavel não existe no uso do scan. Linha: " + tokenAnterior.getLinha() + "\n");
+            }
+        }
+        if (metodoAtual != null) {
+            System.out.println("emscan");
+            Variavel v = metodoAtual.BuscaVariavelPorNome(tokenAnterior.getNome());
+            if(v == null){
+             //  salvarMensagemArquivo("- Variavel não existe no uso do scan. Linha: " + tokenAnterior.getLinha() + "\n");
+            }
+        }
+      }
+           
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     private void verificarExpressaoPrint() {
         int posicaoInicial = posicaoAux;
@@ -1931,8 +2032,7 @@ public class AnalisadorSemantico {
             if (tokenAux.getTipo().equals("IDE")) {
                 System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxx1");
                 System.out.println(variavelAtual.getNome());
-                Variavel variavelAux = metodoAtual.getVariavel(tokenAux.getNome());
-
+                Variavel variavelAux = metodoAtual.getVariavel(tokenAux.getNome(), isVetor);
                 if (variavelAux != null) {
                     if (tipo.equals("")) {
                         tipo2 = variavelAux.getTipo();
@@ -1988,6 +2088,8 @@ public class AnalisadorSemantico {
                 tipo2 = "string";
             }
         }
+        
+        
 
         /*
         if (tokenAnterior.getNome().equals("true") && !metodoAtual.getTipo().equals("bool")
@@ -2000,6 +2102,7 @@ public class AnalisadorSemantico {
         }
          */
     }
+    
 
     /*
     private void verificarExpressaaaaaaao() {

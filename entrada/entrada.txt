@@ -1,60 +1,22 @@
-
-start () {
-
-    struct fichaAluno{
-        string nome;
-        string disciplina;
-        float nota_prova1;
-        float nota_prova2;
-    };
-	
-	struct fichaAluno2 extends fichaAluno{
-        int nome;        
-    };
-	
-	struct fichaAluno3 extends fichaAluno2{
-        float nome;
-        
-    };
-	
-	struct fichaAluno4 extends fichaAluno3{
-        int nome;
-        
-    };
-
-    var{
-        struct fichaAluno2 aluno;
-    }
-
-    
+const {
+   float a = 10.5;
 
 }
 
-var{
-	int d=5, z;
-	float a=10.5;
-	string nome;
-}
-
-function int funcao(int num){
-
-	return 50+50;
-}
 
 start(){
-	a = a+10;
-	nome = nome+"a";
-	
-    vetor1[10] = 50;
-	a = 10.9+9.1;
-	while (a + 5 > 10+5.2){ // FALTA DIZER ERRO
-        print(a, "nome");
-		print(d+5, z+10);
-		print(a+5); // ERRO
+
+  
+
+    var {
+        int[] vetor1;
+        float[][] vetor2;
+        bool[] vetor3, vetor4;
+        nomeStruct[] vetor5;
     }
-	
-	// Verificar tipo de a!
-	funcao(a);
 
+
+    
+    scan (vetors[12],nome);
+    
 }
-

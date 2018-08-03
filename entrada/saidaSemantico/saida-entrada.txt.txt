@@ -1,9 +1,8 @@
 Análise Semântica iniciada para o arquivo entrada.txt
 
-- Método Start já declarado. Linha: 44
-- Valor incompatível com o tipo da declaração (tipos diferentes). Linha: 45
-- Variável <vetor1> não declarada nesse escopo. Linha: 48
-- Expressão do print com tipos diferentes. Linha: 53
+- Variável <vetors> não declarada nesse escopo. Linha: 20
+- Variavel<nome> não existe no uso do scan. Linha: 20
+
 
 
 

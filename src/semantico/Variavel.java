@@ -17,15 +17,18 @@ public class Variavel{
     private String nome;
     private String valor = null;
     private boolean constante = false;
+    private boolean isVetor = false;
 
     public Variavel() {
+        
     }
-    
     public Variavel(boolean constante){
+        this.isVetor = false;
         this.constante = constante;
     }
     
     public Variavel (String tipo){
+        this.isVetor = false;
         this.tipo = tipo;
     }
 
@@ -58,6 +61,13 @@ public class Variavel{
 
     public void setConstante(boolean constante) {
         this.constante = constante;
+    }
+    
+    public void setIsVetor(boolean isVetor) {
+        this.isVetor = isVetor;
+    }
+    public boolean getIsVetor() {
+        return isVetor;
     }
     
     public boolean verificarAtribuicaoConstante( ){
